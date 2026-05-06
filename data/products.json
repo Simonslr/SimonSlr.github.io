@@ -4,7 +4,7 @@
     "slug": "airpods-pro-2",
     "name": "Apple AirPods Pro 2ème génération",
     "category": "Audio",
-    "image": "https://m.media-amazon.com/images/I/61f1YfTkTDL._AC_SL500_.jpg",
+    "image": "/products/airpods-pro-2.jpg",
     "description": "Écouteurs sans fil avec réduction de bruit active, chip H2, autonomie 30h avec boîtier.",
     "prices": {
       "FR": {
@@ -12,8 +12,8 @@
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0D1XD1ZV3?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B0D1XD1ZV3?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 177.99,
@@ -21,7 +21,7 @@
         "seller": "Amazon.de",
         "in_stock": true,
         "affiliate_url": "https://www.amazon.de/dp/B0D1XD1ZV3?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 198.99,
@@ -29,7 +29,7 @@
         "seller": "Amazon.es",
         "in_stock": true,
         "affiliate_url": "https://www.amazon.es/dp/B0D1XD1ZV3?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "updated_at": "2026-05-07"
       }
     }
   },
@@ -38,7 +38,7 @@
     "slug": "sony-wh1000xm5",
     "name": "Sony WH-1000XM5",
     "category": "Audio",
-    "image": "https://m.media-amazon.com/images/I/61bADWoAbkL._AC_SL500_.jpg",
+    "image": "/products/sony-wh1000xm5.jpg",
     "description": "Casque sans fil à réduction de bruit leader du marché, 30h d'autonomie, son Hi-Res.",
     "prices": {
       "FR": {
@@ -46,8 +46,8 @@
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B09XS7JWHH?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B09XS7JWHH?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 279.00,
@@ -55,7 +55,7 @@
         "seller": "Amazon.de",
         "in_stock": true,
         "affiliate_url": "https://www.amazon.de/dp/B09XS7JWHH?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 295.00,
@@ -63,7 +63,7 @@
         "seller": "Amazon.es",
         "in_stock": true,
         "affiliate_url": "https://www.amazon.es/dp/B09XS7JWHH?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "updated_at": "2026-05-07"
       }
     }
   },
@@ -72,7 +72,7 @@
     "slug": "ssd-samsung-990-pro-1tb",
     "name": "SSD Samsung 990 Pro 1 To",
     "category": "Informatique",
-    "image": "https://m.media-amazon.com/images/I/714HYnBtFhL._AC_SL500_.jpg",
+    "image": "/products/ssd-samsung-990-pro-1tb.jpg",
     "description": "SSD NVMe PCIe 4.0, vitesse de lecture 7450 Mo/s, idéal PS5 et PC gaming.",
     "prices": {
       "FR": {
@@ -80,8 +80,8 @@
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0BHJJ9Y77?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B0BHJJ9Y77?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 94.90,
@@ -89,49 +89,49 @@
         "seller": "Amazon.de",
         "in_stock": true,
         "affiliate_url": "https://www.amazon.de/dp/B0BHJJ9Y77?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 104.99,
         "shipping": 0,
-        "seller": "PcComponentes",
+        "seller": "Amazon.es",
         "in_stock": true,
         "affiliate_url": "https://www.amazon.es/dp/B0BHJJ9Y77?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "updated_at": "2026-05-07"
       }
     }
   },
   {
     "id": "kindle-paperwhite-16go",
     "slug": "kindle-paperwhite-16go",
-    "name": "Kindle Paperwhite 16 Go",
+    "name": "Kindle Paperwhite 16 Go (2024)",
     "category": "Liseuses",
-    "image": "https://m.media-amazon.com/images/I/61DPmTMiduL._AC_SL500_.jpg",
-    "description": "Liseuse avec écran 6,8 pouces sans reflets, 16 Go, autonomie 12 semaines, résistante à l'eau.",
+    "image": "/products/kindle-paperwhite-16go.jpg",
+    "description": "Liseuse avec écran 7 pouces sans reflets, 16 Go, autonomie 12 semaines, résistante à l'eau.",
     "prices": {
       "FR": {
         "price": 159.99,
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B09TMF6745?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B0CFPXBJ9Y?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 134.99,
         "shipping": 0,
         "seller": "Amazon.de",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B09TMF6745?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.de/dp/B0CFPXBJ9Y?tag=VOTRE-TAG-DE",
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 144.99,
         "shipping": 0,
         "seller": "Amazon.es",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B09TMF6745?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.es/dp/B0CFPXBJ9Y?tag=VOTRE-TAG-ES",
+        "updated_at": "2026-05-07"
       }
     }
   },
@@ -140,7 +140,7 @@
     "slug": "ipad-10",
     "name": "Apple iPad 10ème génération 64 Go",
     "category": "Tablettes",
-    "image": "https://m.media-amazon.com/images/I/71FYbPaHHHL._AC_SL500_.jpg",
+    "image": "/products/ipad-10.jpg",
     "description": "Tablette 10,9 pouces, puce A14 Bionic, Wi-Fi, compatible Apple Pencil 1ère génération.",
     "prices": {
       "FR": {
@@ -148,24 +148,24 @@
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0BJLXMVTM?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B0BJMGCW37?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 349.00,
         "shipping": 0,
         "seller": "Amazon.de",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0BJLXMVTM?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.de/dp/B0BJMGCW37?tag=VOTRE-TAG-DE",
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 369.00,
         "shipping": 0,
         "seller": "Amazon.es",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0BJLXMVTM?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.es/dp/B0BJMGCW37?tag=VOTRE-TAG-ES",
+        "updated_at": "2026-05-07"
       }
     }
   },
@@ -174,7 +174,7 @@
     "slug": "apple-watch-se-2",
     "name": "Apple Watch SE 2ème génération 40mm",
     "category": "Montres connectées",
-    "image": "https://m.media-amazon.com/images/I/71YHpJDJFZL._AC_SL500_.jpg",
+    "image": "/products/apple-watch-se-2.jpg",
     "description": "Montre connectée avec détection de chute, suivi santé, GPS, résistance à l'eau 50m.",
     "prices": {
       "FR": {
@@ -182,24 +182,24 @@
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0CHX9CY6S?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B0CHX2WD4R?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 239.00,
         "shipping": 0,
         "seller": "Amazon.de",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0CHX9CY6S?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.de/dp/B0CHX2WD4R?tag=VOTRE-TAG-DE",
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 254.00,
         "shipping": 0,
         "seller": "Amazon.es",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0CHX9CY6S?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.es/dp/B0CHX2WD4R?tag=VOTRE-TAG-ES",
+        "updated_at": "2026-05-07"
       }
     }
   },
@@ -208,7 +208,7 @@
     "slug": "ps5-slim",
     "name": "Sony PlayStation 5 Slim",
     "category": "Gaming",
-    "image": "https://m.media-amazon.com/images/I/41JMBEuFngL._AC_SL500_.jpg",
+    "image": "/products/ps5-slim.jpg",
     "description": "Console next-gen avec lecteur de disques, 1 To SSD, DualSense inclus.",
     "prices": {
       "FR": {
@@ -216,8 +216,8 @@
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0CL61F39H?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B0CL61F39H?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 419.99,
@@ -225,7 +225,7 @@
         "seller": "Amazon.de",
         "in_stock": true,
         "affiliate_url": "https://www.amazon.de/dp/B0CL61F39H?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 434.99,
@@ -233,7 +233,7 @@
         "seller": "Amazon.es",
         "in_stock": true,
         "affiliate_url": "https://www.amazon.es/dp/B0CL61F39H?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "updated_at": "2026-05-07"
       }
     }
   },
@@ -242,7 +242,7 @@
     "slug": "dyson-v8",
     "name": "Dyson V8 Absolute",
     "category": "Électroménager",
-    "image": "https://m.media-amazon.com/images/I/61pNjhOEMXL._AC_SL500_.jpg",
+    "image": "/products/dyson-v8.jpg",
     "description": "Aspirateur balai sans fil, filtre HEPA, 40 min d'autonomie, 7 accessoires inclus.",
     "prices": {
       "FR": {
@@ -250,24 +250,24 @@
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B01CO3HZBU?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B0CN5JW3HQ?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 299.00,
         "shipping": 0,
         "seller": "Amazon.de",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B01CO3HZBU?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.de/dp/B0CN5JW3HQ?tag=VOTRE-TAG-DE",
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 319.00,
         "shipping": 0,
         "seller": "Amazon.es",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B01CO3HZBU?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.es/dp/B0CN5JW3HQ?tag=VOTRE-TAG-ES",
+        "updated_at": "2026-05-07"
       }
     }
   },
@@ -276,7 +276,7 @@
     "slug": "samsung-galaxy-s24",
     "name": "Samsung Galaxy S24 128 Go",
     "category": "Smartphones",
-    "image": "https://m.media-amazon.com/images/I/71BPOrXQpJL._AC_SL500_.jpg",
+    "image": "/products/samsung-galaxy-s24.jpg",
     "description": "Smartphone 6,2 pouces AMOLED, puce Exynos 2400, 50 Mpx, 5G, Galaxy AI.",
     "prices": {
       "FR": {
@@ -284,24 +284,24 @@
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0CMDTF8LC?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B0CSV6XPH6?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 699.00,
         "shipping": 0,
         "seller": "Amazon.de",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0CMDTF8LC?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.de/dp/B0CSV6XPH6?tag=VOTRE-TAG-DE",
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 729.00,
         "shipping": 0,
         "seller": "Amazon.es",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0CMDTF8LC?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.es/dp/B0CSV6XPH6?tag=VOTRE-TAG-ES",
+        "updated_at": "2026-05-07"
       }
     }
   },
@@ -310,7 +310,7 @@
     "slug": "delonghi-dedica",
     "name": "De'Longhi Dedica EC685",
     "category": "Électroménager",
-    "image": "https://m.media-amazon.com/images/I/71e6MkVzfaL._AC_SL500_.jpg",
+    "image": "/products/delonghi-dedica.jpg",
     "description": "Machine à expresso manuelle, 15 bars, buse vapeur, design ultra-compact 15 cm.",
     "prices": {
       "FR": {
@@ -318,24 +318,24 @@
         "shipping": 0,
         "seller": "Amazon.fr",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B01LXZXIPR?tag=VOTRE-TAG-FR",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.fr/dp/B06WGTZ874?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
+        "updated_at": "2026-05-07"
       },
       "DE": {
         "price": 104.99,
         "shipping": 0,
         "seller": "Amazon.de",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B01LXZXIPR?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.de/dp/B06WGTZ874?tag=VOTRE-TAG-DE",
+        "updated_at": "2026-05-07"
       },
       "ES": {
         "price": 114.99,
         "shipping": 0,
         "seller": "Amazon.es",
         "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B01LXZXIPR?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-06"
+        "affiliate_url": "https://www.amazon.es/dp/B06WGTZ874?tag=VOTRE-TAG-ES",
+        "updated_at": "2026-05-07"
       }
     }
   }

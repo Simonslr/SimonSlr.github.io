@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { Geist } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
+import EuroPrixLogo from "@/components/EuroPrixLogo"
+import Link from "next/link"
 
 const geist = Geist({ subsets: ["latin"] })
 
@@ -13,23 +15,58 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className={`${geist.className} bg-slate-50 min-h-screen`}>
+      <body className={geist.className} style={{ background: "#fff", minHeight: "100vh" }}>
         <Navbar />
         {children}
-        <footer className="mt-16 border-t border-slate-200 bg-white">
-          <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 bg-indigo-600 rounded-md flex items-center justify-center">
-                <svg width="10" height="10" viewBox="0 0 13 13" fill="none">
-                  <path d="M1.5 6.5h10M6.5 1.5l5 5-5 5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-bold text-slate-700">EuroPrix</span>
+        <footer style={{ borderTop: "1px solid #E2E8F0", padding: "56px 56px 40px", background: "#fff" }}>
+          <div className="max-w-screen-xl mx-auto grid gap-10" style={{ gridTemplateColumns: "1fr 1fr 1fr 1fr" }}>
+            <div style={{ gridColumn: "span 2" }}>
+              <EuroPrixLogo size={36} />
+              <p className="text-xs text-slate-400 mt-4 leading-relaxed max-w-md">
+                EuroPrix participe au programme Partenaires Amazon EU, un programme d'affiliation conçu pour permettre
+                à des sites de percevoir une rémunération grâce à la création de liens vers Amazon.
+                EuroPrix n'est pas affilié à Amazon en dehors de ce programme.
+              </p>
             </div>
-            <p className="text-xs text-slate-400 text-center">
-              Site partenaire Amazon · Prix livraison estimée vers la France · Vérifiez le prix final avant d&apos;acheter
-            </p>
-            <p className="text-xs text-slate-400">© 2026</p>
+
+            <div>
+              <div className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-4 font-mono">
+                Produit
+              </div>
+              {[
+                { label: "Catalogue",          href: "/#products" },
+                { label: "Comment ça marche",  href: "/#how-it-works" },
+                { label: "Méthodologie",        href: "/methodologie" },
+              ].map(({ label, href }) => (
+                <Link key={label} href={href} className="block text-sm font-medium text-slate-700 hover:text-indigo-600 transition-colors mb-2.5 no-underline">
+                  {label}
+                </Link>
+              ))}
+            </div>
+
+            <div>
+              <div className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-4 font-mono">
+                Légal
+              </div>
+              {[
+                { label: "Mentions légales",  href: "/mentions-legales" },
+                { label: "Confidentialité",   href: "/confidentialite" },
+                { label: "Cookies",           href: "/cookies" },
+                { label: "Contact",           href: "/contact" },
+              ].map(({ label, href }) => (
+                <Link key={label} href={href} className="block text-sm font-medium text-slate-700 hover:text-indigo-600 transition-colors mb-2.5 no-underline">
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div
+            className="max-w-screen-xl mx-auto flex items-center justify-between text-xs text-slate-400 mt-8 pt-6"
+            style={{ borderTop: "1px solid #F1F5F9" }}
+          >
+            <span>© 2026 EuroPrix. Site partenaire Amazon.</span>
+            <span className="font-mono tracking-wider">Made in Europe 🇪🇺</span>
           </div>
         </footer>
       </body>

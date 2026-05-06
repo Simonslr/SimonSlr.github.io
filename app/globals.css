@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
+  --background: #ffffff;
   --foreground: #0f172a;
 }
 
@@ -18,32 +18,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Dot grid hero background */
-.hero-grid {
-  background-color: #ffffff;
-  background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-  background-size: 22px 22px;
-}
-
-/* Animations */
+/* ── Animations ── */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+@keyframes ep-ping {
+  75%, 100% { transform: scale(2); opacity: 0; }
 }
 
-@keyframes pulse-green {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); }
-  50%       { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+@keyframes ep-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in-up {
   opacity: 0;
-  animation: fadeInUp 0.5s ease-out forwards;
+  animation: fadeInUp 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
 }
 
 .delay-100 { animation-delay: 0.10s; }
@@ -51,17 +48,35 @@ body {
 .delay-300 { animation-delay: 0.30s; }
 .delay-400 { animation-delay: 0.40s; }
 
-.best-price-pulse {
-  animation: pulse-green 2s ease-in-out infinite;
+.animate-ep-ping {
+  animation: ep-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-/* Card hover lift */
+.animate-ep-pulse {
+  animation: ep-pulse 2s ease-in-out infinite;
+}
+
+.best-price-pulse {
+  animation: ep-pulse 2s ease-in-out infinite;
+}
+
+/* ── Card hover ── */
 .card-lift {
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
 }
 .card-lift:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px -6px rgba(79, 70, 229, 0.13);
-  border-color: #a5b4fc;
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px -20px rgba(79, 70, 229, 0.4), 0 4px 16px -4px rgba(79, 70, 229, 0.2);
+  border-color: #4f46e5;
 }
 
+/* ── Reveal on scroll ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 700ms ease, transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

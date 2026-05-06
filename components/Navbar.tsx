@@ -1,29 +1,38 @@
 import Link from "next/link"
+import EuroPrixLogo from "./EuroPrixLogo"
 
 export default function Navbar() {
   return (
-    <header className="bg-white/90 backdrop-blur-sm border-b border-slate-200/80 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between gap-6">
-
-        <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
-          <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-              <path d="M1.5 6.5h10M6.5 1.5l5 5-5 5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span className="font-bold text-slate-900 tracking-tight text-base">EuroPrix</span>
+    <header
+      className="sticky top-0 z-50 border-b border-slate-200"
+      style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "saturate(180%) blur(14px)", height: 72 }}
+    >
+      <div className="max-w-screen-xl mx-auto px-14 h-full flex items-center justify-between gap-6">
+        <Link href="/" style={{ flexShrink: 0 }}>
+          <EuroPrixLogo size={36} />
         </Link>
 
-        <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-          Prix vérifiés · Vendeurs officiels · Livraison incluse
+        <div
+          className="hidden sm:inline-flex items-center gap-2.5 text-sm text-slate-600 font-medium border border-slate-200 bg-white rounded-full px-4 py-2"
+        >
+          <span className="relative flex" style={{ width: 8, height: 8 }}>
+            <span className="animate-ep-ping absolute inset-0 rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative rounded-full bg-emerald-500" style={{ width: 8, height: 8 }} />
+          </span>
+          <span>
+            <strong className="text-slate-900 font-semibold">Prix vérifiés</strong>
+            {" · "}Vendeurs officiels · Livraison incluse
+          </span>
         </div>
 
         <Link
-          href="/"
-          className="flex-shrink-0 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+          href="/#products"
+          className="flex-shrink-0 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors flex items-center gap-1.5"
         >
           Voir tous les produits
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M13 5l7 7-7 7" />
+          </svg>
         </Link>
       </div>
     </header>
