@@ -1,342 +1,332 @@
 [
   {
-    "id": "airpods-pro-2",
-    "slug": "airpods-pro-2",
-    "name": "Apple AirPods Pro 2ème génération",
-    "category": "Audio",
-    "image": "/products/airpods-pro-2.jpg",
-    "description": "Écouteurs sans fil avec réduction de bruit active, chip H2, autonomie 30h avec boîtier.",
+    "id": "airpods-4", "slug": "airpods-4",
+    "name": "Apple AirPods 4", "category": "Audio",
+    "image": "/products/airpods-4.jpg",
+    "description": "Écouteurs sans fil avec réduction de bruit active, audio spatial personnalisé, boîtier USB-C.",
     "prices": {
-      "FR": {
-        "price": 214.76,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0D1XD1ZV3?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 177.99,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0D1XD1ZV3?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 198.99,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0D1XD1ZV3?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 159.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0DGHYDYJL?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "ES": { "price": 134.57, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0DGHWD7CT?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" },
+      "DE": { "price": 0, "shipping": 0, "seller": "Amazon.de", "in_stock": false, "affiliate_url": "https://www.amazon.de/dp/B0DGHWD7CT?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" }
     }
   },
   {
-    "id": "sony-wh1000xm5",
-    "slug": "sony-wh1000xm5",
-    "name": "Sony WH-1000XM5",
-    "category": "Audio",
+    "id": "sony-wh1000xm5", "slug": "sony-wh1000xm5",
+    "name": "Sony WH-1000XM5", "category": "Audio",
     "image": "/products/sony-wh1000xm5.jpg",
     "description": "Casque sans fil à réduction de bruit leader du marché, 30h d'autonomie, son Hi-Res.",
     "prices": {
-      "FR": {
-        "price": 319.00,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B09XS7JWHH?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 279.00,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B09XS7JWHH?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 295.00,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B09XS7JWHH?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 0, "shipping": 0, "seller": "Amazon.fr", "in_stock": false, "affiliate_url": "https://www.amazon.fr/dp/B09XS7JWHH?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "ES": { "price": 199.00, "shipping": 5.46, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0F38PL24W?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" },
+      "DE": { "price": 0, "shipping": 0, "seller": "Amazon.de", "in_stock": false, "affiliate_url": "https://www.amazon.de/dp/B09Y2MYL5C?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" }
     }
   },
   {
-    "id": "ssd-samsung-990-pro-1tb",
-    "slug": "ssd-samsung-990-pro-1tb",
-    "name": "SSD Samsung 990 Pro 1 To",
-    "category": "Informatique",
+    "id": "bose-quietcomfort-45", "slug": "bose-quietcomfort-45",
+    "name": "Bose QuietComfort 45", "category": "Audio",
+    "image": "/products/bose-quietcomfort-45.jpg",
+    "description": "Casque Bluetooth à réduction de bruit, 24h d'autonomie, son Bose signature, léger et confortable.",
+    "prices": {
+      "FR": { "price": 268.46, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B098FKXT8L?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 239.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B098FKXT8L?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 249.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B098FKXT8L?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "sony-wf-1000xm5", "slug": "sony-wf-1000xm5",
+    "name": "Sony WF-1000XM5", "category": "Audio",
+    "image": "/products/sony-wf-1000xm5.jpg",
+    "description": "Écouteurs intra-auriculaires sans fil, réduction de bruit leader, 36h d'autonomie, IPX4.",
+    "prices": {
+      "FR": { "price": 199.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0C4TLFZSZ?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 179.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0C4TLFZSZ?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 189.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0C4TLFZSZ?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "jbl-charge-5", "slug": "jbl-charge-5",
+    "name": "JBL Charge 5", "category": "Audio",
+    "image": "/products/jbl-charge-5.jpg",
+    "description": "Enceinte Bluetooth portable étanche IP67, 20h d'autonomie, fonction powerbank intégrée.",
+    "prices": {
+      "FR": { "price": 139.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B08VDNCZT9?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 119.99, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B08VDNCZT9?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 129.99, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B08VDNCZT9?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "ssd-samsung-990-pro-1tb", "slug": "ssd-samsung-990-pro-1tb",
+    "name": "SSD Samsung 990 Pro 1 To", "category": "Informatique",
     "image": "/products/ssd-samsung-990-pro-1tb.jpg",
     "description": "SSD NVMe PCIe 4.0, vitesse de lecture 7450 Mo/s, idéal PS5 et PC gaming.",
     "prices": {
-      "FR": {
-        "price": 119.99,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0BHJJ9Y77?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 94.90,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0BHJJ9Y77?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 104.99,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0BHJJ9Y77?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 219.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0B9C3ZVHR?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 205.99, "shipping": 4.67, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0BHJJ9Y77?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 194.90, "shipping": 4.63, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0DWFMD52T?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
     }
   },
   {
-    "id": "kindle-paperwhite-16go",
-    "slug": "kindle-paperwhite-16go",
-    "name": "Kindle Paperwhite 16 Go (2024)",
-    "category": "Liseuses",
+    "id": "samsung-t7-1to", "slug": "samsung-t7-1to",
+    "name": "Samsung T7 SSD Externe 1 To", "category": "Informatique",
+    "image": "/products/samsung-t7-1to.jpg",
+    "description": "SSD externe portable USB 3.2, 1050 Mo/s en lecture, sécurisation par mot de passe, 58g.",
+    "prices": {
+      "FR": { "price": 79.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B087DFLF9S?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 69.99, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B087DFLF9S?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 74.99, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B087DFLF9S?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "macbook-air-m2", "slug": "macbook-air-m2",
+    "name": "MacBook Air 13\" M2 256 Go", "category": "Informatique",
+    "image": "/products/macbook-air-m2.jpg",
+    "description": "Ordinateur portable 13,6 pouces, puce M2, 8 Go RAM, SSD 256 Go, 18h d'autonomie.",
+    "prices": {
+      "FR": { "price": 1099.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0B3BN8MTB?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 1049.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0B3BN8MTB?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 1079.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0B3BN8MTB?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "logitech-mx-master-3s", "slug": "logitech-mx-master-3s",
+    "name": "Logitech MX Master 3S", "category": "Informatique",
+    "image": "/products/logitech-mx-master-3s.jpg",
+    "description": "Souris sans fil ergonomique, défilement MagSpeed, 8000 DPI, clics silencieux, Bluetooth.",
+    "prices": {
+      "FR": { "price": 95.93, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B09HM94VDS?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 84.99, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B09HM94VDS?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 89.99, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B09HM94VDS?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "kindle-paperwhite-16go", "slug": "kindle-paperwhite-16go",
+    "name": "Kindle Paperwhite 2024 16 Go", "category": "Liseuses",
     "image": "/products/kindle-paperwhite-16go.jpg",
     "description": "Liseuse avec écran 7 pouces sans reflets, 16 Go, autonomie 12 semaines, résistante à l'eau.",
     "prices": {
-      "FR": {
-        "price": 159.99,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0CFPXBJ9Y?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 134.99,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0CFPXBJ9Y?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 144.99,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0CFPXBJ9Y?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 179.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0CFPWLGF2?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 179.99, "shipping": 4.97, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0CFPWLGF2?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 179.99, "shipping": 4.97, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0CFPWLGF2?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
     }
   },
   {
-    "id": "ipad-10",
-    "slug": "ipad-10",
-    "name": "Apple iPad 10ème génération 64 Go",
-    "category": "Tablettes",
-    "image": "/products/ipad-10.jpg",
-    "description": "Tablette 10,9 pouces, puce A14 Bionic, Wi-Fi, compatible Apple Pencil 1ère génération.",
+    "id": "ipad-11", "slug": "ipad-11",
+    "name": "Apple iPad 11 128 Go", "category": "Tablettes",
+    "image": "/products/ipad-11.jpg",
+    "description": "Tablette 11 pouces, puce A16, Wi-Fi, écran Liquid Retina, compatible Apple Pencil Pro.",
     "prices": {
-      "FR": {
-        "price": 389.00,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0BJMGCW37?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 349.00,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0BJMGCW37?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 369.00,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0BJMGCW37?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 349.05, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0DZ75RKZH?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "ES": { "price": 0, "shipping": 0, "seller": "Amazon.es", "in_stock": false, "affiliate_url": "https://www.amazon.es/dp/B0DZ75RKZH?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" },
+      "DE": { "price": 0, "shipping": 0, "seller": "Amazon.de", "in_stock": false, "affiliate_url": "https://www.amazon.de/dp/B0DZ75RKZH?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" }
     }
   },
   {
-    "id": "apple-watch-se-2",
-    "slug": "apple-watch-se-2",
-    "name": "Apple Watch SE 2ème génération 40mm",
-    "category": "Montres connectées",
+    "id": "samsung-galaxy-tab-s9-fe", "slug": "samsung-galaxy-tab-s9-fe",
+    "name": "Samsung Galaxy Tab S9 FE 128 Go", "category": "Tablettes",
+    "image": "/products/samsung-galaxy-tab-s9-fe.jpg",
+    "description": "Tablette 10,9 pouces, S Pen inclus, batterie longue durée, certification IP68, Wi-Fi.",
+    "prices": {
+      "FR": { "price": 399.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0CHZ2MQDL?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 369.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0CHZ2MQDL?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 379.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0CHZ2MQDL?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "apple-watch-se-2", "slug": "apple-watch-se-2",
+    "name": "Apple Watch SE 2ème génération 40mm", "category": "Montres connectées",
     "image": "/products/apple-watch-se-2.jpg",
     "description": "Montre connectée avec détection de chute, suivi santé, GPS, résistance à l'eau 50m.",
     "prices": {
-      "FR": {
-        "price": 269.00,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0CHX2WD4R?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 239.00,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0CHX2WD4R?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 254.00,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0CHX2WD4R?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 0, "shipping": 0, "seller": "Amazon.fr", "in_stock": false, "affiliate_url": "https://www.amazon.fr/dp/B0BXFGBVXK?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "ES": { "price": 189.00, "shipping": 7.95, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0BXCC6MYZ?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" },
+      "DE": { "price": 189.00, "shipping": 7.95, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0BXCC6MYZ?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" }
     }
   },
   {
-    "id": "ps5-slim",
-    "slug": "ps5-slim",
-    "name": "Sony PlayStation 5 Slim",
-    "category": "Gaming",
-    "image": "/products/ps5-slim.jpg",
-    "description": "Console next-gen avec lecteur de disques, 1 To SSD, DualSense inclus.",
+    "id": "garmin-fenix-7", "slug": "garmin-fenix-7",
+    "name": "Garmin Fenix 7 47mm", "category": "Montres connectées",
+    "image": "/products/garmin-fenix-7.jpg",
+    "description": "Montre GPS multisport haut de gamme, 18 jours d'autonomie, altimètre, boussole, barométre.",
     "prices": {
-      "FR": {
-        "price": 449.99,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0CL61F39H?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 419.99,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0CL61F39H?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 434.99,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0CL61F39H?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 689.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B09QNRPXNW?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 619.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B09QNRPXNW?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 649.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B09QNRPXNW?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
     }
   },
   {
-    "id": "dyson-v8",
-    "slug": "dyson-v8",
-    "name": "Dyson V8 Absolute",
-    "category": "Électroménager",
-    "image": "/products/dyson-v8.jpg",
-    "description": "Aspirateur balai sans fil, filtre HEPA, 40 min d'autonomie, 7 accessoires inclus.",
+    "id": "garmin-forerunner-265", "slug": "garmin-forerunner-265",
+    "name": "Garmin Forerunner 265", "category": "Montres connectées",
+    "image": "/products/garmin-forerunner-265.jpg",
+    "description": "Montre GPS running AMOLED, 13 jours d'autonomie, plans d'entraînement, récupération.",
     "prices": {
-      "FR": {
-        "price": 349.00,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0CN5JW3HQ?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 299.00,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0CN5JW3HQ?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 319.00,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0CN5JW3HQ?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 349.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0BS1T9J4Y?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 319.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0BS1T9J4Y?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 334.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0BS1T9J4Y?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
     }
   },
   {
-    "id": "samsung-galaxy-s24",
-    "slug": "samsung-galaxy-s24",
-    "name": "Samsung Galaxy S24 128 Go",
-    "category": "Smartphones",
+    "id": "iphone-16", "slug": "iphone-16",
+    "name": "Apple iPhone 16 128 Go", "category": "Smartphones",
+    "image": "/products/iphone-16.jpg",
+    "description": "Smartphone 6,1 pouces OLED, puce A18, appareil photo 48 Mpx, Apple Intelligence, 5G.",
+    "prices": {
+      "FR": { "price": 749.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0DGHY5KG8?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 729.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0DGHY5KG8?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 739.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0DGHY5KG8?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "samsung-galaxy-s24", "slug": "samsung-galaxy-s24",
+    "name": "Samsung Galaxy S24 128 Go", "category": "Smartphones",
     "image": "/products/samsung-galaxy-s24.jpg",
     "description": "Smartphone 6,2 pouces AMOLED, puce Exynos 2400, 50 Mpx, 5G, Galaxy AI.",
     "prices": {
-      "FR": {
-        "price": 759.00,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B0CSV6XPH6?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 699.00,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B0CSV6XPH6?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 729.00,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B0CSV6XPH6?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 519.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0CSV6XPH6?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "ES": { "price": 499.00, "shipping": 5.00, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0CSV6XPH6?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" },
+      "DE": { "price": 489.99, "shipping": 5.00, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0CNH77WY4?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" }
     }
   },
   {
-    "id": "delonghi-dedica",
-    "slug": "delonghi-dedica",
-    "name": "De'Longhi Dedica EC685",
-    "category": "Électroménager",
+    "id": "google-pixel-9", "slug": "google-pixel-9",
+    "name": "Google Pixel 9 128 Go", "category": "Smartphones",
+    "image": "/products/google-pixel-9.jpg",
+    "description": "Smartphone 6,3 pouces OLED, puce Tensor G4, Gemini AI, 24h d'autonomie, 5G.",
+    "prices": {
+      "FR": { "price": 499.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0D7TZNFG4?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 479.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0D7TZNFG4?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 489.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0D7TZNFG4?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "ps5-standard", "slug": "ps5-standard",
+    "name": "Sony PlayStation 5 Standard", "category": "Gaming",
+    "image": "/products/ps5-standard.jpg",
+    "description": "Console next-gen avec lecteur de disques, 1 To SSD ultra-rapide, DualSense inclus.",
+    "prices": {
+      "FR": { "price": 549.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0FP2S1MNB?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "ES": { "price": 599.00, "shipping": 15.00, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0CLT54ZNZ?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" },
+      "DE": { "price": 0, "shipping": 0, "seller": "Amazon.de", "in_stock": false, "affiliate_url": "https://www.amazon.de/dp/B08H93ZRK9?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "xbox-series-x", "slug": "xbox-series-x",
+    "name": "Xbox Series X 1 To", "category": "Gaming",
+    "image": "/products/xbox-series-x.jpg",
+    "description": "Console Microsoft 4K, SSD 1 To ultra-rapide, rétrocompatible, 120 FPS, Xbox Game Pass.",
+    "prices": {
+      "FR": { "price": 599.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B08XQY3ZD6?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 499.99, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B08XQY3ZD6?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 549.99, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B08XQY3ZD6?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "nintendo-switch-oled", "slug": "nintendo-switch-oled",
+    "name": "Nintendo Switch OLED blanche", "category": "Gaming",
+    "image": "/products/nintendo-switch-oled.jpg",
+    "description": "Console hybride écran OLED 7 pouces, Joy-Con blancs, 64 Go, dock amélioré avec port LAN.",
+    "prices": {
+      "FR": { "price": 310.41, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B098RJXBTY?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 299.99, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B098RJXBTY?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 305.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B098RJXBTY?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "dualsense-ps5", "slug": "dualsense-ps5",
+    "name": "Manette DualSense PS5", "category": "Gaming",
+    "image": "/products/dualsense-ps5.jpg",
+    "description": "Manette officielle PS5 sans fil, retour haptique, gâchettes adaptatives, micro intégré.",
+    "prices": {
+      "FR": { "price": 74.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B094WLFGD3?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 69.99, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B094WLFGD3?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 72.99, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B094WLFGD3?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "lego-technic-lamborghini", "slug": "lego-technic-lamborghini",
+    "name": "LEGO Technic Lamborghini Huracán 42196", "category": "Jouets",
+    "image": "/products/lego-technic-lamborghini.jpg",
+    "description": "Set de construction 806 pièces, réplique Lamborghini Huracán Tecnica, moteur V10, portes ouvrantes.",
+    "prices": {
+      "FR": { "price": 89.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0CPQ54PQ5?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 79.99, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0CPQ54PQ5?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 84.99, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0CPQ54PQ5?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "gopro-hero-13", "slug": "gopro-hero-13",
+    "name": "GoPro HERO 13 Black", "category": "Photo & Vidéo",
+    "image": "/products/gopro-hero-13.jpg",
+    "description": "Caméra d'action étanche, vidéo 5.3K60, photo 27 Mpx, HyperSmooth 6.0, compatible objectifs HB.",
+    "prices": {
+      "FR": { "price": 430.98, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0DCM34GXX?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 389.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0DCM34GXX?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 409.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0DCM34GXX?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "apple-airtag-4pack", "slug": "apple-airtag-4pack",
+    "name": "Apple AirTag Pack de 4", "category": "Accessoires",
+    "image": "/products/apple-airtag-4pack.jpg",
+    "description": "Traceur Bluetooth, localisation précise, réseau Find My, étanche IP67, batterie 1 an.",
+    "prices": {
+      "FR": { "price": 99.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0935JRJ59?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 89.99, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0935JRJ59?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 94.99, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0935JRJ59?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "nespresso-vertuo-next", "slug": "nespresso-vertuo-next",
+    "name": "Nespresso Vertuo Next", "category": "Électroménager",
+    "image": "/products/nespresso-vertuo-next.jpg",
+    "description": "Machine à café Nespresso Vertuo, technologie Centrifusion, 5 tailles de café, extinction auto.",
+    "prices": {
+      "FR": { "price": 69.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B093ZT9P7N?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 59.99, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B093ZT9P7N?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 64.99, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B093ZT9P7N?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "philips-airfryer-xxl", "slug": "philips-airfryer-xxl",
+    "name": "Philips Airfryer XXL 7,3L", "category": "Électroménager",
+    "image": "/products/philips-airfryer-xxl.jpg",
+    "description": "Friteuse à air 7,3L, technologie Rapid Air, 90% moins de graisse, écran tactile, 5 programmes.",
+    "prices": {
+      "FR": { "price": 231.14, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0767DNSMH?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 199.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0767DNSMH?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 215.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0767DNSMH?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "dyson-v8", "slug": "dyson-v8",
+    "name": "Dyson V8 Cyclone", "category": "Électroménager",
+    "image": "/products/dyson-v8-cyclone.jpg",
+    "description": "Aspirateur balai sans fil, technologie Cyclone, 40 min d'autonomie, filtre HEPA.",
+    "prices": {
+      "FR": { "price": 0, "shipping": 0, "seller": "Amazon.fr", "in_stock": false, "affiliate_url": "https://www.amazon.fr/dp/B0FQ685GBZ?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "ES": { "price": 299.00, "shipping": 10.88, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0FQ685GBZ?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" },
+      "DE": { "price": 299.00, "shipping": 10.99, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0FQ685GBZ?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "roborock-s8", "slug": "roborock-s8",
+    "name": "Roborock S8 Robot Aspirateur", "category": "Électroménager",
+    "image": "/products/roborock-s8.jpg",
+    "description": "Robot aspirateur laveur, 6000 Pa, double brosse, évitement d'obstacles 3D, navigation LiDAR.",
+    "prices": {
+      "FR": { "price": 399.00, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B0C4Z3XH82?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "DE": { "price": 349.00, "shipping": 0, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B0C4Z3XH82?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" },
+      "ES": { "price": 374.00, "shipping": 0, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B0C4Z3XH82?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" }
+    }
+  },
+  {
+    "id": "delonghi-dedica", "slug": "delonghi-dedica",
+    "name": "De'Longhi Dedica EC685", "category": "Électroménager",
     "image": "/products/delonghi-dedica.jpg",
     "description": "Machine à expresso manuelle, 15 bars, buse vapeur, design ultra-compact 15 cm.",
     "prices": {
-      "FR": {
-        "price": 129.99,
-        "shipping": 0,
-        "seller": "Amazon.fr",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.fr/dp/B06WGTZ874?&linkCode=ll2&tag=priceeu-21&ref_=as_li_ss_tl",
-        "updated_at": "2026-05-07"
-      },
-      "DE": {
-        "price": 104.99,
-        "shipping": 0,
-        "seller": "Amazon.de",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.de/dp/B06WGTZ874?tag=VOTRE-TAG-DE",
-        "updated_at": "2026-05-07"
-      },
-      "ES": {
-        "price": 114.99,
-        "shipping": 0,
-        "seller": "Amazon.es",
-        "in_stock": true,
-        "affiliate_url": "https://www.amazon.es/dp/B06WGTZ874?tag=VOTRE-TAG-ES",
-        "updated_at": "2026-05-07"
-      }
+      "FR": { "price": 141.99, "shipping": 0, "seller": "Amazon.fr", "in_stock": true, "affiliate_url": "https://www.amazon.fr/dp/B06X3Z9MF3?linkCode=ll2&tag=priceeu-21", "updated_at": "2026-05-07" },
+      "ES": { "price": 140.00, "shipping": 11.65, "seller": "Amazon.es", "in_stock": true, "affiliate_url": "https://www.amazon.es/dp/B06X3Z9MF3?tag=VOTRE-TAG-ES", "updated_at": "2026-05-07" },
+      "DE": { "price": 144.99, "shipping": 11.65, "seller": "Amazon.de", "in_stock": true, "affiliate_url": "https://www.amazon.de/dp/B06X3Z9MF3?tag=VOTRE-TAG-DE", "updated_at": "2026-05-07" }
     }
   }
 ]

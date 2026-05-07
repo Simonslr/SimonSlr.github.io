@@ -5,10 +5,10 @@ import SearchBar from "./SearchBar"
 import type { Product } from "@/lib/types"
 
 const TRENDING = [
-  { label: "AirPods Pro",       slug: "airpods-pro-2" },
+  { label: "iPhone 16",         slug: "iphone-16" },
   { label: "SSD 1 To",          slug: "ssd-samsung-990-pro-1tb" },
-  { label: "Casque ANC",        slug: "sony-wh1000xm5" },
-  { label: "Console next-gen",  slug: "ps5-slim" },
+  { label: "Xbox Series X",     slug: "xbox-series-x" },
+  { label: "GoPro Hero 13",     slug: "gopro-hero-13" },
 ]
 
 export default function SearchSection({ products }: { products: Product[] }) {
