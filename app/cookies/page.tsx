@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import InfoPageLayout from "@/components/InfoPageLayout"
 
 export const metadata: Metadata = {
-  title: "Politique de cookies | EuroPrix",
+  title: "Politique de cookies | EuroCompare",
 }
 
 export default function CookiesPage() {
@@ -19,10 +19,10 @@ export default function CookiesPage() {
           ),
         },
         {
-          title: "Cookies utilisés par EuroPrix",
+          title: "Cookies utilisés par EuroCompare",
           content: (
             <>
-              <p>EuroPrix utilise uniquement des <strong>cookies strictement nécessaires</strong> au bon fonctionnement du site :</p>
+              <p>EuroCompare utilise uniquement des <strong>cookies strictement nécessaires</strong> au bon fonctionnement du site :</p>
               <div className="mt-3 border border-slate-200 rounded-xl overflow-hidden text-xs">
                 <div className="grid grid-cols-3 gap-0 bg-slate-50 px-4 py-2.5 font-bold text-slate-500 uppercase tracking-wider">
                   <span>Nom</span><span>Durée</span><span>Finalité</span>
@@ -46,7 +46,7 @@ export default function CookiesPage() {
           title: "Cookies Amazon (tiers)",
           content: (
             <>
-              <p>Lorsque vous cliquez sur un lien affilié Amazon depuis notre site, Amazon peut déposer des cookies de session sur votre navigateur afin de tracker la vente à des fins de rémunération affiliée. Ces cookies sont déposés par Amazon, pas par EuroPrix.</p>
+              <p>Lorsque vous cliquez sur un lien affilié Amazon depuis notre site, Amazon peut déposer des cookies de session sur votre navigateur afin de tracker la vente à des fins de rémunération affiliée. Ces cookies sont déposés par Amazon, pas par EuroCompare.</p>
               <p>Vous pouvez consulter la politique de cookies d'Amazon sur leur site officiel.</p>
             </>
           ),

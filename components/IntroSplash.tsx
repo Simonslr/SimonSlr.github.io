@@ -1,9 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ARROWS, STARS, StarShape, STAR_SIZE } from "./EuroPrixLogo"
+import { ARROWS, STARS, StarShape, STAR_SIZE } from "./EuroCompareLogo"
 
-// Animated logo: arrows draw in (0→0.55), stars fade in (0.55→1), text (0.9→1)
 function AnimatedLogo({ progress }: { progress: number }) {
   const arrowProg = Math.min(1, progress / 0.55)
   const starsProg = Math.max(0, (progress - 0.55) / 0.45)
@@ -18,44 +17,33 @@ function AnimatedLogo({ progress }: { progress: number }) {
           <g key={i}>
             <path
               d={a.d}
-              stroke="#0F172A"
+              stroke="#0A1628"
               strokeWidth="6"
               fill="none"
               strokeLinecap="round"
               strokeDasharray={DASH}
               strokeDashoffset={DASH * (1 - arrowProg)}
             />
-            <g
-              transform={`translate(${a.hx} ${a.hy}) rotate(${a.hang})`}
-              style={{ opacity: headOpacity }}
-            >
-              <polygon points="0,0 10,4 10,-4" fill="#0F172A" />
+            <g transform={`translate(${a.hx} ${a.hy}) rotate(${a.hang})`} style={{ opacity: headOpacity }}>
+              <polygon points="0,0 10,4 10,-4" fill="#0A1628" />
             </g>
           </g>
         ))}
         {STARS.map((s, i) => {
           const localProg = Math.max(0, Math.min(1, (starsProg - (i / 12) * 0.5) * 2.5))
           return (
-            <g
-              key={i}
-              style={{
-                opacity: localProg,
-                transform: `scale(${0.6 + 0.4 * localProg})`,
-                transformOrigin: `${s.x}px ${s.y}px`,
-              }}
-            >
-              <StarShape cx={s.x} cy={s.y} r={STAR_SIZE} fill="#0F172A" />
+            <g key={i} style={{ opacity: localProg, transform: `scale(${0.6 + 0.4 * localProg})`, transformOrigin: `${s.x}px ${s.y}px` }}>
+              <StarShape cx={s.x} cy={s.y} r={STAR_SIZE} fill="#0A1628" />
             </g>
           )
         })}
       </svg>
-
       <div style={{ textAlign: "center", opacity: textOpacity, transition: "opacity 300ms ease" }}>
-        <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: "-0.03em", color: "#0F172A" }}>
-          EuroPrix
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 800, letterSpacing: "-0.03em", color: "#0A1628" }}>
+          EuroCompare
         </div>
-        <div style={{ fontSize: 12, fontFamily: "ui-monospace,monospace", letterSpacing: "0.25em", textTransform: "uppercase", color: "#475569", marginTop: 8 }}>
-          Comparateur européen
+        <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--text-mute)", marginTop: 6 }}>
+          Comparateur de prix
         </div>
       </div>
     </div>
@@ -63,19 +51,31 @@ function AnimatedLogo({ progress }: { progress: number }) {
 }
 
 export default function IntroSplash() {
+  const [mounted, setMounted] = useState(false)
+  const [skip, setSkip] = useState(false)
   const [progress, setProgress] = useState(0)
   const [exiting, setExiting] = useState(false)
   const [hidden, setHidden] = useState(false)
 
+  // Hook 1 : montage — vérifie sessionStorage pour ne jouer qu'une fois par session
   useEffect(() => {
+    if (sessionStorage.getItem("splash_done")) {
+      setSkip(true)
+    } else {
+      sessionStorage.setItem("splash_done", "1")
+    }
+    setMounted(true)
+  }, [])
+
+  // Hook 2 : animation
+  useEffect(() => {
+    if (!mounted || skip) return
     const DUR = 2200
     const start = performance.now()
     let raf: number
-
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / DUR)
-      const eased = 1 - Math.pow(1 - p, 2.4)
-      setProgress(eased)
+      setProgress(1 - Math.pow(1 - p, 2.4))
       if (p < 1) {
         raf = requestAnimationFrame(tick)
       } else {
@@ -85,9 +85,10 @@ export default function IntroSplash() {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [])
+  }, [mounted, skip])
 
-  if (hidden) return null
+  // Returns conditionnels APRÈS tous les hooks
+  if (!mounted || hidden || skip) return null
 
   return (
     <div
@@ -100,12 +101,7 @@ export default function IntroSplash() {
         pointerEvents: exiting ? "none" : "auto",
       }}
     >
-      <div
-        style={{
-          transform: exiting ? "scale(1.06)" : "scale(1)",
-          transition: "transform 900ms cubic-bezier(0.2,0.7,0.2,1)",
-        }}
-      >
+      <div style={{ transform: exiting ? "scale(1.06)" : "scale(1)", transition: "transform 900ms cubic-bezier(0.2,0.7,0.2,1)" }}>
         <AnimatedLogo progress={progress} />
       </div>
     </div>

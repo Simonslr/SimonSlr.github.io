@@ -1,139 +1,383 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ExternalLink, ShieldCheck, Package, RefreshCw, Info } from "lucide-react"
+import Image from "next/image"
+import type { Metadata } from "next"
 import products from "@/data/products.json"
-import type { Product } from "@/lib/types"
+import type { Product, Recommendation } from "@/lib/types"
 import { getRecommendation } from "@/lib/scoring"
-import RecommendationBanner from "@/components/RecommendationBanner"
-import ComparisonTable from "@/components/ComparisonTable"
 import Flag from "@/components/Flag"
-import ProductImage from "@/components/ProductImage"
+import DesignNavbar from "@/components/DesignNavbar"
+import ShareButton from "@/components/ShareButton"
+import FavoriteButton from "@/components/FavoriteButton"
+import AlertSection from "@/components/AlertSection"
+import { createClient } from "@/lib/supabase/server"
+import { getFavorites } from "@/app/actions/favorites"
+import { getAlerts } from "@/app/actions/alerts"
+import PriceChart from "@/components/PriceChart"
 
-interface Props {
-  params: Promise<{ slug: string }>
+interface Props { params: Promise<{ slug: string }> }
+
+const COUNTRY_AMZ: Record<string, string> = {
+  FR: "Amazon.fr",
+  DE: "Amazon.de",
+  ES: "Amazon.es",
 }
 
-const COUNTRY_NAME: Record<string, string> = { FR: "France", DE: "Allemagne", ES: "Espagne" }
-const COUNTRY_AMZ: Record<string, string> = { FR: "Amazon.fr", DE: "Amazon.de", ES: "Amazon.es" }
+function fmt(n: number) {
+  return n % 1 === 0 ? n.toFixed(0) + " €" : n.toFixed(2).replace(".", ",") + " €"
+}
 
 export async function generateStaticParams() {
   return (products as Product[]).map(p => ({ slug: p.slug }))
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const product = (products as Product[]).find(p => p.slug === slug)
   if (!product) return {}
+  const reco = getRecommendation(product)
+  const saving = reco ? ` — Économisez ${Math.round(reco.savings)} €` : ""
   return {
-    title: `${product.name} — Meilleur prix Europe | EuroPrix`,
-    description: `Prix de ${product.name} comparé entre France, Allemagne et Espagne, livraison incluse.`,
+    title: `${product.name}${saving} | EuroCompare`,
+    description: `Comparez le prix du ${product.name} entre Amazon France, Allemagne et Espagne. Livraison incluse, vendeurs officiels.`,
+    openGraph: {
+      title: `${product.name} — Meilleur prix Amazon Europe`,
+      description: `Achetez ${product.name} au meilleur prix en Europe. Livraison incluse.`,
+      type: "website",
+    },
   }
 }
 
+/* ── Ligne de comparaison ─────────────────────────────────────────────────── */
+function CmpRow({ item, rank, worstTotal }: {
+  item: Recommendation["ranked"][number]
+  rank: "best" | "mid" | "worst"
+  worstTotal: number
+}) {
+  const isBest  = rank === "best"
+  const isWorst = rank === "worst"
+  const barPct  = Math.round((item.total / worstTotal) * 100)
+
+  return (
+    <div className={`cmp__row${isBest ? " is-best" : ""}${isWorst ? " is-worst" : ""}`}>
+      <Flag country={item.country} size={18} />
+
+      <div className="row-name">
+        <span className="row-marketplace">
+          {COUNTRY_AMZ[item.country]}
+          {isBest && (
+            <span style={{ color: "var(--green)", fontSize: 13, fontWeight: 400, marginLeft: 8 }}>
+              · meilleur prix
+            </span>
+          )}
+        </span>
+        <span className="row-detail">
+          {fmt(item.offer.price)}
+          {item.offer.shipping > 0
+            ? ` produit · ${fmt(item.offer.shipping)} livraison`
+            : " · livraison gratuite"}
+        </span>
+      </div>
+
+      <div className={`row-bar bar-${rank}`}>
+        <span style={{ width: `${barPct}%` }} />
+      </div>
+
+      <span className="row-price">{fmt(item.total)}</span>
+
+      <span className="row-cta">
+        <a
+          href={item.offer.affiliate_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={isBest ? "btn btn--primary" : "btn btn--ghost"}
+          style={{ fontSize: 13, padding: isBest ? "10px 16px" : "9px 14px" }}
+        >
+          {isBest ? `Acheter sur ${COUNTRY_AMZ[item.country]}` : "Acheter"}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M7 17 17 7"/><path d="M7 7h10v10"/>
+          </svg>
+        </a>
+      </span>
+    </div>
+  )
+}
+
+/* ── Produits similaires ─────────────────────────────────────────────────── */
+function RelatedProducts({ current, all }: { current: Product; all: Product[] }) {
+  const related = all
+    .filter(p => p.id !== current.id && p.category === current.category)
+    .slice(0, 3)
+  if (related.length === 0) return null
+
+  return (
+    <section className="rel">
+      <div className="wrap">
+        <div className="rel__head">
+          <h2 className="rel__title">Dans la même catégorie</h2>
+          <Link href="/#catalogue" className="rel__more">Voir tout →</Link>
+        </div>
+        <div className="rel__grid">
+          {related.map(p => {
+            const reco = getRecommendation(p)
+            const brand = p.name.split(" ")[0]
+            return (
+              <Link key={p.id} href={`/produit/${p.slug}`} className="rel-card">
+                <div className="rel-card__media">
+                  {p.image
+                    ? <Image src={p.image} alt={p.name} fill style={{ objectFit: "contain", padding: 16 }} />
+                    : <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 12, color: "var(--text-mute)" }}>{p.name}</span>
+                  }
+                </div>
+                <div className="rel-card__body">
+                  <div className="rel-card__brand">{brand}</div>
+                  <div className="rel-card__name">{p.name}</div>
+                  {reco && reco.savings > 0 && (
+                    <div className="rel-card__save">
+                      <span className="pill">−{fmt(reco.savings)}</span>
+                      <span className="vs">vs le plus cher</span>
+                    </div>
+                  )}
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ── Page ─────────────────────────────────────────────────────────────────── */
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params
   const product = (products as Product[]).find(p => p.slug === slug)
   if (!product) notFound()
 
-  const reco = getRecommendation(product)
+  const reco        = getRecommendation(product)
+  const allProducts = products as Product[]
+  const worst       = reco?.ranked[reco.ranked.length - 1]
+  const pageUrl     = `https://eurocompare.fr/produit/${product.slug}`
+  const brand       = product.name.split(" ")[0]
+  const nbMarkets   = reco?.ranked.length ?? 0
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isLoggedIn = !!user
+
+  // Historique des prix depuis Supabase
+  const { data: priceHistory } = await supabase
+    .from("price_history")
+    .select("recorded_at, price, country")
+    .eq("product_slug", slug)
+    .order("recorded_at", { ascending: true })
+    .limit(90)
+
+  const [favorites, alerts] = isLoggedIn
+    ? await Promise.all([getFavorites(), getAlerts()])
+    : [[], []]
+
+  const isFavorited  = favorites.some((f: { product_slug: string }) => f.product_slug === slug)
+  const existingAlert = alerts.find((a: { product_slug: string }) => a.product_slug === slug) ?? null
+
+  const jsonLd = reco ? {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description,
+    "image": product.image ? `https://eurocompare.fr${product.image}` : undefined,
+    "brand": { "@type": "Brand", "name": brand },
+    "offers": reco.ranked.map((r) => ({
+      "@type": "Offer",
+      "url": r.offer.affiliate_url,
+      "priceCurrency": "EUR",
+      "price": r.total.toFixed(2),
+      "availability": "https://schema.org/InStock",
+      "seller": { "@type": "Organization", "name": COUNTRY_AMZ[r.country] },
+    })),
+  } : null
 
   return (
-    <main style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-      <div className="max-w-screen-xl mx-auto" style={{ padding: "32px 56px 96px" }}>
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <DesignNavbar />
+
+      <main style={{ paddingTop: 64, background: "var(--bg)" }}>
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-slate-400 mb-8">
-          <Link href="/" className="flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 transition-colors font-medium no-underline">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m15 18-6-6 6-6"/></svg>
-            Accueil
-          </Link>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m9 18 6-6-6-6"/></svg>
-          <span className="text-indigo-500 font-medium">{product.category}</span>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m9 18 6-6-6-6"/></svg>
-          <span className="text-slate-700 truncate max-w-xs">{product.name}</span>
-        </nav>
+        <div className="wrap">
+          <nav className="crumbs" aria-label="Fil d'Ariane">
+            <Link href="/">← Accueil</Link>
+            <span className="sep">/</span>
+            <span>{product.category}</span>
+            <span className="sep">/</span>
+            <span className="current">{product.name}</span>
+          </nav>
+        </div>
 
-        {/* Hero — 2 columns */}
-        <div className="grid gap-12 items-start mb-24" style={{ gridTemplateColumns: "1.05fr 1fr" }}>
+        {/* Hero produit */}
+        <section className="pdp-hero">
+          <div className="wrap">
+            <div className="pdp-hero__grid">
 
-          {/* Left — image */}
-          <div>
-            <div className="w-full rounded-2xl border border-slate-200 overflow-hidden flex items-center justify-center" style={{ background: "#F8FAFC", minHeight: 460 }}>
-              <ProductImage id={product.id} imageUrl={product.image} alt={product.name} size={460} />
-            </div>
-            <div className="flex gap-3 mt-4">
-              {["Vue A", "Vue B", "Vue C", "Packaging"].map(v => (
-                <div
-                  key={v}
-                  className="rounded-xl border border-slate-200 flex items-center justify-center font-mono text-xs text-slate-300 tracking-wider uppercase"
-                  style={{ width: 88, height: 68, background: "#F8FAFC", letterSpacing: "0.1em" }}
-                >
-                  {v}
+              {/* Image */}
+              <figure className="pdp-hero__media">
+                {product.image
+                  ? <Image src={product.image} alt={product.name} fill priority style={{ objectFit: "contain", padding: 32 }} />
+                  : <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 13, color: "var(--text-mute)" }}>{product.name}</span>
+                }
+              </figure>
+
+              {/* Infos */}
+              <div className="pdp-hero__info">
+                <div className="pdp-hero__category">
+                  <span className="brand">{brand}</span> · {product.category}
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Right — info */}
-          <div>
-            <span
-              className="inline-block text-xs font-black tracking-widest uppercase font-mono mb-4"
-              style={{ padding: "5px 10px", borderRadius: 6, background: "#EEF2FF", color: "#4F46E5" }}
-            >
-              {product.category}
-            </span>
+                <h1 className="pdp-hero__title">{product.name}</h1>
 
-            <h1
-              className="font-black text-slate-900 m-0 mb-4"
-              style={{ fontSize: 44, letterSpacing: "-0.035em", lineHeight: 1.05, textWrap: "balance" }}
-            >
-              {product.name}
-            </h1>
+                <p className="pdp-hero__desc">{product.description}</p>
 
-            <p className="text-base text-slate-500 leading-relaxed mb-7">{product.description}</p>
+                {reco && (
+                  <div className="price-block">
 
-            {/* Best price banner */}
-            {reco && (
-              <div className="mb-5">
-                <RecommendationBanner reco={reco} />
+                    {/* Économies */}
+                    {reco.savings > 0 && (
+                      <div className="save-row">
+                        <span className="save-pill">−{fmt(reco.savings)}</span>
+                        <span className="vs">vs le prix le plus cher</span>
+                      </div>
+                    )}
+
+                    {/* Prix */}
+                    <div className="price-line">
+                      <span className="price-now">{fmt(reco.best.total)}</span>
+                      {worst && worst.total > reco.best.total && (
+                        <span className="price-was">{fmt(worst.total)}</span>
+                      )}
+                    </div>
+
+                    {/* Marketplace */}
+                    <div className="price-caption">
+                      <Flag country={reco.best.country} size={16} />
+                      <span>Sur <b>{COUNTRY_AMZ[reco.best.country]}</b></span>
+                      <span className="dot">·</span>
+                      <span>livraison incluse</span>
+                      <span className="dot">·</span>
+                      <span>vendeur officiel</span>
+                    </div>
+
+                    {/* CTA */}
+                    <div className="pdp-cta-row">
+                      <a
+                        href={reco.best.offer.affiliate_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn--primary"
+                        style={{ fontSize: 15, padding: "14px 22px", borderRadius: 10 }}
+                      >
+                        Acheter sur {COUNTRY_AMZ[reco.best.country]}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M7 17 17 7"/><path d="M7 7h10v10"/>
+                        </svg>
+                      </a>
+                      <FavoriteButton
+                        slug={slug}
+                        name={product.name}
+                        initialSaved={isFavorited}
+                        isLoggedIn={isLoggedIn}
+                      />
+                      <ShareButton title={`${product.name} — EuroCompare`} url={pageUrl} />
+                    </div>
+
+                    <AlertSection
+                      slug={slug}
+                      name={product.name}
+                      bestPrice={reco.best.total}
+                      bestCountry={reco.best.country}
+                      isLoggedIn={isLoggedIn}
+                      existingAlert={existingAlert}
+                    />
+
+                    {/* Trust */}
+                    <div className="pdp-trust-line">
+                      <span className="fresh">Prix mis à jour {reco.best.offer.updated_at}</span>
+                      <span>Livraison incluse</span>
+                      <span>Vendeur officiel</span>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-
-            {/* Trust badges */}
-            <div className="flex flex-wrap gap-4 text-xs text-slate-500">
-              <span className="flex items-center gap-1.5"><ShieldCheck size={13} className="text-indigo-400" /> Vendeur officiel</span>
-              <span className="flex items-center gap-1.5"><Package size={13} className="text-indigo-400" /> Livraison incluse</span>
-              {reco && <span className="flex items-center gap-1.5"><RefreshCw size={13} className="text-indigo-400" /> Mis à jour le {reco.best.offer.updated_at}</span>}
             </div>
+          </div>
+        </section>
+
+        {/* Comparaison */}
+        {reco && (
+          <section className="cmp">
+            <div className="wrap">
+              <div className="cmp__head">
+                <h2 className="cmp__title">Comparaison des prix</h2>
+                <div className="cmp__count">
+                  {nbMarkets} marketplace{nbMarkets > 1 ? "s" : ""} · prix livraison incluse
+                </div>
+              </div>
+
+              <div className="cmp__rows">
+                {reco.ranked.map((item, i) => {
+                  const rank = i === 0
+                    ? "best"
+                    : i === reco.ranked.length - 1 && reco.ranked.length > 1
+                      ? "worst"
+                      : "mid"
+                  return (
+                    <CmpRow
+                      key={item.country}
+                      item={item}
+                      rank={rank as "best" | "mid" | "worst"}
+                      worstTotal={worst?.total ?? item.total}
+                    />
+                  )
+                })}
+              </div>
+
+              {/* Historique des prix */}
+              {priceHistory && priceHistory.length >= 2 && (
+                <div style={{ marginTop: 36, paddingTop: 28, borderTop: "1px solid var(--border)" }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-mute)", marginBottom: 16 }}>
+                    Historique des prix
+                  </p>
+                  <PriceChart data={priceHistory} slug={slug} />
+                </div>
+              )}
+
+              <p className="cmp__note">
+                Frais de livraison estimés vers la France métropolitaine. Vérifiez le prix final sur Amazon avant d&apos;acheter.
+                EuroCompare participe au Programme Partenaires Amazon EU et perçoit une commission sur les ventes qualifiées.
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* Produits similaires */}
+        <RelatedProducts current={product} all={allProducts} />
+
+        {/* Retour catalogue */}
+        <div className="pdp-bottom-link">
+          <div className="wrap">
+            <Link href="/#catalogue">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="m15 18-6-6 6-6"/></svg>
+              Voir tous les produits
+            </Link>
           </div>
         </div>
 
-        {/* Comparison table */}
-        <div className="mb-6">
-          <h2 className="font-black text-slate-900 mb-2" style={{ fontSize: 28, letterSpacing: "-0.025em" }}>
-            Comparaison détaillée
-          </h2>
-          <p className="text-sm text-slate-500 mb-6">
-            Prix total livraison incluse vers la France, chez les vendeurs officiels.
-          </p>
-          {reco ? (
-            <ComparisonTable reco={reco} />
-          ) : (
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-sm text-amber-700">
-              Données insuffisantes pour établir une comparaison.
-            </div>
-          )}
-        </div>
-
-        {/* Legal note */}
-        <div className="flex items-start gap-3 rounded-xl p-4" style={{ background: "#F8FAFC", border: "1px solid #E2E8F0" }}>
-          <Info size={13} className="text-slate-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-slate-500 leading-relaxed m-0">
-            Les frais de livraison sont des estimations vers la France métropolitaine et peuvent varier selon le poids,
-            le volume et les promotions en cours. Vérifiez le prix final sur le site du vendeur avant d'acheter.
-          </p>
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   )
 }

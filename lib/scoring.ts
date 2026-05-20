@@ -2,7 +2,7 @@ import type { Product, Recommendation, RankedOffer, CountryCode } from "./types"
 
 export function getRecommendation(product: Product): Recommendation | null {
   const ranked: RankedOffer[] = Object.entries(product.prices)
-    .filter(([_, offer]) => offer.in_stock)
+    .filter(([_, offer]) => offer != null && offer.in_stock && offer.price > 0)
     .map(([country, offer]) => ({
       country: country as CountryCode,
       total: offer.price + offer.shipping,

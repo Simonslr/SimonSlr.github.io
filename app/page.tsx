@@ -1,56 +1,46 @@
-import products from "@/data/products.json"
-import type { Product } from "@/lib/types"
-import IntroSplash from "@/components/IntroSplash"
-import HeroCarousel from "@/components/HeroCarousel"
-import StatsBar from "@/components/StatsBar"
-import SearchSection from "@/components/SearchSection"
-import HowItWorks from "@/components/HowItWorks"
-import ProductCard from "@/components/ProductCard"
-import Guarantees from "@/components/Guarantees"
+import type { Metadata } from "next"
+import IntroSplash      from "@/components/IntroSplash"
+import Marquee          from "@/components/Marquee"
+import DesignNavbar     from "@/components/DesignNavbar"
+import EuroMap          from "@/components/EuroMap"
+import HeroText         from "@/components/HeroText"
+import DesignMethod     from "@/components/DesignMethod"
+import DesignFeatured   from "@/components/DesignFeatured"
+import DesignCatalogue  from "@/components/DesignCatalogue"
+import DesignTrust      from "@/components/DesignTrust"
+import DesignCTAFinal   from "@/components/DesignCTAFinal"
+import SmoothScroll     from "@/components/SmoothScroll"
+import ScrollAnimations from "@/components/ScrollAnimations"
 
-const allProducts = products as Product[]
+export const metadata: Metadata = {
+  title: "EuroCompare — Le même produit, moins cher en Europe",
+  description: "Comparez les prix Amazon France, Allemagne et Espagne. Livraison incluse, vendeurs officiels, sans inscription. Économisez jusqu'à 30% sur vos achats tech.",
+  keywords: ["comparateur prix amazon", "amazon france allemagne espagne", "meilleur prix amazon", "économiser amazon europe"],
+  openGraph: {
+    title: "EuroCompare — Le même produit, moins cher en Europe",
+    description: "Comparez les prix Amazon FR, DE, ES. Livraison incluse, vendeurs officiels.",
+    type: "website",
+    locale: "fr_FR",
+  },
+}
 
 export default function HomePage() {
   return (
-    <main style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+    <div>
+      <SmoothScroll />
+      <ScrollAnimations />
       <IntroSplash />
-      <HeroCarousel />
-      <StatsBar />
-      <SearchSection products={allProducts} />
-      <HowItWorks />
-
-      {/* Products grid */}
-      <section id="products" style={{ padding: "120px 56px", background: "#F8FAFC" }}>
-        <div className="max-w-screen-xl mx-auto">
-          <div className="flex items-end justify-between gap-8 flex-wrap mb-16">
-            <div>
-              <div className="text-xs font-bold tracking-widest uppercase text-indigo-600 font-mono mb-4">
-                Catalogue · Mis à jour aujourd'hui
-              </div>
-              <h2 className="font-black text-slate-900 m-0" style={{ fontSize: 52, letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-                Produits comparés.
-              </h2>
-              <p className="text-lg text-slate-500 mt-4 leading-relaxed max-w-2xl">
-                Cliquez sur un produit pour voir le détail de la comparaison entre la France, l'Allemagne et l'Espagne.
-              </p>
-            </div>
-            <div
-              className="text-sm font-semibold text-indigo-600 border border-indigo-200 rounded-full px-4 py-2 flex-shrink-0"
-              style={{ background: "#EEF2FF" }}
-            >
-              {allProducts.length} produits
-            </div>
-          </div>
-
-          <div className="grid gap-6" style={{ gridTemplateColumns: "repeat(3,1fr)" }}>
-            {allProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Guarantees />
-    </main>
+      <DesignNavbar />
+      <main>
+        <EuroMap />
+        <HeroText />
+        <Marquee dark />
+        <DesignMethod />
+        <DesignFeatured />
+        <DesignCatalogue />
+        <DesignTrust />
+        <DesignCTAFinal />
+      </main>
+    </div>
   )
 }

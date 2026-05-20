@@ -1,4 +1,5 @@
 import Link from "next/link"
+import DesignNavbar from "./DesignNavbar"
 
 interface Section {
   title: string
@@ -11,54 +12,98 @@ export default function InfoPageLayout({
   updatedAt,
   sections,
 }: {
-  title: string
-  subtitle?: string
+  title:      string
+  subtitle?:  string
   updatedAt?: string
-  sections: Section[]
+  sections:   Section[]
 }) {
   return (
-    <main style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-      {/* Header */}
-      <div style={{ background: "#F8FAFC", borderBottom: "1px solid #E2E8F0", padding: "48px 56px 40px" }}>
-        <div className="max-w-3xl mx-auto">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition-colors no-underline mb-6"
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m15 18-6-6 6-6"/></svg>
-            Retour à l'accueil
-          </Link>
-          <h1 className="font-black text-slate-900 m-0" style={{ fontSize: 44, letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="text-lg text-slate-500 mt-3 leading-relaxed">{subtitle}</p>
-          )}
-          {updatedAt && (
-            <p className="text-xs text-slate-400 mt-4 font-mono tracking-wider">
-              Dernière mise à jour : {updatedAt}
-            </p>
-          )}
-        </div>
-      </div>
+    <>
+      <DesignNavbar />
+      <main style={{ paddingTop: 64, minHeight: "100vh", background: "var(--bg)" }}>
 
-      {/* Content */}
-      <div style={{ padding: "56px 56px 96px" }}>
-        <div className="max-w-3xl mx-auto">
-          <div className="flex flex-col gap-12">
+        {/* Header */}
+        <div style={{ borderBottom: "1px solid var(--border)", paddingBottom: 40, marginBottom: 0 }}>
+          <div className="wrap" style={{ paddingTop: 48 }}>
+            <Link
+              href="/"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 13,
+                color: "var(--text-mute)",
+                textDecoration: "none",
+                marginBottom: 28,
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              Accueil
+            </Link>
+
+            <h1 style={{
+              fontFamily: "var(--font-serif)",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(40px, 5vw, 68px)",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.05,
+              color: "var(--text)",
+              marginBottom: subtitle ? 16 : 0,
+            }}>
+              {title}.
+            </h1>
+
+            {subtitle && (
+              <p style={{ fontSize: 18, color: "var(--text-mute)", lineHeight: 1.55, maxWidth: "56ch" }}>
+                {subtitle}
+              </p>
+            )}
+
+            {updatedAt && (
+              <p style={{
+                marginTop: 16,
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "var(--text-mute)",
+              }}>
+                Mis à jour le {updatedAt}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="wrap" style={{ paddingTop: 64, paddingBottom: 100 }}>
+          <div style={{ maxWidth: 680, display: "flex", flexDirection: "column", gap: 48 }}>
             {sections.map((s, i) => (
               <section key={i}>
-                <h2 className="font-bold text-slate-900 mb-3" style={{ fontSize: 20, letterSpacing: "-0.01em" }}>
+                <h2 style={{
+                  fontSize: 18,
+                  fontWeight: 600,
+                  letterSpacing: "-0.015em",
+                  color: "var(--text)",
+                  marginBottom: 14,
+                }}>
                   {s.title}
                 </h2>
-                <div className="text-slate-600 leading-relaxed text-sm space-y-3">
+                <div style={{
+                  fontSize: 16,
+                  color: "var(--text-mute)",
+                  lineHeight: 1.75,
+                }}>
                   {s.content}
                 </div>
               </section>
             ))}
           </div>
         </div>
-      </div>
-    </main>
+
+      </main>
+    </>
   )
 }
