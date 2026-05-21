@@ -121,7 +121,7 @@ export default function ScrollAnimations() {
             const steps = sec.querySelectorAll<HTMLElement>(".step")
             const prog  = sec.querySelector<HTMLElement>("#method-progress")
             const tl = gsap.timeline({
-              scrollTrigger: { trigger: sec, start: "top top", end: "+=900", pin: true, scrub: 1.4, anticipatePin: 1 },
+              scrollTrigger: { trigger: sec, start: "top top", end: "+=600", pin: true, scrub: 1.4, anticipatePin: 1 },
             })
             if (head) tl.fromTo(head, { y: 0, opacity: 1 }, { y: -40, opacity: 0.92, ease: "none" }, 0)
             steps.forEach((s, i) => {

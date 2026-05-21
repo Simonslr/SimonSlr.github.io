@@ -77,11 +77,11 @@ export default function DesignCTAFinal() {
             <div className="foot__col">
               <h4>Catégories</h4>
               <ul>
-                <li><Link href="/">Audio</Link></li>
-                <li><Link href="/">Smartphones</Link></li>
-                <li><Link href="/">Informatique</Link></li>
-                <li><Link href="/">Gaming</Link></li>
-                <li><Link href="/">Maison</Link></li>
+                <li><Link href="/#catalogue">Audio</Link></li>
+                <li><Link href="/#catalogue">Smartphones</Link></li>
+                <li><Link href="/#catalogue">Informatique</Link></li>
+                <li><Link href="/#catalogue">Gaming</Link></li>
+                <li><Link href="/#catalogue">Maison</Link></li>
               </ul>
             </div>
             <div className="foot__col">

@@ -10,6 +10,7 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jet
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", style: ["normal", "italic"] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://eurocompare.fr"),
   title: "EuroCompare — Le vrai prix. Le bon pays.",
   description: "Comparez les prix Amazon entre la France, l'Allemagne et l'Espagne. Vendeurs officiels uniquement, livraison incluse, sans inscription.",
 }

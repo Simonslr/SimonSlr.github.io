@@ -64,7 +64,7 @@ export default function HeroText() {
             <div className="stat__lab">d&apos;écart max</div>
           </div>
           <div>
-            <div className="stat__num">{products.length * 4}+</div>
+            <div className="stat__num">{products.length}+</div>
             <div className="stat__lab">produits</div>
           </div>
           <div>

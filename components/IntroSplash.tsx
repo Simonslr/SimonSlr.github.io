@@ -70,7 +70,7 @@ export default function IntroSplash() {
   // Hook 2 : animation
   useEffect(() => {
     if (!mounted || skip) return
-    const DUR = 2200
+    const DUR = 1600
     const start = performance.now()
     let raf: number
     const tick = (t: number) => {

@@ -7,7 +7,7 @@ import { feature } from "topojson-client"
 import type { Topology, GeometryCollection } from "topojson-specification"
 import type { GeoJSON } from "geojson"
 
-const W = 960, H = 600, SCROLL_RANGE = 2400
+const W = 960, H = 600, SCROLL_RANGE = 1800
 
 // center=[4, 46] shifts the map south to include Spain (40°N) in the viewBox.
 // scale=1000 (vs 1200) gives enough field of view so all three countries fit.
@@ -275,14 +275,25 @@ export default function EuroMap() {
     travel("DE", "ES", 0.58, 0.20)
 
     // Fade out
-    seq.to(ball, { opacity: 0, duration: 0.04 }, 0.93)
-    seq.to(section, { opacity: 0, duration: 0.05 }, 0.95)
+    seq.to(ball, { opacity: 0, duration: 0.06 }, 0.93)
     seq.duration(1)
 
-    // ── Lerp-smoothed progress driver ─────────────────────────────────────
-    // Fix B: removed double-smoothing. Lenis already eases scroll (duration 1.4s).
-    // Adding our own lerp created 2s+ lag. Now we use a minimal lerp (k=0.22)
-    // only to prevent single-frame jumps — not to add cinematic lag.
+    // ── Mobile: skip scroll-driven animation entirely ────────────────────
+    // On small screens the sticky+lerp is fragile on iOS Safari.
+    // Instead auto-play the timeline once at normal speed.
+    if (window.innerWidth <= 860) {
+      let loopCall: ReturnType<typeof gsap.delayedCall> | null = null
+      seq.play()
+      seq.eventCallback("onComplete", () => {
+        loopCall = gsap.delayedCall(1.5, () => { if (!disposed) seq.restart() })
+      })
+      return () => {
+        disposed = true; seq.kill(); loopCall?.kill()
+        if (typeTimerRef.current) clearInterval(typeTimerRef.current)
+      }
+    }
+
+    // ── Desktop: lerp-smoothed scroll driver ──────────────────────────────
     const lerp = { target: 0, current: 0 }, LERP_K = 0.22
     let cur: Country | null = null, holdActive = false, hintHidden = false
     let rafId = 0
@@ -306,7 +317,9 @@ export default function EuroMap() {
       setProgPct(p * 100)
       let act: Country | null = null, hold = false
       if      (p > 0.04 && p < 0.14) { act = FR; hold = p > 0.07 && p < 0.12 }
+      else if (p > 0.14 && p < 0.36) { act = FR } // FR→DE travel: keep FR label visible
       else if (p > 0.36 && p < 0.57) { act = DE; hold = p > 0.40 && p < 0.55 }
+      else if (p > 0.57 && p < 0.78) { act = DE } // DE→ES travel: keep DE label visible
       else if (p > 0.78 && p < 0.93) { act = ES; hold = p > 0.82 && p < 0.91 }
       upd(act); holdActive = hold
     }

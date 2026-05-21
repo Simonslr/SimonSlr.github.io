@@ -70,7 +70,6 @@ export default function DesignCatalogue() {
 
   const handleCompare = () => {
     document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" })
-    inputRef.current?.focus()
   }
 
   return (
@@ -84,8 +83,8 @@ export default function DesignCatalogue() {
               cherchez-<span className="em-serif" style={{ color: "var(--blue)" }}>vous&nbsp;?</span>
             </h2>
             <p className="sub" style={{ marginTop: 24 }} data-reveal="fade">
-              Tapez le nom d&apos;un produit. Nous trouvons immédiatement la
-              meilleure offre Amazon parmi la France, l&apos;Allemagne et l&apos;Espagne.
+              Filtrez notre sélection de produits — prix mis à jour quotidiennement
+              sur Amazon.fr, Amazon.de et Amazon.es, livraison incluse.
             </p>
           </div>
 
@@ -199,8 +198,8 @@ function ProductCard({ p, index }: { p: DesignProduct; index: number }) {
 
           <a href={p.affiliateUrl} target="_blank" rel="noopener noreferrer" className="card__cta">
             Acheter sur {COUNTRY_AMAZON[best]}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M7 17 17 7" /><path d="M7 7h10v10" />
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-label="Ouvre dans un nouvel onglet">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
             </svg>
           </a>
 
