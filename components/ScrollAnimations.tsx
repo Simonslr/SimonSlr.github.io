@@ -282,7 +282,7 @@ export default function ScrollAnimations() {
 
       // 3D card tilt — applied on .card__inner for shadow decoupling
       if (!reduced && finePointer) {
-        document.querySelectorAll<HTMLElement>(".card, .hsc-card").forEach((card) => {
+        document.querySelectorAll<HTMLElement>(".card").forEach((card) => {
           const inner = card.querySelector<HTMLElement>(".card__inner") ?? card
           const onMove = (e: MouseEvent) => {
             const r  = card.getBoundingClientRect()

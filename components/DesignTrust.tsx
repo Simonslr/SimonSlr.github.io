@@ -11,37 +11,23 @@ export default function DesignTrust() {
             Ce que nous<br />
             <span className="em-serif" style={{ color: "var(--blue)" }}>promettons.</span>
           </h2>
-          <div className="trust__stats" data-reveal="fade">
-            <div className="trust-stat">
-              <div className="trust-stat__num"><span data-count="100" data-fmt="int">0</span><span className="u">%</span></div>
-              <div className="trust-stat__lab">livraison incluse</div>
-            </div>
-            <div className="trust-stat">
-              <div className="trust-stat__num"><span data-count="3" data-fmt="int">0</span><span className="u">/3</span></div>
-              <div className="trust-stat__lab">marchés couverts</div>
-            </div>
-            <div className="trust-stat">
-              <div className="trust-stat__num"><span data-count="0" data-fmt="int">0</span><span className="u"> €</span></div>
-              <div className="trust-stat__lab">d&apos;intermédiaire</div>
-            </div>
-          </div>
         </div>
 
         <div className="trust__list">
           <Pledge
-            num="01"
+            num="100%"
             title={<>Livraison<br /><span className="em-serif">incluse</span>, toujours.</>}
             body="Le prix que vous voyez est le prix que vous payez à l'arrivée : produit + livraison vers la France, sans frais cachés."
             icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M14 17H4V6h11v11Z" /><path d="M14 9h4l3 3v5h-7" /><circle cx="8" cy="17.5" r="1.6" /><circle cx="18" cy="17.5" r="1.6" /></svg>}
           />
           <Pledge
-            num="02"
+            num="3/3"
             title={<>Vendeurs officiels<br /><span className="em-serif">uniquement.</span></>}
             body="Seules les offres expédiées par Amazon ou par des marchands vérifiés apparaissent. Pas de marketplace tierce douteuse."
             icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /></svg>}
           />
           <Pledge
-            num="03"
+            num="0 €"
             title={<>Lien direct,<br /><span className="em-serif">zéro intermédiaire.</span></>}
             body="Un seul clic vous emmène sur Amazon. Pas de redirection, pas de page intermédiaire, pas de mauvaise surprise."
             icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M3 12h18" /><path d="M12 3a14 14 0 0 1 0 18" /><path d="M12 3a14 14 0 0 0 0 18" /></svg>}

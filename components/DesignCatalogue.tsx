@@ -141,18 +141,6 @@ export default function DesignCatalogue() {
       {/* CATALOGUE */}
       <section id="catalogue" className="section cat">
         <div className="wrap">
-          <div className="cat__head">
-            <div>
-              <h2 className="h-section" data-reveal="fade">
-                Les meilleures<br />
-                <span className="em-serif" style={{ color: "var(--blue)" }}>économies</span> du jour.
-              </h2>
-            </div>
-            <div className="cat__count" data-reveal="fade">
-              {filtered.length} produit{filtered.length > 1 ? "s" : ""} · livraison incluse
-            </div>
-          </div>
-
           <div ref={gridRef} className={`cat__grid is-${phase}`} data-filter-grid>
             {filtered.length === 0 && (
               <div className="cat__empty">Aucun produit ne correspond à ces filtres.</div>

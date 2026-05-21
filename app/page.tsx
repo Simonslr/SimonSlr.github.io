@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import IntroSplash      from "@/components/IntroSplash"
-import Marquee          from "@/components/Marquee"
 import DesignNavbar     from "@/components/DesignNavbar"
 import EuroMap          from "@/components/EuroMap"
 import HeroText         from "@/components/HeroText"
@@ -32,9 +31,8 @@ export default function HomePage() {
       <IntroSplash />
       <DesignNavbar />
       <main>
-        <EuroMap />
         <HeroText />
-        <Marquee dark />
+        <EuroMap />
         <DesignMethod />
         <DesignFeatured />
         <DesignCatalogue />

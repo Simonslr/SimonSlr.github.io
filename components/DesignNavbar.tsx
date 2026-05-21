@@ -24,24 +24,25 @@ export default function DesignNavbar() {
   }, [])
 
   useEffect(() => {
-    const DARK = ".hero[data-hero='dark'], .hero-scroll, .method, .featured, .trust, .cta-fin"
+    // Catches any element with data-hero="dark" (HeroText, EuroMap, HeroGlobe…)
+    // plus legacy section classes. No class restriction on the attribute selector.
+    const DARK = "[data-hero='dark'], .hero-scroll, .globe-hero-section, .method, .featured, .trust, .cta-fin"
 
     const update = () => {
       const y = window.scrollY
       setScrolled(y > 8)
 
-      const navBottom = 64
-      const sections  = Array.from(document.querySelectorAll<HTMLElement>(DARK))
-      const hit       = sections.find((s) => {
+      const navH    = 64
+      const sections = Array.from(document.querySelectorAll<HTMLElement>(DARK))
+      const hit      = sections.find((s) => {
         const r = s.getBoundingClientRect()
-        // La section couvre-t-elle la zone de la navbar ?
-        return r.top <= navBottom && r.bottom > 0
+        return r.top <= navH && r.bottom > 0
       })
       setIsDark(!!hit)
     }
 
-    // Pas d'appel immédiat — l'état initial (pathname === "/") est correct.
-    // Le premier scroll corrigera tout décalage éventuel.
+    // Immediate call so the navbar is correct on first paint (no scroll needed)
+    update()
     window.addEventListener("scroll", update, { passive: true })
     window.addEventListener("resize", update)
     return () => {
