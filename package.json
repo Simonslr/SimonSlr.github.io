@@ -11,7 +11,9 @@
     "prices:fr": "node scripts/scrape-prices.js --country FR",
     "prices:de": "node scripts/scrape-prices.js --country DE",
     "prices:es": "node scripts/scrape-prices.js --country ES",
-    "add": "node scripts/add-product.js"
+    "add": "node scripts/add-product.js",
+    "ad:preview": "remotion preview remotion/index.ts",
+    "ad:render": "remotion render remotion/index.ts EuroCompareAd --output ads/eurocompare-ad.mp4 --codec h264"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
