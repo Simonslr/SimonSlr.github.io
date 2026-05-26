@@ -6,12 +6,12 @@ import { getRecommendation } from "@/lib/scoring"
 import { sendAlertEmail } from "@/lib/emails"
 import { timingSafeCompare } from "@/lib/security"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 export async function GET(request: NextRequest) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   // ── Auth: timing-safe comparison prevents secret enumeration ──────────────
   const secret = request.headers.get("x-cron-secret") ?? ""
   if (!timingSafeCompare(secret, process.env.CRON_SECRET ?? "")) {
