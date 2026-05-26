@@ -23,9 +23,43 @@ export const metadata: Metadata = {
   },
 }
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://eurocomp.vercel.app"
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE}/#website`,
+      "url": SITE,
+      "name": "EuroCompare",
+      "description": "Comparez les prix Amazon France, Allemagne et Espagne. Livraison incluse, vendeurs officiels.",
+      "inLanguage": "fr-FR",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": { "@type": "EntryPoint", "urlTemplate": `${SITE}/#catalogue` },
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE}/#organization`,
+      "name": "EuroCompare",
+      "url": SITE,
+      "description": "Comparateur de prix Amazon entre la France, l'Allemagne et l'Espagne.",
+    },
+    {
+      "@type": "SiteNavigationElement",
+      "name": ["Catalogue", "Comment ça marche", "Connexion"],
+      "url": [`${SITE}/#catalogue`, `${SITE}/#methode`, `${SITE}/connexion`],
+    },
+  ],
+}
+
 export default function HomePage() {
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SmoothScroll />
       <ScrollAnimations />
       <IntroSplash />
