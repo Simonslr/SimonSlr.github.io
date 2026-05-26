@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   title: "EuroCompare — Le vrai prix. Le bon pays.",
   description: "Comparez les prix Amazon entre la France, l'Allemagne et l'Espagne. Vendeurs officiels uniquement, livraison incluse, sans inscription.",
   robots: { index: true, follow: true },
+  verification: { google: "ace7ae0afca6efec" },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
