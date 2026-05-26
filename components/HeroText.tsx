@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react"
 import { getCatalogueProducts } from "@/lib/design-data"
-
 export default function HeroText() {
   const rootRef = useRef<HTMLElement>(null)
 

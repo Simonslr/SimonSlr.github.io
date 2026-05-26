@@ -2,11 +2,14 @@
 
 import { useEffect } from "react"
 
+type WindowWithLenis = Window & typeof globalThis & { __lenis?: unknown }
+
 export default function SmoothScroll() {
   useEffect(() => {
     if (typeof window === "undefined") return
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let lenis: any
 
     async function init() {
@@ -17,10 +20,10 @@ export default function SmoothScroll() {
       gsap.registerPlugin(ScrollTrigger)
 
       lenis = new Lenis({
-        duration: 1.4,
+        duration: 1.1,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        wheelMultiplier: 1,
+        wheelMultiplier: 0.9,
         touchMultiplier: 2,
       })
 
@@ -28,12 +31,11 @@ export default function SmoothScroll() {
       gsap.ticker.add((time: number) => lenis.raf(time * 1000))
       gsap.ticker.lagSmoothing(0)
 
-      // When ScrollTrigger adds/removes pin spacers it changes page height.
-      // Lenis must recalculate its scroll length each time.
       ScrollTrigger.addEventListener("refresh", () => lenis.resize())
       ScrollTrigger.refresh()
 
-      ;(window as any).__lenis = lenis
+      ;(window as WindowWithLenis).__lenis = lenis
+      window.dispatchEvent(new CustomEvent("lenis:ready", { detail: lenis }))
     }
 
     const t = setTimeout(init, 50)

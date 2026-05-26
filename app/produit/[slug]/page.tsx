@@ -14,6 +14,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getFavorites } from "@/app/actions/favorites"
 import { getAlerts } from "@/app/actions/alerts"
 import PriceChart from "@/components/PriceChart"
+import { safeJsonLd } from "@/lib/security"
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -202,7 +203,7 @@ export default async function ProductPage({ params }: Props) {
       {jsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
         />
       )}
       <DesignNavbar />

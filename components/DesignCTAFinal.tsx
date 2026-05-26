@@ -40,7 +40,7 @@ export default function DesignCTAFinal() {
                   <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
                 </svg>
               </button>
-              <a className="btn btn--outline" href="/#methode">Comment ça marche</a>
+              <Link className="btn btn--outline" href="/#methode">Comment ça marche</Link>
             </div>
 
             <div className="cta-fin__chips" data-reveal="fade">
@@ -59,10 +59,10 @@ export default function DesignCTAFinal() {
         <div className="wrap">
           <div className="foot__top">
             <div className="foot__brand">
-              <a className="nav__logo" href="/" style={{ gap: 8 }}>
+              <Link className="nav__logo" href="/" style={{ gap: 8 }}>
                 <EuroCompareLogo size={22} color="rgba(255,255,255,0.9)" textColor="rgba(255,255,255,0.9)" showText={false} />
                 <span>EuroCompare</span>
-              </a>
+              </Link>
               <p>Comparateur Amazon France · Allemagne · Espagne. Conçu à Paris. Indépendant.</p>
             </div>
             <div className="foot__col">

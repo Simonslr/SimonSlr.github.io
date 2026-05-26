@@ -1,403 +1,438 @@
 'use client'
+import { ThreeCanvas } from '@remotion/three'
+import { useThree } from '@react-three/fiber'
+import { Stars } from '@react-three/drei'
+import * as THREE from 'three'
+import { useMemo } from 'react'
 import {
-  AbsoluteFill,
-  Easing,
-  Sequence,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
+  AbsoluteFill, Easing, Sequence,
+  interpolate, spring, useCurrentFrame,
 } from 'remotion'
 
-// ── Brand tokens ────────────────────────────────────────────────────────────
-const BG        = '#060c18'
-const BG_CARD   = '#0d1a2e'
-const BLUE      = '#3b82f6'
-const BLUE_DIM  = '#1d4ed8'
-const WHITE     = '#f0f4ff'
-const MUTED     = 'rgba(203,213,225,0.60)'
-const BORDER    = 'rgba(255,255,255,0.09)'
-const FONT      = '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif'
-const MONO      = '"JetBrains Mono", "Fira Code", "Courier New", monospace'
+// ── Brand tokens ─────────────────────────────────────────────────────────────
+const BG       = '#060c18'
+const BLUE     = '#2563eb'
+const BLUE_LT  = '#3b82f6'
+const BLUE_DIM = '#1d4ed8'
+const WHITE    = '#f0f4ff'
+const MUTED    = 'rgba(203,213,225,0.58)'
+const BORDER   = 'rgba(255,255,255,0.08)'
+const GREEN    = '#4ade80'
+const FONT     = '"Geist","Inter",-apple-system,BlinkMacSystemFont,sans-serif'
+const MONO     = '"Geist Mono","JetBrains Mono","SF Mono",monospace'
 
 const COUNTRIES = [
-  { code: 'FR', label: 'Amazon.fr',  price: 349, color: '#60a5fa', flag: ['#002395','#f0f4ff','#ED2939'] },
-  { code: 'DE', label: 'Amazon.de',  price: 289, color: '#fbbf24', flag: ['#1a1a1a','#cc0000','#ffce00'] },
-  { code: 'ES', label: 'Amazon.es',  price: 259, color: '#34d399', flag: ['#c60b1e','#ffc400','#c60b1e'], best: true },
+  { code: 'FR', tld: 'fr', label: 'Amazon.fr', price: 349, flag: ['#002395', '#f0f4ff', '#ED2939'] },
+  { code: 'DE', tld: 'de', label: 'Amazon.de', price: 289, flag: ['#1a1a1a', '#cc0000', '#ffce00'] },
+  { code: 'ES', tld: 'es', label: 'Amazon.es', price: 259, flag: ['#c60b1e', '#ffc400', '#c60b1e'], best: true },
+] as const
+
+const MAX = 349, SAVE = 90, PCT = 26
+
+// ── Logo geometry (copié de EuroCompareLogo.tsx) ──────────────────────────────
+const STAR_R    = 42
+const STAR_SIZE = 4.2
+const LA = 17, LB = 33
+
+const LOGO_ARROWS = [
+  { d: `M ${50-4} ${50-4} Q ${LB-5} ${LA+8} ${LA} ${LA}`,                   hx: LA,     hy: LA,     hang: -135 },
+  { d: `M ${50+4} ${50-4} Q ${100-LB+5} ${LA+8} ${100-LA} ${LA}`,           hx: 100-LA, hy: LA,     hang: -45  },
+  { d: `M ${50+4} ${50+4} Q ${100-LB+5} ${100-LA-8} ${100-LA} ${100-LA}`,   hx: 100-LA, hy: 100-LA, hang: 45   },
+  { d: `M ${50-4} ${50+4} Q ${LB-5} ${100-LA-8} ${LA} ${100-LA}`,           hx: LA,     hy: 100-LA, hang: 135  },
 ]
-const MAX_PRICE = 349
-const SAVINGS   = 90
-const PCT       = 26
 
-// Deterministic particle field (no Math.random — stable per-frame)
-const PARTICLES = Array.from({ length: 40 }, (_, i) => ({
-  x:  (i * 137.508) % 1080,
-  y:  (i * 233.718) % 1920,
-  r:  1.2 + (i % 4) * 0.8,
-  op: 0.06 + (i % 5) * 0.04,
-  dy: 0.25 + (i % 6) * 0.12,
-}))
+function computeStarPoints() {
+  const s: { x: number; y: number }[] = []
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2 - Math.PI / 2
+    s.push({ x: 50 + STAR_R * Math.cos(a), y: 50 + STAR_R * Math.sin(a) })
+  }
+  return s
+}
+const LOGO_STARS = computeStarPoints()
 
-// ── Animation helpers ───────────────────────────────────────────────────────
-const spr = (frame: number, delay = 0, damping = 16, stiffness = 160) =>
-  spring({ frame: Math.max(0, frame - delay), fps: 30, config: { damping, stiffness, mass: 1 } })
+function StarShape({ cx, cy, r, fill }: { cx: number; cy: number; r: number; fill: string }) {
+  const pts: string[] = []
+  for (let i = 0; i < 10; i++) {
+    const a  = (i / 10) * Math.PI * 2 - Math.PI / 2
+    const rr = i % 2 === 0 ? r : r * 0.45
+    pts.push(`${(cx + rr * Math.cos(a)).toFixed(4)},${(cy + rr * Math.sin(a)).toFixed(4)}`)
+  }
+  return <polygon points={pts.join(' ')} fill={fill} />
+}
 
-const ease = (frame: number, inF: number, outF: number, from = 0, to = 1) =>
-  interpolate(frame, [inF, outF], [from, to], {
-    easing: Easing.bezier(0.22, 1, 0.36, 1),
-    extrapolateLeft:  'clamp',
-    extrapolateRight: 'clamp',
-  })
+// Logo animé (flèches + étoiles + wordmark)
+function AnimatedLogo({
+  size = 120,
+  arrowProg = 1,
+  starsProg = 1,
+  textOp = 1,
+  subtitleOp = 0,
+}: {
+  size?: number
+  arrowProg?: number
+  starsProg?: number
+  textOp?: number
+  subtitleOp?: number
+}) {
+  const DASH = 100
+  const headOp = arrowProg > 0.85 ? (arrowProg - 0.85) / 0.15 : 0
 
-const easeIn = (frame: number, inF: number, outF: number, from = 0, to = 1) =>
-  interpolate(frame, [inF, outF], [from, to], {
-    easing: Easing.bezier(0.55, 0, 1, 0.45),
-    extrapolateLeft:  'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-// ── Sub-components ──────────────────────────────────────────────────────────
-
-function FlagStripes({
-  stripes, vertical = false, size = 28,
-}: { stripes: string[]; vertical?: boolean; size?: number }) {
   return (
-    <div style={{
-      width: vertical ? size * 1.4 : size * 1.4,
-      height: size,
-      borderRadius: 4,
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: vertical ? 'row' : 'column',
-      border: '1px solid rgba(255,255,255,0.15)',
-      flexShrink: 0,
-    }}>
-      {stripes.map((c, i) => (
-        <div key={i} style={{ flex: 1, background: c }} />
-      ))}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+      <svg width={size} height={size} viewBox="0 0 100 100" style={{ overflow: 'visible' }}>
+        {LOGO_ARROWS.map((a, i) => (
+          <g key={i}>
+            <path
+              d={a.d} stroke={WHITE} strokeWidth="6" fill="none" strokeLinecap="round"
+              strokeDasharray={DASH}
+              strokeDashoffset={DASH * (1 - arrowProg)}
+            />
+            <g transform={`translate(${a.hx} ${a.hy}) rotate(${a.hang})`} style={{ opacity: headOp }}>
+              <polygon points="0,0 10,4 10,-4" fill={WHITE} />
+            </g>
+          </g>
+        ))}
+        {LOGO_STARS.map((s, i) => {
+          const localProg = Math.max(0, Math.min(1, (starsProg - (i / 12) * 0.55) * 2.5))
+          return (
+            <g key={i} style={{ opacity: localProg, transform: `scale(${0.6 + 0.4 * localProg})`, transformOrigin: `${s.x}px ${s.y}px` }}>
+              <StarShape cx={s.x} cy={s.y} r={STAR_SIZE} fill={BLUE_LT} />
+            </g>
+          )
+        })}
+      </svg>
+
+      <div style={{ textAlign: 'center', opacity: textOp }}>
+        <div style={{ fontFamily: FONT, fontSize: size * 0.38, fontWeight: 800, letterSpacing: '-0.03em', color: WHITE, lineHeight: 1 }}>
+          EuroCompare
+        </div>
+        {subtitleOp > 0 && (
+          <div style={{ fontFamily: MONO, fontSize: size * 0.14, letterSpacing: '0.18em', textTransform: 'uppercase', color: `rgba(96,165,250,0.65)`, marginTop: 10, opacity: subtitleOp }}>
+            Comparateur Amazon Europe
+          </div>
+        )}
+      </div>
     </div>
   )
 }
 
-function Particles({ frame }: { frame: number }) {
+// ── Animation helpers ─────────────────────────────────────────────────────────
+const spr = (f: number, delay = 0, damping = 16, stiffness = 160) =>
+  spring({ frame: Math.max(0, f - delay), fps: 30, config: { damping, stiffness, mass: 1 } })
+
+const ease = (f: number, i: number, o: number, from = 0, to = 1) =>
+  interpolate(f, [i, o], [from, to], {
+    easing: Easing.bezier(0.22, 1, 0.36, 1),
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+  })
+
+const easeIn = (f: number, i: number, o: number, from = 0, to = 1) =>
+  interpolate(f, [i, o], [from, to], {
+    easing: Easing.bezier(0.55, 0, 1, 0.45),
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+  })
+
+const countNum = (f: number, i: number, o: number, from: number, to: number) =>
+  Math.round(interpolate(f, [i, o], [from, to], {
+    easing: Easing.bezier(0.22, 1, 0.36, 1),
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+  }))
+
+// ── THREE.js — géométrie cachée au niveau module ──────────────────────────────
+const _particleCount = 700
+const _particlePositions = (() => {
+  const arr = new Float32Array(_particleCount * 3)
+  for (let i = 0; i < _particleCount; i++) {
+    const phi   = Math.acos(1 - 2 * i / _particleCount)
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i
+    const r     = 7 + (i % 4) * 0.9
+    arr[i * 3]     = r * Math.sin(phi) * Math.cos(theta)
+    arr[i * 3 + 1] = r * Math.cos(phi)
+    arr[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta) - 2
+  }
+  return arr
+})()
+const _ptGeo = (() => {
+  const g = new THREE.BufferGeometry()
+  g.setAttribute('position', new THREE.BufferAttribute(_particlePositions.slice(), 3))
+  return g
+})()
+
+const _planeCache: Record<string, THREE.PlaneGeometry>  = {}
+const _edgesCache: Record<string, THREE.EdgesGeometry>  = {}
+const getPlane = (w: number, h: number) => {
+  const k = `${w}x${h}`
+  if (!_planeCache[k]) _planeCache[k] = new THREE.PlaneGeometry(w, h)
+  return _planeCache[k]
+}
+const getEdges = (w: number, h: number) => {
+  const k = `${w}x${h}`
+  if (!_edgesCache[k]) _edgesCache[k] = new THREE.EdgesGeometry(new THREE.BoxGeometry(w, h, 0.01))
+  return _edgesCache[k]
+}
+
+// ── THREE.js components ───────────────────────────────────────────────────────
+
+function CameraRig({ frame }: { frame: number }) {
+  const { camera } = useThree()
+  let x = 0, y = 0, z = 12
+
+  if (frame < 95) {
+    z = ease(frame, 0, 90, 22, 7)
+    y = ease(frame, 0, 90, 0.8, 0)
+  } else if (frame < 200) {
+    z = ease(frame, 95, 180, 7, 10)
+    y = ease(frame, 95, 180, 0, 0.3)
+  } else if (frame < 375) {
+    const t = (frame - 200) / 175
+    x = Math.sin(t * Math.PI * 0.9) * 2.0
+    y = Math.sin(t * Math.PI * 0.45) * 0.6
+    z = 10
+  } else if (frame < 490) {
+    x = ease(frame, 360, 490, 0, 1.2)
+    y = ease(frame, 360, 490, 0.5, -0.8)
+    z = ease(frame, 360, 430, 12, 6.5)
+  } else {
+    z = ease(frame, 478, 600, 7, 14)
+    y = ease(frame, 478, 600, 0, 0.5)
+  }
+
+  camera.position.set(x, y, z)
+  camera.lookAt(0, 0, 0)
+  return null
+}
+
+function SceneLighting({ frame }: { frame: number }) {
+  const op = ease(frame, 0, 20)
+  return (
+    <>
+      <ambientLight intensity={0.22 * op} color="#101830" />
+      <pointLight position={[0, 2, 6]}   intensity={2.0 * op} color={BLUE}    distance={30} />
+      <pointLight position={[5, 4, 3]}   intensity={0.7 * op} color="#6366f1" distance={22} />
+      <pointLight position={[-4, -3, 4]} intensity={0.5 * op} color={BLUE_LT} distance={20} />
+      <hemisphereLight args={['#1a2340', '#060c18', 0.38 * op]} />
+    </>
+  )
+}
+
+function ParticleField({ frame }: { frame: number }) {
+  return (
+    <points geometry={_ptGeo} rotation={[frame * 0.0028, frame * 0.0042, frame * 0.0015]}>
+      <pointsMaterial size={0.04} color={BLUE_LT} opacity={0.28 * ease(frame, 0, 30)} transparent sizeAttenuation />
+    </points>
+  )
+}
+
+function GlowCard({ position, width, height, opacity, glowColor = BLUE, tiltX = 0, tiltY = 0 }: {
+  position: [number, number, number]; width: number; height: number; opacity: number
+  glowColor?: string; tiltX?: number; tiltY?: number
+}) {
+  if (opacity <= 0) return null
+  return (
+    <group position={position} rotation={[tiltX, tiltY, 0]}>
+      <mesh geometry={getPlane(width, height)}>
+        <meshStandardMaterial color="#080e1c" transparent opacity={opacity * 0.88} side={THREE.FrontSide} />
+      </mesh>
+      <lineSegments geometry={getEdges(width, height)}>
+        <lineBasicMaterial color={glowColor} transparent opacity={opacity * 0.55} />
+      </lineSegments>
+    </group>
+  )
+}
+
+function ConceptCards({ frame }: { frame: number }) {
+  const lf = frame - 200
+  return (
+    <>
+      {COUNTRIES.map((c, i) => {
+        const yPos  = (1 - i) * 3.6
+        const cardOp = ease(lf - i * 16, 0, 18)
+        const tiltY  = Math.sin(lf * 0.016) * 0.07
+        const isBest = 'best' in c && c.best === true
+        return (
+          <GlowCard key={c.code} position={[0, yPos, 0]} width={5.7} height={2.8}
+            opacity={cardOp} glowColor={isBest ? BLUE : '#1e3a5f'} tiltY={tiltY} />
+        )
+      })}
+    </>
+  )
+}
+
+function ResultCards({ frame }: { frame: number }) {
+  const lf = frame - 360
+  return (
+    <>
+      <GlowCard position={[0, 0, 0]} width={5.7} height={10} opacity={ease(lf, 0, 22)}
+        tiltX={Math.sin(lf * 0.025) * 0.04} tiltY={Math.sin(lf * 0.018) * 0.055} />
+      <GlowCard position={[-5.5, 2.5, -3.5]} width={3.2} height={2.2}
+        opacity={ease(lf, 8, 28) * 0.36} glowColor="#6366f1" tiltY={0.24} />
+      <GlowCard position={[5.5, -2.5, -3.5]} width={3.2} height={2.2}
+        opacity={ease(lf, 8, 28) * 0.34} tiltY={-0.22} />
+    </>
+  )
+}
+
+function World({ frame }: { frame: number }) {
+  return (
+    <>
+      <CameraRig frame={frame} />
+      <SceneLighting frame={frame} />
+      <Stars radius={28} depth={55} count={2800} factor={3.5} saturation={0} fade speed={0} />
+      <ParticleField frame={frame} />
+      {frame >= 200 && frame < 380 && <ConceptCards frame={frame} />}
+      {frame >= 360 && frame < 492 && <ResultCards frame={frame} />}
+    </>
+  )
+}
+
+// ── DOM — utilitaires ─────────────────────────────────────────────────────────
+
+const PTS = Array.from({ length: 45 }, (_, i) => ({
+  x: (i * 137.508) % 1080, y: (i * 233.718) % 1920,
+  r: 0.8 + (i % 3) * 0.4, op: 0.03 + (i % 5) * 0.02, dy: 0.15 + (i % 7) * 0.06,
+}))
+
+function CSSParticles({ frame }: { frame: number }) {
   return (
     <AbsoluteFill style={{ pointerEvents: 'none' }}>
-      {PARTICLES.map((p, i) => (
+      {PTS.map((p, i) => (
         <div key={i} style={{
-          position: 'absolute',
-          left: p.x,
-          top: (p.y - frame * p.dy * 0.6) % 1920,
-          width: p.r * 2,
-          height: p.r * 2,
-          borderRadius: '50%',
-          background: BLUE,
-          opacity: p.op,
-          filter: 'blur(0.5px)',
+          position: 'absolute', left: p.x,
+          top: ((p.y - frame * p.dy * 0.4) % 1920 + 1920) % 1920,
+          width: p.r * 2, height: p.r * 2, borderRadius: '50%',
+          background: BLUE_LT, opacity: p.op,
         }} />
       ))}
     </AbsoluteFill>
   )
 }
 
-function GlowOrb({ x, y, color, radius, opacity }: {
-  x: number; y: number; color: string; radius: number; opacity: number
-}) {
+function Glow({ x, y, color, r, op }: { x: number; y: number; color: string; r: number; op: number }) {
   return (
     <div style={{
-      position: 'absolute',
-      left: x - radius, top: y - radius,
-      width: radius * 2, height: radius * 2,
-      borderRadius: '50%',
-      background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
-      opacity,
-      pointerEvents: 'none',
+      position: 'absolute', left: x - r, top: y - r,
+      width: r * 2, height: r * 2, borderRadius: '50%',
+      background: `radial-gradient(circle at center,${color}44 0%,${color}00 68%)`,
+      opacity: op, pointerEvents: 'none',
     }} />
   )
 }
 
-// ── SCENE 1: HOOK (0–75f = 0–2.5s) ────────────────────────────────────────
-function SceneHook() {
-  const f = useCurrentFrame()
-
-  const euroScale = spr(f, 0, 22, 280)
-  const euroOp    = ease(f, 0, 12)
-  const textOp    = ease(f, 20, 42)
-  const textClip  = ease(f, 20, 52)
-  const subtextOp = ease(f, 38, 58)
-
+function Flag({ stripes, size = 28 }: { stripes: readonly string[]; size?: number }) {
   return (
-    <AbsoluteFill style={{
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      gap: 0, padding: '0 80px',
+    <div style={{
+      width: size * 1.42, height: size, borderRadius: 4, overflow: 'hidden',
+      display: 'flex', border: '1px solid rgba(255,255,255,0.11)', flexShrink: 0,
     }}>
-      {/* Glow orb behind */}
-      <GlowOrb x={540} y={900} color={BLUE} radius={340} opacity={0.12 * ease(f, 5, 35)} />
-
-      {/* Euro symbol */}
-      <div style={{
-        fontSize: 96,
-        fontFamily: MONO,
-        fontWeight: 800,
-        color: BLUE,
-        opacity: euroOp,
-        transform: `scale(${euroScale})`,
-        marginBottom: 32,
-        filter: `drop-shadow(0 0 32px ${BLUE}66)`,
-        letterSpacing: '-0.04em',
-      }}>€</div>
-
-      {/* Main hook */}
-      <div style={{
-        overflow: 'hidden',
-        clipPath: `inset(0 ${(1 - textClip) * 102}% 0 0)`,
-        opacity: textOp,
-      }}>
-        <h1 style={{
-          fontFamily: FONT,
-          fontSize: 88,
-          fontWeight: 800,
-          letterSpacing: '-0.045em',
-          lineHeight: 1.05,
-          color: WHITE,
-          margin: 0,
-          textAlign: 'center',
-        }}>
-          Vous payez<br />trop cher.
-        </h1>
-      </div>
-
-      {/* Subtext */}
-      <p style={{
-        fontFamily: FONT,
-        fontSize: 30,
-        color: MUTED,
-        marginTop: 28,
-        opacity: subtextOp,
-        letterSpacing: '-0.01em',
-        textAlign: 'center',
-      }}>
-        Et vous ne le savez pas encore.
-      </p>
-    </AbsoluteFill>
+      {stripes.map((c, i) => <div key={i} style={{ flex: 1, background: c }} />)}
+    </div>
   )
 }
 
-// ── SCENE 2: BIG PRICE (75–180f = 2.5–6s) ─────────────────────────────────
-function SceneBigPrice() {
-  const f = useCurrentFrame()
+function Beam({ y, op }: { y: number; op: number }) {
+  return (
+    <div style={{
+      position: 'absolute', left: 0, right: 0, top: y - 1, height: 2,
+      background: `linear-gradient(90deg,transparent,${BLUE}cc 20%,${BLUE} 50%,${BLUE}cc 80%,transparent)`,
+      boxShadow: `0 0 18px 4px ${BLUE}66,0 0 50px 10px ${BLUE}1a`,
+      opacity: op, pointerEvents: 'none',
+    }} />
+  )
+}
 
-  const priceScale = spr(f, 0, 20, 240)
-  const priceOp    = ease(f, 0, 18)
-  const labelOp    = ease(f, 22, 42)
-  const glowOp     = ease(f, 30, 60)
-  const exitOp     = easeIn(f, 85, 105, 1, 0)
+// ── SCÈNE 1 : LOGO INTRO (0–95f) ─────────────────────────────────────────────
+function DOMLogoIntro({ frame: f }: { frame: number }) {
+  const arrowProg  = ease(f, 8, 52)
+  const starsProg  = ease(f, 45, 80)
+  const textOp     = ease(f, 65, 84)
+  const subtitleOp = ease(f, 72, 90)
+  const containerOp = easeIn(f, 80, 95, 1, 0)
+  const containerSc = 1 + ease(f, 78, 95, 0, 0.04)
 
   return (
-    <AbsoluteFill style={{
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-    }}>
-      <GlowOrb x={540} y={960} color="#ef4444" radius={380} opacity={0.09 * glowOp} />
-
-      <div style={{
-        opacity: priceOp * exitOp,
-        transform: `scale(${priceScale})`,
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
-      }}>
-        {/* The painful price */}
-        <div style={{
-          fontFamily: FONT,
-          fontSize: 168,
-          fontWeight: 900,
-          letterSpacing: '-0.06em',
-          color: WHITE,
-          lineHeight: 1,
-          filter: `drop-shadow(0 0 48px rgba(239,68,68,0.20))`,
-        }}>
-          349 €
-        </div>
-
-        {/* Label */}
-        <div style={{
-          opacity: labelOp,
-          marginTop: 20,
-          display: 'flex', alignItems: 'center', gap: 12,
-        }}>
-          <FlagStripes stripes={COUNTRIES[0].flag} vertical size={26} />
-          <span style={{
-            fontFamily: MONO,
-            fontSize: 26,
-            color: MUTED,
-            letterSpacing: '0.05em',
-          }}>
-            Amazon.fr
-          </span>
-        </div>
-
-        {/* "C'est le prix que vous payez" */}
-        <p style={{
-          fontFamily: FONT,
-          fontSize: 24,
-          color: 'rgba(203,213,225,0.40)',
-          marginTop: 40,
-          opacity: labelOp,
-          letterSpacing: '-0.01em',
-        }}>
-          C'est le prix que vous avez toujours payé.
-        </p>
+    <AbsoluteFill style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Glow x={540} y={960} color={BLUE} r={480} op={0.14 * ease(f, 5, 35)} />
+      <div style={{ opacity: containerOp, transform: `scale(${containerSc})` }}>
+        <AnimatedLogo
+          size={160}
+          arrowProg={arrowProg}
+          starsProg={starsProg}
+          textOp={textOp}
+          subtitleOp={subtitleOp}
+        />
       </div>
     </AbsoluteFill>
   )
 }
 
-// ── SCENE 3: COMPARISON TABLE (180–345f = 6–11.5s) ────────────────────────
-function SceneCompare() {
-  const f = useCurrentFrame()
-
-  const titleOp = ease(f, 0, 20)
-  const exitOp  = easeIn(f, 140, 165, 1, 0)
+// ── SCÈNE 2 : LE CONCEPT (88–200f) ───────────────────────────────────────────
+function DOMConcept({ frame: f }: { frame: number }) {
+  const exit = easeIn(f, 88, 100, 1, 0)
 
   return (
-    <AbsoluteFill style={{
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      padding: '0 56px',
-    }}>
-      <GlowOrb x={540} y={880} color={BLUE} radius={360} opacity={0.10 * ease(f, 20, 50)} />
+    <AbsoluteFill style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 60px' }}>
+      <Glow x={540} y={880} color={BLUE} r={400} op={0.10 * ease(f, 10, 40)} />
 
       {/* Eyebrow */}
-      <p style={{
-        fontFamily: MONO,
-        fontSize: 18,
-        letterSpacing: '0.18em',
-        textTransform: 'uppercase',
-        color: `rgba(96,165,250,0.70)`,
-        margin: '0 0 36px',
-        opacity: titleOp * exitOp,
-      }}>
-        Le même casque — 3 prix
-      </p>
+      <div style={{ overflow: 'hidden', marginBottom: 20 }}>
+        <p style={{
+          fontFamily: MONO, fontSize: 16, letterSpacing: '0.20em', textTransform: 'uppercase',
+          color: `rgba(96,165,250,0.68)`, margin: 0,
+          transform: `translateY(${(1 - ease(f, 0, 22)) * 100}%)`,
+          opacity: ease(f, 0, 22) * exit,
+        }}>Le même produit</p>
+      </div>
 
-      {/* Title */}
-      <h2 style={{
-        fontFamily: FONT,
-        fontSize: 62,
-        fontWeight: 800,
-        letterSpacing: '-0.04em',
-        lineHeight: 1.1,
-        color: WHITE,
-        margin: '0 0 56px',
-        textAlign: 'center',
-        opacity: titleOp * exitOp,
-      }}>
-        Comparer prend<br />10 secondes.
-      </h2>
+      {/* Titre */}
+      <div style={{ overflow: 'hidden', marginBottom: 6 }}>
+        <h1 style={{
+          fontFamily: FONT, fontSize: 76, fontWeight: 800, letterSpacing: '-0.05em',
+          lineHeight: 1.06, color: WHITE, margin: 0, textAlign: 'center',
+          transform: `translateY(${(1 - ease(f, 6, 28)) * 100}%)`,
+          opacity: ease(f, 6, 28) * exit,
+        }}>Existe sur 3 Amazons.</h1>
+      </div>
+      <div style={{ overflow: 'hidden', marginBottom: 56 }}>
+        <h1 style={{
+          fontFamily: FONT, fontSize: 76, fontWeight: 800, letterSpacing: '-0.05em',
+          lineHeight: 1.06, color: BLUE, margin: 0, textAlign: 'center',
+          filter: `drop-shadow(0 0 22px ${BLUE}77)`,
+          transform: `translateY(${(1 - ease(f, 16, 38)) * 100}%)`,
+          opacity: ease(f, 16, 38) * exit,
+        }}>À des prix différents.</h1>
+      </div>
 
-      {/* Rows */}
-      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* 3 country blocks */}
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
         {COUNTRIES.map((c, i) => {
-          const delay = i * 22
-          const rowSpr  = spr(f, delay, 18, 160)
-          const rowOp   = ease(f, delay, delay + 20)
-          const barPct  = c.price / MAX_PRICE * 100
-          const barAnim = ease(f, delay + 18, delay + 48, 0, barPct)
-          const savings = MAX_PRICE - c.price
-          const isBest  = c.best === true
+          const d      = i * 14
+          const rowSpr = spr(f, 30 + d, 18, 160)
+          const rowOp  = ease(f, 30 + d, 48 + d)
+          const isBest = 'best' in c && c.best === true
 
           return (
             <div key={c.code} style={{
-              opacity: rowOp * exitOp,
+              opacity: rowOp * exit,
               transform: `translateY(${(1 - rowSpr) * 40}px)`,
-              background: isBest
-                ? `linear-gradient(135deg, rgba(16,42,74,0.9), rgba(14,32,60,0.9))`
-                : `rgba(13,26,46,0.8)`,
-              border: isBest ? `1.5px solid ${BLUE}55` : `1px solid ${BORDER}`,
-              borderRadius: 20,
-              padding: '28px 32px',
+              background: isBest ? 'rgba(37,99,235,0.08)' : 'rgba(12,24,44,0.75)',
+              border: isBest ? `1px solid ${BLUE}44` : `1px solid ${BORDER}`,
+              borderRadius: 18, padding: '20px 24px',
+              display: 'flex', alignItems: 'center', gap: 18,
               backdropFilter: 'blur(20px)',
-              boxShadow: isBest
-                ? `0 0 48px rgba(59,130,246,0.15), 0 4px 24px rgba(0,0,0,0.30)`
-                : `0 4px 20px rgba(0,0,0,0.25)`,
             }}>
-              {/* Top row: flag + label + price */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 18 }}>
-                <FlagStripes stripes={c.flag} vertical size={30} />
-                <span style={{
-                  fontFamily: FONT,
-                  fontSize: 26,
-                  fontWeight: 600,
-                  color: isBest ? WHITE : MUTED,
-                  flex: 1,
-                  letterSpacing: '-0.02em',
-                }}>
+              <Flag stripes={c.flag} size={34} />
+              <div style={{ flex: 1 }}>
+                <p style={{ fontFamily: FONT, fontSize: 20, fontWeight: 600, color: isBest ? WHITE : MUTED, margin: 0, letterSpacing: '-0.02em' }}>
                   {c.label}
-                </span>
-                {isBest && (
-                  <div style={{
-                    background: BLUE,
-                    color: '#fff',
-                    fontFamily: MONO,
-                    fontSize: 13,
-                    fontWeight: 700,
-                    padding: '4px 12px',
-                    borderRadius: 6,
-                    letterSpacing: '0.05em',
-                  }}>
-                    MEILLEUR PRIX
-                  </div>
-                )}
-                <span style={{
-                  fontFamily: FONT,
-                  fontSize: 36,
-                  fontWeight: 800,
-                  color: isBest ? BLUE : WHITE,
-                  letterSpacing: '-0.04em',
-                  filter: isBest ? `drop-shadow(0 0 16px ${BLUE}88)` : undefined,
-                }}>
-                  {c.price} €
-                </span>
+                </p>
+                <p style={{ fontFamily: MONO, fontSize: 12, color: `rgba(96,165,250,0.50)`, margin: '3px 0 0', letterSpacing: '0.05em' }}>
+                  amazon.{c.tld}
+                </p>
               </div>
-
-              {/* Progress bar */}
-              <div style={{
-                width: '100%', height: 5,
-                background: 'rgba(255,255,255,0.07)',
-                borderRadius: 3, overflow: 'hidden',
-              }}>
-                <div style={{
-                  width: `${barAnim}%`,
-                  height: '100%',
-                  background: isBest
-                    ? `linear-gradient(90deg, ${BLUE_DIM}, ${BLUE})`
-                    : 'rgba(255,255,255,0.18)',
-                  borderRadius: 3,
-                  boxShadow: isBest ? `0 0 8px ${BLUE}88` : undefined,
-                }} />
-              </div>
-
-              {/* Savings tag for best */}
-              {isBest && savings > 0 && (
-                <div style={{
-                  marginTop: 14,
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  opacity: ease(f, delay + 40, delay + 60),
-                }}>
-                  <div style={{
-                    background: 'rgba(52,211,153,0.15)',
-                    border: '1px solid rgba(52,211,153,0.30)',
-                    color: '#34d399',
-                    fontFamily: MONO,
-                    fontSize: 16,
-                    fontWeight: 700,
-                    padding: '3px 10px',
-                    borderRadius: 6,
-                  }}>
-                    −{savings} €
-                  </div>
-                  <span style={{ fontFamily: FONT, fontSize: 16, color: 'rgba(203,213,225,0.50)' }}>
-                    par rapport au prix France
-                  </span>
+              {isBest && (
+                <div style={{ background: BLUE, color: '#fff', fontFamily: MONO, fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 6, letterSpacing: '0.08em' }}>
+                  MEILLEUR PRIX
                 </div>
               )}
             </div>
@@ -405,342 +440,301 @@ function SceneCompare() {
         })}
       </div>
 
-      {/* Big savings callout */}
-      <div style={{
-        marginTop: 40,
-        opacity: ease(f, 88, 112) * exitOp,
-        transform: `scale(${spr(f, 88, 24, 220)})`,
-        display: 'flex', alignItems: 'baseline', gap: 12,
+      {/* Tagline bas */}
+      <p style={{
+        fontFamily: FONT, fontSize: 18, color: MUTED, textAlign: 'center',
+        marginTop: 36, letterSpacing: '-0.01em', lineHeight: 1.6,
+        opacity: ease(f, 65, 82) * exit,
       }}>
-        <span style={{
-          fontFamily: FONT,
-          fontSize: 80,
-          fontWeight: 900,
-          letterSpacing: '-0.05em',
-          color: '#34d399',
-          filter: 'drop-shadow(0 0 24px rgba(52,211,153,0.40))',
-        }}>
-          −{PCT}%
-        </span>
-        <span style={{ fontFamily: FONT, fontSize: 28, color: MUTED, letterSpacing: '-0.02em' }}>
-          d'économie
-        </span>
-      </div>
+        L'écart peut atteindre <strong style={{ color: WHITE }}>26%</strong> sur le même produit.
+      </p>
     </AbsoluteFill>
   )
 }
 
-// ── SCENE 4: FLOATING UI CARD (345–480f = 11.5–16s) ───────────────────────
-function SceneCard() {
-  const f = useCurrentFrame()
+// ── SCÈNE 3 : SCAN EN ACTION (192–370f) ───────────────────────────────────────
+function DOMScan({ frame: f }: { frame: number }) {
+  const exit = easeIn(f, 150, 165, 1, 0)
 
-  const cardY   = interpolate(spr(f, 0, 20, 160), [0, 1], [300, 0])
-  const cardOp  = ease(f, 0, 25)
-  const exitOp  = easeIn(f, 110, 135, 1, 0)
-  const glowPulse = Math.sin(f * 0.12) * 0.5 + 0.5
+  // Typing animation pour "Sony WH-1000XM5"
+  const QUERY  = 'Sony WH-1000XM5'
+  const typed  = Math.floor(ease(f, 8, 36, 0, QUERY.length))
+  const queryOp = ease(f, 6, 22)
+
+  // Phases du scan
+  const scanLine1 = ease(f, 40, 55)   // "Scan Amazon.fr"
+  const scanLine2 = ease(f, 55, 70)   // "Scan Amazon.de"
+  const scanLine3 = ease(f, 70, 85)   // "Scan Amazon.es"
+  const resultsOp = ease(f, 88, 105)  // résultats apparaissent
 
   return (
-    <AbsoluteFill style={{
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      padding: '0 48px',
-    }}>
-      <GlowOrb x={540} y={940} color={BLUE} radius={420} opacity={(0.08 + glowPulse * 0.04) * cardOp * exitOp} />
+    <AbsoluteFill style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 50px' }}>
+      <Glow x={540} y={860} color={BLUE} r={380} op={0.09 * ease(f, 15, 45)} />
 
-      <div style={{
-        opacity: cardOp * exitOp,
-        transform: `translateY(${cardY}px)`,
-        width: '100%',
-      }}>
-        {/* Header eyebrow */}
+      {/* Eyebrow */}
+      <div style={{ overflow: 'hidden', marginBottom: 16 }}>
         <p style={{
-          fontFamily: MONO,
-          fontSize: 16,
-          letterSpacing: '0.16em',
-          textTransform: 'uppercase',
-          color: `rgba(96,165,250,0.65)`,
-          marginBottom: 28,
-          textAlign: 'center',
-        }}>
-          EuroCompare — Sony WH-1000XM5
-        </p>
+          fontFamily: MONO, fontSize: 15, letterSpacing: '0.22em', textTransform: 'uppercase',
+          color: `rgba(96,165,250,0.68)`, margin: 0,
+          transform: `translateY(${(1 - ease(f, 0, 18)) * 100}%)`,
+          opacity: ease(f, 0, 18) * exit,
+        }}>EuroCompare scanne pour vous</p>
+      </div>
 
-        {/* Glass card */}
-        <div style={{
-          background: 'rgba(13,26,46,0.85)',
-          border: `1px solid rgba(59,130,246,0.20)`,
-          borderRadius: 28,
-          padding: '40px 40px 36px',
-          backdropFilter: 'blur(40px)',
-          boxShadow: `
-            0 0 0 1px rgba(255,255,255,0.05),
-            0 24px 80px rgba(0,0,0,0.50),
-            0 0 80px rgba(59,130,246,0.08)
-          `,
-        }}>
-          {/* Product headline */}
-          <div style={{
-            display: 'flex', justifyContent: 'space-between',
-            alignItems: 'flex-start', marginBottom: 32,
-          }}>
-            <div>
-              <p style={{ fontFamily: MONO, fontSize: 13, color: `rgba(96,165,250,0.60)`, margin: '0 0 8px', letterSpacing: '0.08em' }}>
-                MEILLEUR PRIX TROUVÉ
-              </p>
-              <p style={{ fontFamily: FONT, fontSize: 40, fontWeight: 800, color: WHITE, margin: 0, letterSpacing: '-0.04em', lineHeight: 1 }}>
-                259 €
-              </p>
-              <p style={{ fontFamily: FONT, fontSize: 16, color: MUTED, margin: '6px 0 0', letterSpacing: '-0.01em' }}>
-                livraison incluse · vendeur officiel
-              </p>
+      {/* Search bar animée */}
+      <div style={{
+        width: '100%',
+        background: 'rgba(12,24,44,0.90)',
+        border: `1.5px solid ${BLUE}55`,
+        borderRadius: 16, padding: '18px 24px',
+        display: 'flex', alignItems: 'center', gap: 16,
+        marginBottom: 32,
+        opacity: queryOp * exit,
+        boxShadow: `0 0 32px rgba(37,99,235,0.15)`,
+        backdropFilter: 'blur(20px)',
+      }}>
+        <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={BLUE_LT} strokeWidth={2.5} strokeLinecap="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <span style={{ fontFamily: MONO, fontSize: 20, color: WHITE, letterSpacing: '-0.01em', flex: 1 }}>
+          {QUERY.slice(0, typed)}
+          <span style={{ opacity: Math.sin(f * 0.35) > 0 ? 1 : 0, color: BLUE_LT }}>|</span>
+        </span>
+      </div>
+
+      {/* Scan lines */}
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32, opacity: exit }}>
+        {[
+          { label: 'Scan Amazon.fr', flag: COUNTRIES[0].flag, prog: scanLine1 },
+          { label: 'Scan Amazon.de', flag: COUNTRIES[1].flag, prog: scanLine2 },
+          { label: 'Scan Amazon.es', flag: COUNTRIES[2].flag, prog: scanLine3 },
+        ].map((row, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, opacity: ease(f, 36 + i * 15, 52 + i * 15) }}>
+            <Flag stripes={row.flag} size={20} />
+            <span style={{ fontFamily: MONO, fontSize: 14, color: MUTED, flex: 1, letterSpacing: '0.04em' }}>{row.label}</span>
+            <div style={{ width: 140, height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{
+                width: `${row.prog * 100}%`, height: '100%',
+                background: `linear-gradient(90deg,${BLUE_DIM},${BLUE_LT})`,
+                borderRadius: 2, boxShadow: `0 0 6px ${BLUE}aa`,
+                transition: 'none',
+              }} />
             </div>
-            <div style={{
-              background: 'rgba(52,211,153,0.12)',
-              border: '1px solid rgba(52,211,153,0.25)',
-              borderRadius: 12,
-              padding: '12px 18px',
-              textAlign: 'center',
-            }}>
-              <p style={{ fontFamily: FONT, fontSize: 28, fontWeight: 800, color: '#34d399', margin: 0, letterSpacing: '-0.03em' }}>
-                −{PCT}%
-              </p>
-              <p style={{ fontFamily: MONO, fontSize: 11, color: 'rgba(52,211,153,0.60)', margin: '4px 0 0', letterSpacing: '0.06em' }}>
-                ÉCONOMIE
-              </p>
-            </div>
+            {row.prog >= 0.98 && (
+              <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2.5} strokeLinecap="round" style={{ opacity: ease(f, 36 + i * 15 + 18, 36 + i * 15 + 28) }}>
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
           </div>
+        ))}
+      </div>
 
-          {/* Divider */}
-          <div style={{ width: '100%', height: 1, background: BORDER, marginBottom: 28 }} />
-
-          {/* Country rows */}
-          {COUNTRIES.map((c, i) => (
+      {/* Résultats */}
+      <div style={{ width: '100%', opacity: resultsOp * exit }}>
+        <p style={{ fontFamily: MONO, fontSize: 13, color: `rgba(96,165,250,0.55)`, margin: '0 0 14px', letterSpacing: '0.10em', textAlign: 'center' }}>
+          RÉSULTATS TROUVÉS — 3 MARCHÉS
+        </p>
+        {COUNTRIES.map((c, i) => {
+          const isBest = 'best' in c && c.best === true
+          return (
             <div key={c.code} style={{
-              display: 'flex', alignItems: 'center', gap: 14,
-              padding: '14px 16px',
-              borderRadius: 12,
-              background: c.best ? 'rgba(59,130,246,0.08)' : 'transparent',
+              display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px',
+              borderRadius: 14,
+              background: isBest ? 'rgba(37,99,235,0.10)' : 'transparent',
+              border: isBest ? `1px solid ${BLUE}44` : `1px solid ${BORDER}`,
               marginBottom: i < COUNTRIES.length - 1 ? 8 : 0,
-              opacity: ease(f, 28 + i * 12, 44 + i * 12),
+              opacity: ease(f, 90 + i * 10, 105 + i * 10),
             }}>
-              <FlagStripes stripes={c.flag} vertical size={22} />
-              <span style={{ fontFamily: FONT, fontSize: 20, color: c.best ? WHITE : MUTED, flex: 1, letterSpacing: '-0.01em', fontWeight: c.best ? 600 : 400 }}>
-                {c.label}
-              </span>
-              <span style={{
-                fontFamily: FONT, fontSize: 22,
-                color: c.best ? BLUE : 'rgba(203,213,225,0.45)',
-                fontWeight: c.best ? 700 : 400,
-                letterSpacing: '-0.02em',
-                filter: c.best ? `drop-shadow(0 0 10px ${BLUE}66)` : undefined,
-              }}>
+              <Flag stripes={c.flag} size={24} />
+              <span style={{ fontFamily: FONT, fontSize: 18, color: isBest ? WHITE : MUTED, flex: 1, fontWeight: isBest ? 600 : 400 }}>{c.label}</span>
+              {isBest && <div style={{ background: BLUE, color: '#fff', fontFamily: MONO, fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 5, letterSpacing: '0.08em' }}>BEST</div>}
+              <span style={{ fontFamily: FONT, fontSize: 26, fontWeight: 800, color: isBest ? BLUE : WHITE, letterSpacing: '-0.04em', filter: isBest ? `drop-shadow(0 0 12px ${BLUE}88)` : undefined }}>
                 {c.price} €
               </span>
             </div>
-          ))}
-
-          {/* Divider */}
-          <div style={{ width: '100%', height: 1, background: BORDER, margin: '28px 0' }} />
-
-          {/* CTA Button */}
-          <div style={{
-            background: BLUE,
-            borderRadius: 16,
-            padding: '20px 32px',
-            textAlign: 'center',
-            opacity: ease(f, 55, 75),
-            boxShadow: `0 8px 32px rgba(37,99,235,0.40)`,
-          }}>
-            <p style={{
-              fontFamily: FONT,
-              fontSize: 22,
-              fontWeight: 700,
-              color: '#fff',
-              margin: 0,
-              letterSpacing: '-0.02em',
-            }}>
-              Acheter sur Amazon.es →
-            </p>
-          </div>
-        </div>
-
-        {/* Below card: URL hint */}
-        <p style={{
-          fontFamily: MONO,
-          fontSize: 18,
-          color: 'rgba(96,165,250,0.40)',
-          textAlign: 'center',
-          marginTop: 28,
-          opacity: ease(f, 70, 90) * exitOp,
-          letterSpacing: '0.05em',
-        }}>
-          eurocompare.fr
-        </p>
+          )
+        })}
       </div>
     </AbsoluteFill>
   )
 }
 
-// ── SCENE 5: OUTRO (480–600f = 16–20s) ────────────────────────────────────
-function SceneOutro() {
-  const f = useCurrentFrame()
+// ── SCÈNE 4 : LE RÉSULTAT (360–490f) ─────────────────────────────────────────
+function DOMResultat({ frame: f }: { frame: number }) {
+  const cardOp = ease(f, 0, 22)
+  const exit   = easeIn(f, 110, 130, 1, 0)
+  const bobY   = Math.sin(f * 0.078) * 11
+  const tiltX  = Math.sin(f * 0.058) * 2.4
+  const tiltY  = Math.cos(f * 0.068) * 1.4
+  const pulse  = Math.sin(f * 0.10) * 0.5 + 0.5
 
-  const logoScale = spr(f, 0, 22, 260)
-  const logoOp    = ease(f, 0, 20)
-  const line1Op   = ease(f, 28, 50)
-  const line1Clip = ease(f, 28, 58)
-  const line2Op   = ease(f, 52, 72)
-  const line2Clip = ease(f, 52, 82)
-  const urlOp     = ease(f, 78, 98)
-  const lineW     = ease(f, 82, 110, 0, 100)
-  const glowPulse = Math.sin(f * 0.10) * 0.5 + 0.5
+  // Économies qui comptent
+  const savingsCount = countNum(f, 18, 52, 0, SAVE)
 
   return (
-    <AbsoluteFill style={{
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      padding: '0 80px',
-    }}>
-      <GlowOrb x={540} y={920} color={BLUE} radius={380} opacity={(0.12 + glowPulse * 0.06) * logoOp} />
-      <GlowOrb x={200} y={700} color="#6366f1" radius={220} opacity={0.06 * ease(f, 30, 65)} />
+    <AbsoluteFill style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 40px' }}>
+      <Glow x={540} y={920} color={BLUE} r={460} op={(0.08 + pulse * 0.05) * cardOp * exit} />
 
-      {/* Logo mark */}
       <div style={{
-        width: 72, height: 72,
-        background: `linear-gradient(135deg, ${BLUE_DIM}, ${BLUE})`,
-        borderRadius: 18,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        marginBottom: 32,
-        opacity: logoOp,
-        transform: `scale(${logoScale})`,
-        boxShadow: `0 0 40px rgba(59,130,246,0.40), 0 0 80px rgba(59,130,246,0.15)`,
+        opacity: cardOp * exit,
+        transform: `translateY(${bobY}px) perspective(1500px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`,
+        width: '100%', willChange: 'transform',
       }}>
-        <span style={{
-          fontFamily: FONT,
-          fontSize: 36,
-          fontWeight: 900,
-          color: '#fff',
-          letterSpacing: '-0.06em',
-        }}>E</span>
+        {/* Eyebrow */}
+        <div style={{ overflow: 'hidden', marginBottom: 16, textAlign: 'center' }}>
+          <p style={{ fontFamily: MONO, fontSize: 14, letterSpacing: '0.20em', textTransform: 'uppercase', color: `rgba(96,165,250,0.65)`, margin: 0, transform: `translateY(${(1 - ease(f, 0, 18)) * 100}%)`, opacity: ease(f, 0, 18) }}>
+            Vous économisez
+          </p>
+        </div>
+
+        {/* Gros chiffre d'économies */}
+        <div style={{ textAlign: 'center', marginBottom: 40, opacity: ease(f, 8, 24) }}>
+          <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: 4 }}>
+            <span style={{ fontFamily: FONT, fontSize: 130, fontWeight: 900, color: GREEN, letterSpacing: '-0.06em', lineHeight: 1, filter: 'drop-shadow(0 0 36px rgba(74,222,128,0.50))' }}>
+              {savingsCount}€
+            </span>
+          </div>
+          <p style={{ fontFamily: FONT, fontSize: 22, color: MUTED, margin: '4px 0 0', letterSpacing: '-0.01em', opacity: ease(f, 20, 36) }}>
+            sur ce produit, livraison incluse
+          </p>
+        </div>
+
+        {/* Card produit */}
+        <div style={{ background: 'rgba(8,20,40,0.93)', border: `1px solid rgba(37,99,235,0.20)`, borderRadius: 26, padding: '30px 30px 26px', backdropFilter: 'blur(40px)', boxShadow: `0 0 0 1px rgba(255,255,255,0.04),0 32px 100px rgba(0,0,0,0.58),0 0 80px rgba(37,99,235,0.10)` }}>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 22 }}>
+            <div>
+              <p style={{ fontFamily: MONO, fontSize: 10, color: `rgba(96,165,250,0.50)`, margin: '0 0 7px', letterSpacing: '0.11em', opacity: ease(f, 14, 28) }}>MEILLEUR PRIX TROUVÉ</p>
+              <p style={{ fontFamily: FONT, fontSize: 42, fontWeight: 900, color: BLUE, margin: 0, letterSpacing: '-0.055em', lineHeight: 1, filter: `drop-shadow(0 0 16px ${BLUE}66)`, opacity: ease(f, 18, 32) }}>259 €</p>
+              <p style={{ fontFamily: FONT, fontSize: 13, color: MUTED, margin: '4px 0 0', opacity: ease(f, 26, 40) }}>livraison incluse · vendeur officiel</p>
+            </div>
+            <div style={{ background: 'rgba(74,222,128,0.09)', border: '1px solid rgba(74,222,128,0.20)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', opacity: ease(f, 26, 42) }}>
+              <p style={{ fontFamily: FONT, fontSize: 24, fontWeight: 800, color: GREEN, margin: 0, letterSpacing: '-0.04em' }}>−{PCT}%</p>
+              <p style={{ fontFamily: MONO, fontSize: 9, color: 'rgba(74,222,128,0.52)', margin: '3px 0 0', letterSpacing: '0.09em' }}>ÉCONOMIE</p>
+            </div>
+          </div>
+
+          <div style={{ width: '100%', height: 1, background: BORDER, marginBottom: 18 }} />
+
+          {COUNTRIES.map((c, i) => (
+            <div key={c.code} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: 'best' in c && c.best ? `rgba(37,99,235,0.09)` : 'transparent', marginBottom: i < COUNTRIES.length - 1 ? 4 : 0, opacity: ease(f, 22 + i * 10, 38 + i * 10) }}>
+              <Flag stripes={c.flag} size={20} />
+              <span style={{ fontFamily: FONT, fontSize: 16, flex: 1, color: 'best' in c && c.best ? WHITE : MUTED, fontWeight: 'best' in c && c.best ? 600 : 400 }}>{c.label}</span>
+              <span style={{ fontFamily: FONT, fontSize: 18, color: 'best' in c && c.best ? BLUE : 'rgba(203,213,225,0.38)', fontWeight: 'best' in c && c.best ? 700 : 400, filter: 'best' in c && c.best ? `drop-shadow(0 0 10px ${BLUE}66)` : undefined }}>{c.price} €</span>
+            </div>
+          ))}
+
+          <div style={{ width: '100%', height: 1, background: BORDER, margin: '18px 0' }} />
+
+          <div style={{ background: BLUE, borderRadius: 13, padding: '16px 24px', textAlign: 'center', opacity: ease(f, 52, 66), boxShadow: `0 8px 28px rgba(37,99,235,0.46),inset 0 1px 0 rgba(255,255,255,0.14)` }}>
+            <p style={{ fontFamily: FONT, fontSize: 18, fontWeight: 700, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>Voir sur Amazon.es →</p>
+          </div>
+        </div>
+      </div>
+    </AbsoluteFill>
+  )
+}
+
+// ── SCÈNE 5 : OUTRO (478–600f) ────────────────────────────────────────────────
+function DOMOutro({ frame: f }: { frame: number }) {
+  const arrowProg = ease(f, 4, 36)
+  const starsProg = ease(f, 28, 58)
+  const textOp    = ease(f, 48, 64)
+  const tagOp1    = ease(f, 62, 80)
+  const tagOp2    = ease(f, 74, 92)
+  const urlOp     = ease(f, 88, 104)
+  const beamW     = ease(f, 94, 120, 0, 100)
+  const pulse     = Math.sin(f * 0.09) * 0.5 + 0.5
+
+  return (
+    <AbsoluteFill style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 80px' }}>
+      <Glow x={540} y={820} color={BLUE} r={460} op={(0.10 + pulse * 0.07) * ease(f, 0, 20)} />
+
+      {/* Logo animé (version rapide) */}
+      <div style={{ marginBottom: 16 }}>
+        <AnimatedLogo size={110} arrowProg={arrowProg} starsProg={starsProg} textOp={textOp} />
       </div>
 
-      {/* Wordmark */}
-      <p style={{
-        fontFamily: FONT,
-        fontSize: 28,
-        fontWeight: 700,
-        color: 'rgba(240,244,255,0.55)',
-        letterSpacing: '0.01em',
-        margin: '0 0 56px',
-        opacity: logoOp,
-      }}>
-        EuroCompare
-      </p>
-
-      {/* Tagline line 1 */}
-      <div style={{
-        overflow: 'hidden',
-        clipPath: `inset(0 ${(1 - line1Clip) * 102}% 0 0)`,
-        opacity: line1Op,
-        marginBottom: 4,
-      }}>
-        <h2 style={{
-          fontFamily: FONT,
-          fontSize: 76,
-          fontWeight: 800,
-          letterSpacing: '-0.045em',
-          lineHeight: 1.08,
-          color: WHITE,
-          margin: 0,
-          textAlign: 'center',
-        }}>
+      {/* Tagline */}
+      <div style={{ overflow: 'hidden', marginBottom: 2, marginTop: 48 }}>
+        <h2 style={{ fontFamily: FONT, fontSize: 78, fontWeight: 800, letterSpacing: '-0.05em', lineHeight: 1.06, color: WHITE, margin: 0, textAlign: 'center', transform: `translateY(${(1 - tagOp1) * 110}%)`, opacity: Math.min(1, tagOp1 * 1.4) }}>
           Le même produit.
         </h2>
       </div>
-
-      {/* Tagline line 2 */}
-      <div style={{
-        overflow: 'hidden',
-        clipPath: `inset(0 ${(1 - line2Clip) * 102}% 0 0)`,
-        opacity: line2Op,
-        marginBottom: 60,
-      }}>
-        <h2 style={{
-          fontFamily: FONT,
-          fontSize: 76,
-          fontWeight: 800,
-          letterSpacing: '-0.045em',
-          lineHeight: 1.08,
-          color: BLUE,
-          margin: 0,
-          textAlign: 'center',
-          filter: `drop-shadow(0 0 24px ${BLUE}66)`,
-        }}>
+      <div style={{ overflow: 'hidden', marginBottom: 60 }}>
+        <h2 style={{ fontFamily: FONT, fontSize: 78, fontWeight: 800, letterSpacing: '-0.05em', lineHeight: 1.06, color: BLUE, margin: 0, textAlign: 'center', filter: `drop-shadow(0 0 24px ${BLUE}66)`, transform: `translateY(${(1 - tagOp2) * 110}%)`, opacity: Math.min(1, tagOp2 * 1.4) }}>
           Moins cher.
         </h2>
       </div>
 
-      {/* URL */}
-      <div style={{ opacity: urlOp, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-        <p style={{
-          fontFamily: MONO,
-          fontSize: 24,
-          color: 'rgba(96,165,250,0.70)',
-          letterSpacing: '0.08em',
-          margin: 0,
-        }}>
+      {/* CTA + URL */}
+      <div style={{ opacity: urlOp, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+        <div style={{ background: BLUE, borderRadius: 14, padding: '18px 40px', boxShadow: `0 8px 32px rgba(37,99,235,0.48),inset 0 1px 0 rgba(255,255,255,0.16)` }}>
+          <p style={{ fontFamily: FONT, fontSize: 20, fontWeight: 700, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>
+            Essayer gratuitement →
+          </p>
+        </div>
+        <p style={{ fontFamily: MONO, fontSize: 20, color: `rgba(96,165,250,0.68)`, letterSpacing: '0.09em', margin: 0 }}>
           eurocompare.fr
         </p>
-
-        {/* Extending line */}
-        <div style={{
-          width: `${lineW}%`,
-          height: 2,
-          background: `linear-gradient(90deg, transparent, ${BLUE}, transparent)`,
-          borderRadius: 1,
-          boxShadow: `0 0 8px ${BLUE}88`,
-        }} />
+        <div style={{ width: `${beamW}%`, height: 2, background: `linear-gradient(90deg,transparent,${BLUE}cc,${BLUE},${BLUE}cc,transparent)`, borderRadius: 1, boxShadow: `0 0 14px ${BLUE}99,0 0 28px ${BLUE}44` }} />
       </div>
     </AbsoluteFill>
   )
 }
 
-// ── ROOT COMPOSITION ────────────────────────────────────────────────────────
+// ── ROOT ──────────────────────────────────────────────────────────────────────
 export const EuroCompareAd: React.FC = () => {
   const f = useCurrentFrame()
 
-  // Global background fade
-  const bgOp = ease(f, 0, 12)
-
   return (
-    <AbsoluteFill style={{ background: BG, opacity: bgOp }}>
-      {/* Persistent particle layer */}
-      <Particles frame={f} />
+    <AbsoluteFill style={{ background: BG }}>
 
-      {/* Scene 1 — Hook */}
-      <Sequence from={0} durationInFrames={80}>
-        <SceneHook />
-      </Sequence>
+      {/* LAYER 1 — Three.js 3D */}
+      <AbsoluteFill>
+        <ThreeCanvas
+          width={1080}
+          height={1920}
+          frameloop="always"
+          camera={{ position: [0, 0, 12], fov: 55 }}
+          gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+        >
+          <World frame={f} />
+        </ThreeCanvas>
+      </AbsoluteFill>
 
-      {/* Scene 2 — Big Price */}
-      <Sequence from={72} durationInFrames={120}>
-        <SceneBigPrice />
-      </Sequence>
+      {/* LAYER 2 — Particules CSS */}
+      <CSSParticles frame={f} />
 
-      {/* Scene 3 — Compare */}
-      <Sequence from={175} durationInFrames={172}>
-        <SceneCompare />
-      </Sequence>
+      {/* LAYER 3 — Scènes DOM */}
+      <AbsoluteFill style={{ opacity: ease(f, 0, 10) }}>
 
-      {/* Scene 4 — Floating Card */}
-      <Sequence from={340} durationInFrames={148}>
-        <SceneCard />
-      </Sequence>
+        {/* S1 : Logo intro */}
+        <Sequence from={0} durationInFrames={95}>
+          <DOMLogoIntro frame={f} />
+        </Sequence>
 
-      {/* Scene 5 — Outro */}
-      <Sequence from={478} durationInFrames={122}>
-        <SceneOutro />
-      </Sequence>
+        {/* S2 : Le concept */}
+        <Sequence from={88} durationInFrames={112}>
+          <DOMConcept frame={f - 88} />
+        </Sequence>
+
+        {/* S3 : Scan en action */}
+        <Sequence from={192} durationInFrames={178}>
+          <DOMScan frame={f - 192} />
+        </Sequence>
+
+        {/* S4 : Le résultat */}
+        <Sequence from={360} durationInFrames={130}>
+          <DOMResultat frame={f - 360} />
+        </Sequence>
+
+        {/* S5 : Outro */}
+        <Sequence from={478} durationInFrames={122}>
+          <DOMOutro frame={f - 478} />
+        </Sequence>
+
+      </AbsoluteFill>
     </AbsoluteFill>
   )
 }

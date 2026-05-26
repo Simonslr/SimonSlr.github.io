@@ -17,7 +17,7 @@ function AnimatedLogo({ progress }: { progress: number }) {
           <g key={i}>
             <path
               d={a.d}
-              stroke="#0A1628"
+              stroke="#ffffff"
               strokeWidth="6"
               fill="none"
               strokeLinecap="round"
@@ -25,7 +25,7 @@ function AnimatedLogo({ progress }: { progress: number }) {
               strokeDashoffset={DASH * (1 - arrowProg)}
             />
             <g transform={`translate(${a.hx} ${a.hy}) rotate(${a.hang})`} style={{ opacity: headOpacity }}>
-              <polygon points="0,0 10,4 10,-4" fill="#0A1628" />
+              <polygon points="0,0 10,4 10,-4" fill="#ffffff" />
             </g>
           </g>
         ))}
@@ -33,16 +33,16 @@ function AnimatedLogo({ progress }: { progress: number }) {
           const localProg = Math.max(0, Math.min(1, (starsProg - (i / 12) * 0.5) * 2.5))
           return (
             <g key={i} style={{ opacity: localProg, transform: `scale(${0.6 + 0.4 * localProg})`, transformOrigin: `${s.x}px ${s.y}px` }}>
-              <StarShape cx={s.x} cy={s.y} r={STAR_SIZE} fill="#0A1628" />
+              <StarShape cx={s.x} cy={s.y} r={STAR_SIZE} fill="#ffffff" />
             </g>
           )
         })}
       </svg>
       <div style={{ textAlign: "center", opacity: textOpacity, transition: "opacity 300ms ease" }}>
-        <div style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 800, letterSpacing: "-0.03em", color: "#0A1628" }}>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 800, letterSpacing: "-0.03em", color: "#ffffff" }}>
           EuroCompare
         </div>
-        <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--text-mute)", marginTop: 6 }}>
+        <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginTop: 6 }}>
           Comparateur de prix
         </div>
       </div>
@@ -60,6 +60,7 @@ export default function IntroSplash() {
   // Hook 1 : montage — vérifie sessionStorage pour ne jouer qu'une fois par session
   useEffect(() => {
     if (sessionStorage.getItem("splash_done")) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSkip(true)
     } else {
       sessionStorage.setItem("splash_done", "1")
@@ -94,7 +95,7 @@ export default function IntroSplash() {
     <div
       style={{
         position: "fixed", inset: 0, zIndex: 9999,
-        background: "#fff",
+        background: "#0a0f1e",
         display: "grid", placeItems: "center",
         opacity: exiting ? 0 : 1,
         transition: "opacity 700ms cubic-bezier(0.4,0,0.2,1)",

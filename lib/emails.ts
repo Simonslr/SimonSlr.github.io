@@ -1,4 +1,5 @@
 import { Resend } from "resend"
+import { htmlEscape, isHttpsUrl } from "@/lib/security"
 
 const FROM = "EuroCompare <alertes@eurocompare.fr>"
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://eurocompare.fr"
@@ -9,7 +10,7 @@ function getResend() {
 }
 
 function fmt(n: number) {
-  return n.toFixed(2).replace(".", ",") + " €"
+  return n.toFixed(2).replace(".", ",") + " €"
 }
 
 // Shared header HTML
@@ -55,9 +56,9 @@ const emailFooter = (unsubUrl: string) => `
         <tr>
           <td style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:12px;color:#94a3b8;line-height:1.7;">
             <strong style="color:#64748b;">EuroCompare</strong> &mdash; Comparateur Amazon France, Allemagne, Espagne.<br/>
-            <a href="${unsubUrl}" style="color:#94a3b8;text-decoration:underline;">G&eacute;rer mes pr&eacute;f&eacute;rences</a>
+            <a href="${htmlEscape(unsubUrl)}" style="color:#94a3b8;text-decoration:underline;">G&eacute;rer mes pr&eacute;f&eacute;rences</a>
             &nbsp;&middot;&nbsp;
-            <a href="${SITE}/mentions-legales" style="color:#94a3b8;text-decoration:underline;">Mentions l&eacute;gales</a>
+            <a href="${htmlEscape(SITE)}/mentions-legales" style="color:#94a3b8;text-decoration:underline;">Mentions l&eacute;gales</a>
           </td>
         </tr>
       </table>
@@ -94,6 +95,7 @@ function buildEmail(body: string, footerUrl: string): string {
 export async function sendWelcomeEmail(email: string) {
   const resend = getResend()
   if (!resend) return
+
   const body = `
     <tr>
       <td style="padding:48px 40px 40px;">
@@ -133,7 +135,7 @@ export async function sendWelcomeEmail(email: string) {
         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
           <tr>
             <td style="border-radius:10px;background:#2563eb;">
-              <a href="${SITE}/#catalogue" style="display:inline-block;padding:14px 28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:-0.01em;">
+              <a href="${htmlEscape(SITE)}/#catalogue" style="display:inline-block;padding:14px 28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:-0.01em;">
                 Voir les &eacute;conomies du jour &rarr;
               </a>
             </td>
@@ -144,10 +146,10 @@ export async function sendWelcomeEmail(email: string) {
   `
 
   await resend.emails.send({
-    from: FROM,
-    to:   email,
+    from:    FROM,
+    to:      email,
     subject: "Bienvenue sur EuroCompare",
-    html: buildEmail(body, `${SITE}/compte`),
+    html:    buildEmail(body, `${SITE}/compte`),
   })
 }
 
@@ -162,12 +164,21 @@ export async function sendAlertEmail(opts: {
 }) {
   const resend = getResend()
   if (!resend) return
+
   const marketplace: Record<string, string> = {
     FR: "Amazon.fr",
     DE: "Amazon.de",
     ES: "Amazon.es",
   }
-  const saving = opts.targetPrice - opts.currentPrice
+
+  // Validate affiliate URL before embedding in email link
+  const safeAffiliateUrl = isHttpsUrl(opts.affiliateUrl) ? opts.affiliateUrl : `${SITE}/produit/${opts.productSlug}`
+  const safeProductUrl   = `${SITE}/produit/${opts.productSlug}`
+
+  // Escape all user-controlled strings before interpolating into HTML
+  const safeProductName = htmlEscape(opts.productName)
+  const safeMarketplace = htmlEscape(marketplace[opts.country] ?? opts.country)
+  const saving          = opts.targetPrice - opts.currentPrice
 
   const body = `
     <tr>
@@ -176,7 +187,7 @@ export async function sendAlertEmail(opts: {
           Alerte prix d&eacute;clench&eacute;e
         </p>
         <h1 style="font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;font-style:italic;color:#0f172a;margin:0 0 32px;line-height:1.2;letter-spacing:-0.01em;">
-          ${opts.productName}
+          ${safeProductName}
         </h1>
       </td>
     </tr>
@@ -193,7 +204,7 @@ export async function sendAlertEmail(opts: {
                 ${fmt(opts.currentPrice)}
               </p>
               <p style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:14px;color:#475569;margin:0;">
-                Sur <strong>${marketplace[opts.country]}</strong> &middot; livraison incluse &middot; vendeur officiel
+                Sur <strong>${safeMarketplace}</strong> &middot; livraison incluse &middot; vendeur officiel
               </p>
               ${saving > 0 ? `
               <p style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:13px;color:#64748b;margin:10px 0 0;">
@@ -213,12 +224,12 @@ export async function sendAlertEmail(opts: {
         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
           <tr>
             <td style="border-radius:10px;background:#2563eb;">
-              <a href="${opts.affiliateUrl}" style="display:inline-block;padding:14px 28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:-0.01em;">
-                Acheter sur ${marketplace[opts.country]} &rarr;
+              <a href="${htmlEscape(safeAffiliateUrl)}" style="display:inline-block;padding:14px 28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:-0.01em;">
+                Acheter sur ${safeMarketplace} &rarr;
               </a>
             </td>
             <td style="padding-left:12px;">
-              <a href="${SITE}/produit/${opts.productSlug}" style="display:inline-block;padding:14px 20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:14px;color:#475569;text-decoration:none;border:1px solid #e2e8f0;border-radius:10px;">
+              <a href="${htmlEscape(safeProductUrl)}" style="display:inline-block;padding:14px 20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:14px;color:#475569;text-decoration:none;border:1px solid #e2e8f0;border-radius:10px;">
                 Voir la comparaison
               </a>
             </td>
@@ -229,9 +240,9 @@ export async function sendAlertEmail(opts: {
   `
 
   await resend.emails.send({
-    from: FROM,
-    to:   opts.email,
-    subject: `${opts.productName} — ${fmt(opts.currentPrice)} sur ${marketplace[opts.country]}`,
-    html: buildEmail(body, `${SITE}/compte`),
+    from:    FROM,
+    to:      opts.email,
+    subject: `${opts.productName} — ${fmt(opts.currentPrice)} sur ${marketplace[opts.country] ?? opts.country}`,
+    html:    buildEmail(body, `${SITE}/compte`),
   })
 }

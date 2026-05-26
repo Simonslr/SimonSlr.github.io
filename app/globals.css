@@ -57,7 +57,7 @@
 /* ── Reset ───────────────────────────────────────────────────────────────── */
 html, body { margin: 0; padding: 0; }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+/* scroll-behavior intentionally removed — Lenis handles smooth scroll */
 ::selection { background: #DBEAFE; color: #1E40AF; }
 
 body {

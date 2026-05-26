@@ -4,6 +4,7 @@ import products from "@/data/products.json"
 import type { Product } from "@/lib/types"
 import { getRecommendation } from "@/lib/scoring"
 import { sendAlertEmail } from "@/lib/emails"
+import { timingSafeCompare } from "@/lib/security"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,8 +12,9 @@ const supabase = createClient(
 )
 
 export async function GET(request: NextRequest) {
-  const secret = request.headers.get("x-cron-secret")
-  if (secret !== process.env.CRON_SECRET) {
+  // ── Auth: timing-safe comparison prevents secret enumeration ──────────────
+  const secret = request.headers.get("x-cron-secret") ?? ""
+  if (!timingSafeCompare(secret, process.env.CRON_SECRET ?? "")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -29,10 +31,14 @@ export async function GET(request: NextRequest) {
     }))
   })
 
-  let insertError: string | null = null
+  let insertFailed = false
   if (historyRows.length > 0) {
     const { error } = await supabase.from("price_history").insert(historyRows)
-    if (error) insertError = error.message
+    if (error) {
+      insertFailed = true
+      // Log server-side only — do NOT expose error.message in the response
+      console.error("[cron] price_history insert failed:", error.code)
+    }
   }
 
   // 2. Check active alerts
@@ -43,10 +49,9 @@ export async function GET(request: NextRequest) {
 
   if (!activeAlerts || activeAlerts.length === 0) {
     return NextResponse.json({
-      ok:          !insertError,
-      recorded:    historyRows.length,
-      insertError: insertError ?? undefined,
-      checked:     0,
+      ok:       !insertFailed,
+      recorded: historyRows.length,
+      checked:  0,
     })
   }
 
@@ -62,7 +67,11 @@ export async function GET(request: NextRequest) {
     if (reco.best.total <= alert.target_price) {
       await supabase
         .from("alerts")
-        .update({ triggered: true, triggered_at: new Date().toISOString(), current_best_price: reco.best.total })
+        .update({
+          triggered:          true,
+          triggered_at:       new Date().toISOString(),
+          current_best_price: reco.best.total,
+        })
         .eq("id", alert.id)
 
       const email = alert.profiles?.email
@@ -82,10 +91,9 @@ export async function GET(request: NextRequest) {
   }
 
   return NextResponse.json({
-    ok:          !insertError,
-    recorded:    historyRows.length,
-    insertError: insertError ?? undefined,
-    checked:     activeAlerts.length,
+    ok:       !insertFailed,
+    recorded: historyRows.length,
+    checked:  activeAlerts.length,
     fired,
   })
 }

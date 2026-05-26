@@ -80,10 +80,10 @@ export default function DesignNavbar() {
       <nav id="site-nav" className={`nav${isDark ? " is-dark" : ""}${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap nav__inner">
           {/* Logo — vrai logo EuroCompare */}
-          <a className="nav__logo" href="/" style={{ gap: 8 }}>
+          <Link className="nav__logo" href="/" style={{ gap: 8 }}>
             <EuroCompareLogo size={24} color="currentColor" textColor="currentColor" showText={false} />
             <span>EuroCompare</span>
-          </a>
+          </Link>
 
           {/* Desktop links */}
           <div className="nav__links">

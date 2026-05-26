@@ -24,7 +24,7 @@ export default function DesignFeatured() {
   const save      = featured.prices[worst] - featured.prices[best]
   const savePct   = Math.round((1 - featured.prices[best] / featured.prices[worst]) * 100)
   const rows      = ["FR", "DE", "ES"].filter((c) => featured.prices[c] != null).map((c) => ({ c, price: featured.prices[c], isBest: c === best, isWorst: c === worst }))
-  const bestUrl   = (featured as any).affiliateUrls?.[best] || featured.affiliateUrl
+  const bestUrl   = featured.affiliateUrls[best] || featured.affiliateUrl
 
   return (
     <section id="vedette" className="section featured" data-featured-section>

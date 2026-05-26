@@ -15,18 +15,21 @@ export default function DesignTrust() {
 
         <div className="trust__list">
           <Pledge
+            ordinal="1"
             num="100%"
             title={<>Livraison<br /><span className="em-serif">incluse</span>, toujours.</>}
             body="Le prix que vous voyez est le prix que vous payez à l'arrivée : produit + livraison vers la France, sans frais cachés."
             icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M14 17H4V6h11v11Z" /><path d="M14 9h4l3 3v5h-7" /><circle cx="8" cy="17.5" r="1.6" /><circle cx="18" cy="17.5" r="1.6" /></svg>}
           />
           <Pledge
+            ordinal="2"
             num="3/3"
             title={<>Vendeurs officiels<br /><span className="em-serif">uniquement.</span></>}
             body="Seules les offres expédiées par Amazon ou par des marchands vérifiés apparaissent. Pas de marketplace tierce douteuse."
             icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /></svg>}
           />
           <Pledge
+            ordinal="3"
             num="0 €"
             title={<>Lien direct,<br /><span className="em-serif">zéro intermédiaire.</span></>}
             body="Un seul clic vous emmène sur Amazon. Pas de redirection, pas de page intermédiaire, pas de mauvaise surprise."
@@ -38,10 +41,10 @@ export default function DesignTrust() {
   )
 }
 
-function Pledge({ num, title, body, icon }: { num: string; title: React.ReactNode; body: string; icon: React.ReactNode }) {
+function Pledge({ ordinal, num, title, body, icon }: { ordinal: string; num: string; title: React.ReactNode; body: string; icon: React.ReactNode }) {
   return (
     <article className="pledge2" data-reveal="card">
-      <div className="pledge2__ghost" aria-hidden="true">{num}</div>
+      <div className="pledge2__ghost" aria-hidden="true">{ordinal}</div>
       <div className="pledge2__num" aria-hidden="true">{num}</div>
       <div className="pledge2__body">
         <div className="pledge2__icon">{icon}</div>

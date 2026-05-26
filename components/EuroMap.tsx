@@ -9,9 +9,12 @@ import type { GeoJSON } from "geojson"
 
 const W = 960, H = 600, SCROLL_RANGE = 1800
 
-// center=[4, 46] shifts the map south to include Spain (40°N) in the viewBox.
-// scale=1000 (vs 1200) gives enough field of view so all three countries fit.
-// With these values: Paris≈(451,228), Berlin≈(644,158), Madrid≈(346,490)
+interface LenisInstance {
+  on: (event: string, cb: (e: { scroll: number }) => void) => void
+  off: (event: string, cb: (e: { scroll: number }) => void) => void
+}
+type WindowWithLenis = Window & typeof globalThis & { __lenis?: LenisInstance }
+
 const projection = geoMercator().center([4, 46]).scale(1000).translate([W / 2, H / 2])
 const pathGen    = geoPath(projection)
 
@@ -20,7 +23,6 @@ const CTX_IDS = [826, 380, 528, 56, 756, 616, 208, 578, 752, 620, 40, 203, 300, 
 const CAPITALS: Record<string, [number, number]> = {
   FR: [2.35, 48.85], DE: [13.41, 52.52], ES: [-3.70, 40.42],
 }
-// Position on the progress rail [0-1] for each country's "hold" centre
 const RAIL_POS: Record<string, number> = { FR: 0.21, DE: 0.50, ES: 0.79 }
 
 interface Country { code: string; name: string; color: string; market: string; tagline: string; zoom: number }
@@ -30,22 +32,26 @@ const COUNTRIES: Country[] = [
   { code: "ES", name: "Espagne",   color: "#ef4444", market: "Amazon.es", tagline: "Avantages TVA européenne",  zoom: 3.0 },
 ]
 
-// Static star field — generated once, client-only
-function genStars() {
-  const out: { x: number; y: number; r: number; o: number }[] = []
-  for (let i = 0; i < 140; i++)
-    out.push({ x: Math.random() * W, y: Math.random() * H, r: 0.4 + Math.random() * 0.6, o: 0.18 + Math.random() * 0.45 })
-  for (let i = 0; i < 14; i++)
-    out.push({ x: Math.random() * W, y: Math.random() * H, r: 1.1, o: 0.85 })
-  return out
-}
+// Deterministic star positions — LCG seeded at 42, avoids hydration mismatch
+const STAR_DATA = (() => {
+  let s = 42
+  const rnd = () => { s = Math.imul(1664525, s) + 1013904223 | 0; return (s >>> 0) / 0x100000000 }
+  return Array.from({ length: 55 }, (_, i) => ({
+    x: rnd() * W,
+    y: rnd() * H,
+    r: [0.55, 0.75, 0.9, 1.1, 0.6][i % 5] as number,
+    v: i % 3, // twinkling variant 0 / 1 / 2
+  }))
+})()
 
 export default function EuroMap() {
-  const wrapperRef   = useRef<HTMLDivElement>(null)
-  const sectionRef   = useRef<HTMLElement>(null)
-  const hintRef      = useRef<HTMLDivElement>(null)
-  const svgRef       = useRef<SVGSVGElement>(null)
-  const cameraRef    = useRef<SVGGElement>(null)
+  const wrapperRef  = useRef<HTMLDivElement>(null)
+  const sectionRef  = useRef<HTMLElement>(null)
+  const hintRef     = useRef<HTMLDivElement>(null)
+  const svgRef      = useRef<SVGSVGElement>(null)
+  const cameraRef   = useRef<SVGGElement>(null)
+  const mouseRef    = useRef({ tx: 0, ty: 0, cx: 0, cy: 0 })
+  const plxRafRef   = useRef(0)
 
   const [geoData, setGeoData] = useState<{
     main: Record<string, { d: string; cx: number; cy: number }>
@@ -53,14 +59,10 @@ export default function EuroMap() {
     caps: Record<string, { x: number; y: number }>
   } | null>(null)
 
-  const [active, setActive]       = useState<Country | null>(null)
-  const [progPct, setProgPct]     = useState(0)
+  const [active, setActive]         = useState<Country | null>(null)
+  const [progPct, setProgPct]       = useState(0)
   const [marketText, setMarketText] = useState("")
-  // Stars are generated client-only (Math.random) to avoid SSR hydration mismatch
-  const [stars, setStars] = useState<ReturnType<typeof genStars>>([])
   const typeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  useEffect(() => { setStars(genStars()) }, [])
 
   // ── Load geography ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -80,7 +82,39 @@ export default function EuroMap() {
     })
   }, [])
 
-  // ── Typewriter on market name ─────────────────────────────────────────────
+  // ── Mouse parallax — star layer drifts opposite to cursor ─────────────────
+  useEffect(() => {
+    const svg = svgRef.current
+    if (!svg) return
+    let disposed = false
+
+    const onMove = (e: MouseEvent) => {
+      const r = svg.getBoundingClientRect()
+      mouseRef.current.tx = (e.clientX - r.left - r.width  * 0.5) / r.width
+      mouseRef.current.ty = (e.clientY - r.top  - r.height * 0.5) / r.height
+    }
+
+    const loop = () => {
+      if (disposed) return
+      const m = mouseRef.current
+      m.cx += (m.tx - m.cx) * 0.07
+      m.cy += (m.ty - m.cy) * 0.07
+      const stars = svg.querySelector<SVGGElement>("#em-stars")
+      if (stars) stars.setAttribute("transform",
+        `translate(${(m.cx * -20).toFixed(2)} ${(m.cy * -12).toFixed(2)})`)
+      plxRafRef.current = requestAnimationFrame(loop)
+    }
+
+    window.addEventListener("mousemove", onMove, { passive: true })
+    plxRafRef.current = requestAnimationFrame(loop)
+    return () => {
+      disposed = true
+      window.removeEventListener("mousemove", onMove)
+      cancelAnimationFrame(plxRafRef.current)
+    }
+  }, [])
+
+  // ── Typewriter on marketplace name ────────────────────────────────────────
   const startType = (text: string) => {
     if (typeTimerRef.current) clearInterval(typeTimerRef.current)
     setMarketText("")
@@ -91,7 +125,7 @@ export default function EuroMap() {
     }, 42)
   }
 
-  // ── GSAP animation + scroll driver ───────────────────────────────────────
+  // ── GSAP scroll animation ─────────────────────────────────────────────────
   useEffect(() => {
     if (!geoData) return
     const section = sectionRef.current, wrapper = wrapperRef.current
@@ -100,11 +134,24 @@ export default function EuroMap() {
     let disposed = false
 
     const q = <T extends SVGElement>(sel: string) => svg.querySelector<T>(sel)
-    const getPath  = (code: string) => q<SVGPathElement>(`#em-path-${code}`)
-    const getScan  = (code: string) => q<SVGPathElement>(`#em-scan-${code}`)
-    const getGrad  = (code: string) => svg.querySelector<SVGLinearGradientElement>(`#scan-grad-${code}`)
+    const getPath = (code: string) => q<SVGPathElement>(`#em-path-${code}`)
+    const getScan = (code: string) => q<SVGPathElement>(`#em-scan-${code}`)
+    const getGrad = (code: string) => svg.querySelector<SVGLinearGradientElement>(`#scan-grad-${code}`)
 
-    // ── Entry animation: context countries cascade in ─────────────────────
+    // ── Capital ring pulse — repeating GSAP loop, staggered per ring ───────
+    COUNTRIES.forEach((c, ci) => {
+      ;[0, 1, 2].forEach(ring => {
+        const el = q<SVGCircleElement>(`#em-cap-ring-${c.code}-${ring}`)
+        if (!el) return
+        gsap.fromTo(el,
+          { attr: { r: 2.5 }, opacity: 0.85 },
+          { attr: { r: 20 }, opacity: 0,
+            duration: 2.2, delay: ring * 0.74 + ci * 0.28,
+            ease: "power2.out", repeat: -1, repeatDelay: 0.05 })
+      })
+    })
+
+    // ── Entry animation ───────────────────────────────────────────────────
     const ctxEls = Array.from(svg.querySelectorAll<SVGPathElement>(".em-ctx"))
     gsap.set(ctxEls, { opacity: 0, scale: 0.96, transformOrigin: "center center" })
     gsap.to(ctxEls, { opacity: 1, scale: 1, duration: 0.9, stagger: 0.025, ease: "power2.out", delay: 0.15 })
@@ -117,16 +164,8 @@ export default function EuroMap() {
 
     // ── Scroll timeline ───────────────────────────────────────────────────
     const seq = gsap.timeline({ paused: true })
-    const [FR, DE, ES] = COUNTRIES
+    const [FR, DE] = COUNTRIES
 
-    // White flash on every transition
-    const flash = (at: number) => {
-      const r = q<SVGRectElement>("#em-flash"); if (!r) return
-      seq.to(r, { opacity: 0.30, duration: 0.012, ease: "power2.in" }, at)
-      seq.to(r, { opacity: 0,    duration: 0.022, ease: "power2.out" }, at + 0.012)
-    }
-
-    // Spotlight: dim inactive countries
     const spotlight = (code: string | null, at: number) => {
       COUNTRIES.forEach(c => {
         const el = getPath(c.code); if (!el) return
@@ -136,7 +175,6 @@ export default function EuroMap() {
       if (ctxLayer) seq.to(ctxLayer, { opacity: code ? 0.5 : 1, duration: 0.10 }, at)
     }
 
-    // Scan gradient sweep (L→R bar of color across the country)
     const scanIn = (code: string, at: number) => {
       const c = COUNTRIES.find(x => x.code === code)!
       const grad = getGrad(code), scanPath = getScan(code)
@@ -152,39 +190,14 @@ export default function EuroMap() {
       }, at + 0.06)
       seq.to(scanPath, { opacity: 0, duration: 0.06 }, at + 0.18)
     }
-    const scanOff = (code: string, at: number) => {
-      seq.to(getPath(code)!, {
-        attr: { fill: "rgba(255,255,255,0.05)", stroke: "rgba(255,255,255,0.20)", strokeWidth: 0.8 },
-        filter: "none", duration: 0.08,
-      }, at)
-    }
 
-    // Beam: glowing trail streaks from capital to capital
-    const beamTrace = (fromCode: string, toCode: string, at: number) => {
-      const trail = q<SVGPathElement>("#em-beam-trail"), head = q<SVGCircleElement>("#em-beam-head")
-      if (!trail || !head) return
-      const a = geoData.caps[fromCode], b = geoData.caps[toCode]; if (!a || !b) return
-      const mx = (a.x + b.x) / 2, my = Math.min(a.y, b.y) - Math.abs(b.x - a.x) * 0.08
-      const d = `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`
-      const pathLen = Math.hypot(b.x - a.x, b.y - a.y) * 1.08
-      seq.set(trail, { attr: { d, strokeDasharray: `28 ${pathLen}`, strokeDashoffset: pathLen }, opacity: 0.95 }, at)
-      seq.to(trail, { attr: { strokeDashoffset: -28 }, duration: 0.16, ease: "power2.inOut" }, at)
-      seq.to(trail, { opacity: 0, duration: 0.08, ease: "power2.out" }, at + 0.10)
-      seq.set(head, { attr: { cx: a.x, cy: a.y, r: 4 }, opacity: 1 }, at)
-      seq.to(head,  { attr: { cx: b.x, cy: b.y, r: 2 }, opacity: 0, duration: 0.18, ease: "power2.inOut" }, at)
-    }
-
-    // ── No zoom — static map, ball travels between capitals ──────────────────
-    // Camera stays at scale=1. The animation IS the colored ball that circulates
-    // Paris → Berlin → Madrid → Paris, with each country lighting up on arrival.
     gsap.set(cam, { x: 0, y: 0, scale: 1 })
 
-    // Ball element
     const ball  = q<SVGCircleElement>("#em-beam-head")
     const trail = q<SVGPathElement>("#em-beam-trail")
+    const halo  = q<SVGCircleElement>("#em-beam-halo")
     if (!ball) return
 
-    // Soft ambient glow on all 3 countries from the start (they're always visible)
     COUNTRIES.forEach(c => {
       const el = getPath(c.code); if (!el) return
       gsap.set(el, {
@@ -193,21 +206,16 @@ export default function EuroMap() {
       })
     })
 
-    // Helper: animate ball from capital A to capital B + draw trail + arrival glow
-    // The ball follows the EXACT quadratic bezier using a proxy + onUpdate —
-    // animating cx/cy directly creates straight-line motion; the proxy approach
-    // computes B(t) = (1-t)²P0 + 2(1-t)t·P1 + t²P2 at every frame.
     const travel = (fromCode: string, toCode: string, at: number, dur: number) => {
       const a = geoData.caps[fromCode], b = geoData.caps[toCode]
       const toC = COUNTRIES.find(c => c.code === toCode)!
-      if (!a || !b || !ball) return
+      if (!a || !b) return
 
       const mx = (a.x + b.x) / 2
       const my = Math.min(a.y, b.y) - Math.abs(b.x - a.x) * 0.09
-      const pathD = `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`
+      const pathD  = `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`
       const pathLen = Math.hypot(b.x - a.x, b.y - a.y) * 1.09
 
-      // Trail: strokes itself along the bezier as ball progresses
       if (trail) {
         seq.set(trail, {
           attr: { d: pathD, strokeDasharray: `${pathLen * 0.18} ${pathLen}`, strokeDashoffset: pathLen },
@@ -217,23 +225,30 @@ export default function EuroMap() {
         seq.to(trail, { opacity: 0, duration: 0.08 }, at + dur + 0.02)
       }
 
-      // Ball: proxy drives the bezier interpolation each frame
-      // Captures local copies so the closure is stable across multiple travel() calls
       const ax = a.x, ay = a.y, bx = b.x, by = b.y
       const proxy = { t: 0 }
+
       seq.set(ball, { fill: toC.color, opacity: 1, attr: { r: 5, cx: ax, cy: ay } }, at)
+      if (halo) {
+        seq.set(halo, { attr: { cx: ax, cy: ay }, fill: toC.color, opacity: 0 }, at)
+        seq.to(halo, { opacity: 0.28, duration: 0.10 }, at + 0.02)
+      }
+
       seq.fromTo(proxy, { t: 0 }, {
         t: 1, duration: dur, ease: "power2.inOut",
         onUpdate() {
           const t  = proxy.t
           const px = (1-t)*(1-t)*ax + 2*(1-t)*t*mx + t*t*bx
           const py = (1-t)*(1-t)*ay + 2*(1-t)*t*my + t*t*by
-          ball!.setAttribute("cx", px.toFixed(2))
-          ball!.setAttribute("cy", py.toFixed(2))
+          ball.setAttribute("cx", px.toFixed(2))
+          ball.setAttribute("cy", py.toFixed(2))
+          halo?.setAttribute("cx", px.toFixed(2))
+          halo?.setAttribute("cy", py.toFixed(2))
         },
       }, at)
 
-      // Arrival: country lights up — no flash, just smooth glow transition
+      if (halo) seq.to(halo, { opacity: 0, duration: 0.08 }, at + dur - 0.05)
+
       scanIn(toCode, at + dur * 0.88)
       spotlight(toCode, at + dur * 0.90)
     }
@@ -241,7 +256,6 @@ export default function EuroMap() {
     const deactivate = (code: string, at: number) => {
       const c = COUNTRIES.find(x => x.code === code)!
       const el = getPath(code); if (!el) return
-      // Return to ambient soft glow (not full off — they stay warmly lit)
       seq.to(el, {
         attr: { fill: `${c.color}12`, stroke: `${c.color}44`, strokeWidth: 0.9 },
         filter: `drop-shadow(0 0 10px ${c.color}25)`,
@@ -250,15 +264,7 @@ export default function EuroMap() {
       spotlight(null, at)
     }
 
-    // ── Timeline ───────────────────────────────────────────────────────────
-    // 0.00–0.12  intro — ball appears at Paris, FR lights up
-    // 0.12–0.38  ball travels Paris → Berlin
-    // 0.38–0.55  hold at Berlin (DE glowing)
-    // 0.55–0.78  ball travels Berlin → Madrid
-    // 0.78–0.92  hold at Madrid (ES glowing)
-    // 0.92–1.00  fade out
-
-    // Intro: France awakens first, ball fades in at Paris — no flash
+    // ── Timeline ──────────────────────────────────────────────────────────
     scanIn("FR", 0.04)
     spotlight("FR", 0.06)
     const frCap = geoData.caps.FR
@@ -266,21 +272,17 @@ export default function EuroMap() {
       fill: FR.color, opacity: 0 }, 0.04)
     seq.to(ball, { opacity: 1, duration: 0.08, ease: "power2.out" }, 0.06)
 
-    // FR → DE  (no flash on arrival — smooth scan transition does the job)
     deactivate("FR", 0.12)
     travel("FR", "DE", 0.14, 0.22)
 
-    // DE → ES
     deactivate("DE", 0.56)
     travel("DE", "ES", 0.58, 0.20)
 
-    // Fade out
     seq.to(ball, { opacity: 0, duration: 0.06 }, 0.93)
+    if (halo) seq.to(halo, { opacity: 0, duration: 0.06 }, 0.93)
     seq.duration(1)
 
-    // ── Mobile: skip scroll-driven animation entirely ────────────────────
-    // On small screens the sticky+lerp is fragile on iOS Safari.
-    // Instead auto-play the timeline once at normal speed.
+    // ── Mobile: auto-play ─────────────────────────────────────────────────
     if (window.innerWidth <= 860) {
       let loopCall: ReturnType<typeof gsap.delayedCall> | null = null
       seq.play()
@@ -316,11 +318,11 @@ export default function EuroMap() {
       setHint(p > 0.03)
       setProgPct(p * 100)
       let act: Country | null = null, hold = false
-      if      (p > 0.04 && p < 0.14) { act = FR; hold = p > 0.07 && p < 0.12 }
-      else if (p > 0.14 && p < 0.36) { act = FR } // FR→DE travel: keep FR label visible
-      else if (p > 0.36 && p < 0.57) { act = DE; hold = p > 0.40 && p < 0.55 }
-      else if (p > 0.57 && p < 0.78) { act = DE } // DE→ES travel: keep DE label visible
-      else if (p > 0.78 && p < 0.93) { act = ES; hold = p > 0.82 && p < 0.91 }
+      if      (p > 0.04 && p < 0.14) { act = FR;                   hold = p > 0.07 && p < 0.12 }
+      else if (p > 0.14 && p < 0.36) { act = FR }
+      else if (p > 0.36 && p < 0.57) { act = DE;                   hold = p > 0.40 && p < 0.55 }
+      else if (p > 0.57 && p < 0.78) { act = DE }
+      else if (p > 0.78 && p < 0.93) { act = COUNTRIES[2];         hold = p > 0.82 && p < 0.91 }
       upd(act); holdActive = hold
     }
 
@@ -336,7 +338,6 @@ export default function EuroMap() {
 
     const computeP = (s: number) => Math.max(0, Math.min(1, (s - wrapper.offsetTop) / SCROLL_RANGE))
 
-    // ── Micro Y-drift while holding (organic life, ±0.5px) ───────────────
     let driftId = 0
     const driftLoop = () => {
       if (!disposed && svgRef.current) {
@@ -350,27 +351,36 @@ export default function EuroMap() {
     let lenisHandler: ((e: { scroll: number }) => void) | null = null
     let lenisTimer: ReturnType<typeof setTimeout> | null = null
     let fallbackFn: (() => void) | null = null
-    let attempts = 0
+    let lenisReadyHandler: ((e: Event) => void) | null = null
 
-    const attach = () => {
-      if (disposed) return
-      const lenis = (window as any).__lenis
-      if (!lenis) {
-        if (++attempts < 25) { lenisTimer = setTimeout(attach, 150) }
-        else { fallbackFn = () => { lerp.target = computeP(window.scrollY) }; window.addEventListener("scroll", fallbackFn, { passive: true }) }
-        return
-      }
+    const attachLenis = (lenis: LenisInstance) => {
+      if (disposed || lenisHandler) return
       lenisHandler = ({ scroll }: { scroll: number }) => { lerp.target = computeP(scroll) }
       lenis.on("scroll", lenisHandler)
       lerp.target = computeP(window.scrollY)
     }
-    lenisTimer = setTimeout(attach, 120)
+
+    const attach = () => {
+      if (disposed) return
+      const lenis = (window as WindowWithLenis).__lenis
+      if (lenis) { attachLenis(lenis); return }
+      lenisReadyHandler = (e: Event) => { attachLenis((e as CustomEvent).detail) }
+      window.addEventListener("lenis:ready", lenisReadyHandler, { once: true })
+      lenisTimer = setTimeout(() => {
+        if (disposed || lenisHandler) return
+        if (lenisReadyHandler) { window.removeEventListener("lenis:ready", lenisReadyHandler); lenisReadyHandler = null }
+        fallbackFn = () => { lerp.target = computeP(window.scrollY) }
+        window.addEventListener("scroll", fallbackFn, { passive: true })
+      }, 3000)
+    }
+    setTimeout(attach, 80)
 
     return () => {
       disposed = true; seq.kill()
       cancelAnimationFrame(rafId); cancelAnimationFrame(driftId)
       if (lenisTimer) clearTimeout(lenisTimer)
-      const lenis = (window as any).__lenis
+      if (lenisReadyHandler) window.removeEventListener("lenis:ready", lenisReadyHandler)
+      const lenis = (window as WindowWithLenis).__lenis
       if (lenis && lenisHandler) lenis.off("scroll", lenisHandler)
       if (fallbackFn) window.removeEventListener("scroll", fallbackFn)
       if (typeTimerRef.current) clearInterval(typeTimerRef.current)
@@ -386,13 +396,34 @@ export default function EuroMap() {
         <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} className="euro-map__svg"
              aria-hidden="true" preserveAspectRatio="xMidYMid slice">
           <defs>
+            {/* Deep-space background */}
             <radialGradient id="em-space" cx="50%" cy="50%" r="70%">
               <stop offset="0%"   stopColor="#050d1a" />
               <stop offset="55%"  stopColor="#020610" />
               <stop offset="100%" stopColor="#000000" />
             </radialGradient>
 
-            {/* Per-country scan gradients — GSAP tweens x1/x2 to sweep L→R */}
+            {/* Nebula gradient blobs */}
+            <radialGradient id="em-neb-a" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stopColor="#1e3a5f" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#050d1a" stopOpacity="0"   />
+            </radialGradient>
+            <radialGradient id="em-neb-b" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stopColor="#2d1b4e" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#050d1a" stopOpacity="0"   />
+            </radialGradient>
+            <radialGradient id="em-neb-c" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stopColor="#0d2e1a" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#050d1a" stopOpacity="0"   />
+            </radialGradient>
+
+            {/* Edge vignette */}
+            <radialGradient id="em-vignette" cx="50%" cy="50%" r="75%">
+              <stop offset="40%"  stopColor="transparent"                />
+              <stop offset="100%" stopColor="#000000" stopOpacity="0.75" />
+            </radialGradient>
+
+            {/* Per-country scan gradients */}
             {COUNTRIES.map(c => (
               <linearGradient key={c.code} id={`scan-grad-${c.code}`}
                 x1="-960" y1="0" x2="-480" y2="0" gradientUnits="userSpaceOnUse">
@@ -403,13 +434,14 @@ export default function EuroMap() {
               </linearGradient>
             ))}
 
-            {/* Beam trail gradient */}
+            {/* Beam trail */}
             <linearGradient id="em-trail-grad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%"   stopColor="#ffffff" stopOpacity="0"    />
               <stop offset="75%"  stopColor="#ffffff" stopOpacity="0.85" />
               <stop offset="100%" stopColor="#ffffff" stopOpacity="1"    />
             </linearGradient>
 
+            {/* Glow filters */}
             <filter id="em-glow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="5" result="b" />
               <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
@@ -419,25 +451,35 @@ export default function EuroMap() {
               <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
 
-            <pattern id="em-grid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-              <line x1="0" y1="0" x2="0"  y2="60" stroke="rgba(255,255,255,0.028)" strokeWidth="0.4" />
-              <line x1="0" y1="0" x2="60" y2="0"  stroke="rgba(255,255,255,0.028)" strokeWidth="0.4" />
-            </pattern>
+            {/* Bloom: screen-blend for cinematic glow on ball */}
+            <filter id="em-bloom" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="7" result="blur" />
+              <feBlend in="SourceGraphic" in2="blur" mode="screen" result="blended" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="blended" />
+              </feMerge>
+            </filter>
+
+            {/* Soft radial glow for colored capital dots */}
+            <filter id="em-ball-glow" x="-300%" y="-300%" width="700%" height="700%">
+              <feGaussianBlur stdDeviation="3.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            {/* Large diffuse halo around travelling ball */}
+            <filter id="em-halo" x="-150%" y="-150%" width="400%" height="400%">
+              <feGaussianBlur stdDeviation="16" />
+            </filter>
           </defs>
 
           {/* Deep-space background */}
           <rect width={W} height={H} fill="url(#em-space)" />
-          <rect width={W} height={H} fill="url(#em-grid)" />
 
-          {/* Static star field */}
-          <g id="em-stars">
-            {stars.map((s, i) => (
-              <circle key={i} cx={s.x.toFixed(1)} cy={s.y.toFixed(1)}
-                r={s.r.toFixed(2)} fill="#fff" opacity={s.o.toFixed(2)} />
-            ))}
-          </g>
-
-          {/* Camera group — everything that pan-zooms */}
+          {/* Camera group — everything that can pan-zoom */}
           <g ref={cameraRef} id="camera">
             <g id="ctx-layer">
               {geoData?.ctx.map(c => (
@@ -448,7 +490,7 @@ export default function EuroMap() {
               ))}
             </g>
 
-            {/* Connection lines between capitals */}
+            {/* Dashed connection lines between capitals */}
             {geoData && (() => {
               const { FR: fr, DE: de, ES: es } = geoData.caps
               if (!fr || !de || !es) return null
@@ -473,7 +515,7 @@ export default function EuroMap() {
                 strokeWidth="0.8" strokeLinejoin="round" />
             ))}
 
-            {/* Scan overlay paths — filled with animated scan gradient */}
+            {/* Scan overlay — animated gradient sweep */}
             {COUNTRIES.map(c => (
               <path key={`scan-${c.code}`} id={`em-scan-${c.code}`}
                 d={geoData?.main[c.code]?.d ?? ""}
@@ -481,34 +523,50 @@ export default function EuroMap() {
                 opacity="0" pointerEvents="none" />
             ))}
 
-            {/* Capital markers */}
+            {/* Capital markers — 3 expanding rings + colored center dot */}
             {geoData && COUNTRIES.map(c => {
               const p = geoData.caps[c.code]; if (!p) return null
               return (
                 <g key={`cap-${c.code}`}>
-                  <circle cx={p.x} cy={p.y} r="6" fill="none"
-                    stroke="rgba(255,255,255,0.20)" strokeWidth="0.6">
-                    <animate attributeName="r" from="6" to="20" dur="2.6s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" from="0.55" to="0" dur="2.6s" repeatCount="indefinite" />
-                  </circle>
-                  <circle cx={p.x} cy={p.y} r="2.5" fill="white" opacity="0.95" />
+                  {([0, 1, 2] as const).map(ring => (
+                    <circle key={ring}
+                      id={`em-cap-ring-${c.code}-${ring}`}
+                      cx={p.x} cy={p.y} r="2.5"
+                      fill="none"
+                      stroke={c.color}
+                      strokeWidth="0.8"
+                      opacity="0"
+                    />
+                  ))}
+                  <circle cx={p.x} cy={p.y} r="2.8"
+                    fill={c.color} opacity="0.95"
+                    filter="url(#em-ball-glow)" />
                 </g>
               )
             })}
 
-            {/* Beam trail + head */}
+            {/* Diffuse halo following ball during travel */}
+            <circle id="em-beam-halo" cx="0" cy="0" r="34"
+              fill="white" opacity="0" filter="url(#em-halo)" />
+
+            {/* Beam trail */}
             <path id="em-beam-trail" d="" fill="none"
               stroke="url(#em-trail-grad)" strokeWidth="2.4" strokeLinecap="round"
               opacity="0" filter="url(#em-glow-soft)" />
+
+            {/* Beam head — bloom-lit */}
             <circle id="em-beam-head" cx="0" cy="0" r="3"
-              fill="#fff" opacity="0" filter="url(#em-glow-soft)" />
+              fill="#fff" opacity="0" filter="url(#em-bloom)" />
           </g>
 
-          {/* White transition flash — sits above camera */}
+          {/* Edge vignette */}
+          <rect width={W} height={H} fill="url(#em-vignette)" pointerEvents="none" />
+
+          {/* White transition flash */}
           <rect id="em-flash" width={W} height={H} fill="#ffffff" opacity="0" pointerEvents="none" />
         </svg>
 
-        {/* Vertical progress rail — right edge */}
+        {/* Vertical progress rail */}
         <div className="em-progress" style={{ '--prog-color': activeColor } as React.CSSProperties}>
           <div className="em-progress__fill"
                style={{ height: `${progPct}%`, background: activeColor === "rgba(255,255,255,0.9)"
@@ -518,7 +576,8 @@ export default function EuroMap() {
             const isActive = active?.code === c.code
             const isPassed = progPct / 100 >= RAIL_POS[c.code]
             return (
-              <div key={c.code} className={`em-progress__node ${isActive ? "is-active" : ""} ${isPassed && !isActive ? "is-passed" : ""}`}
+              <div key={c.code}
+                   className={`em-progress__node ${isActive ? "is-active" : ""} ${isPassed && !isActive ? "is-passed" : ""}`}
                    style={{ top: `${RAIL_POS[c.code] * 100}%`, '--node-color': c.color } as React.CSSProperties}>
                 <span className="em-progress__label">{c.code}</span>
               </div>

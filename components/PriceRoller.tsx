@@ -1,60 +1,72 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
+import gsap from "gsap"
 
 // Split-flap digit ticker. Non-digit characters (€, comma, space) are static.
-// Each digit rolls from a random start to its final value like an airport board.
+// Each digit rolls from 0 to its final value like an airport departure board.
 interface Props {
   value: string
   className?: string
 }
 
 export default function PriceRoller({ value, className }: Props) {
-  const rootRef  = useRef<HTMLSpanElement>(null)
-  const cellsRef = useRef<Array<HTMLSpanElement | null>>([])
-  const [played, setPlayed] = useState(false)
+  const rootRef   = useRef<HTMLSpanElement>(null)
+  const cellsRef  = useRef<Array<HTMLSpanElement | null>>([])
+  // Ref (not state) so setting it doesn't trigger a re-render / cleanup race
+  const playedRef = useRef(false)
 
   const chars = Array.from(value)
 
   useEffect(() => {
     const root = rootRef.current
-    if (!root || played) return
+    if (!root || playedRef.current) return
 
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     let killed = false
-    const tweens: Array<{ kill: () => void }> = []
 
-    const io = new IntersectionObserver(async (entries) => {
+    const io = new IntersectionObserver((entries) => {
       if (!entries.find((e) => e.isIntersecting) || killed) return
       io.disconnect()
-
-      const { gsap } = await import("gsap")
-      if (killed) return
+      playedRef.current = true  // prevent re-registration before any re-render
 
       chars.forEach((ch, i) => {
         const cell = cellsRef.current[i]
         if (!cell) return
         const isDigit = ch.charCodeAt(0) >= 48 && ch.charCodeAt(0) <= 57
         if (!isDigit) return
+
         const target = parseInt(ch, 10)
         const reel   = cell.querySelector<HTMLElement>(".pr__reel")
         if (!reel) return
+
+        // Each .pr__d is 1em; the reel is 10em tall.
+        // yPercent is % of reel height → each digit step = 10%.
+        const finalY = -target * 10
+
+        if (reducedMotion) {
+          gsap.set(reel, { yPercent: finalY })
+          return
+        }
+
         const rotations = 1 + Math.floor(Math.random() * 2)
         gsap.set(reel, { yPercent: 0 })
-        const tw = gsap.to(reel, {
-          yPercent: -(target + rotations * 10) * 100,
-          duration: 1.2 + i * 0.06,
-          delay:    i * 0.05,
-          ease: "expo.out",
-          onComplete: () => { gsap.set(reel, { yPercent: -target * 100 }) },
+        gsap.to(reel, {
+          // Overshoot by rotations full cycles (each = 100% of reel = 10 digits),
+          // then snap back to the exact digit in onComplete.
+          yPercent:  finalY - rotations * 100,
+          duration:  1.2 + i * 0.06,
+          delay:     i * 0.05,
+          ease:      "expo.out",
+          onComplete: () => { gsap.set(reel, { yPercent: finalY }) },
         })
-        tweens.push(tw)
       })
-      setPlayed(true)
-    }, { threshold: 0.6 })
+    }, { threshold: 0.2 })
 
     io.observe(root)
-    return () => { killed = true; io.disconnect(); tweens.forEach(t => t.kill()) }
-  }, [chars, played])
+    return () => { killed = true; io.disconnect() }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // intentionally empty — value is static per mount; ref captures current chars
 
   return (
     <span ref={rootRef} className={`pr ${className ?? ""}`.trim()} aria-label={value}>
@@ -62,7 +74,9 @@ export default function PriceRoller({ value, className }: Props) {
         const isDigit = ch.charCodeAt(0) >= 48 && ch.charCodeAt(0) <= 57
         if (!isDigit) return <span key={i} className="pr__static">{ch}</span>
         return (
-          <span key={i} className="pr__cell" ref={(el) => { cellsRef.current[i] = el }} aria-hidden="true">
+          <span key={i} className="pr__cell"
+            ref={(el) => { cellsRef.current[i] = el }}
+            aria-hidden="true">
             <span className="pr__reel">
               {Array.from({ length: 10 }, (_, n) => <span key={n} className="pr__d">{n}</span>)}
             </span>

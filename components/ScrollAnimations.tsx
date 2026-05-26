@@ -7,7 +7,7 @@ export default function ScrollAnimations() {
     if (typeof window === "undefined") return
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
-    let ctx: any
+    let ctx: { revert: () => void } | undefined
     const localCleanups: Array<() => void> = []
 
     async function init() {
@@ -94,11 +94,11 @@ export default function ScrollAnimations() {
         // ── 6. Comparison bar + best-row pulse ────────────────────────────
         document.querySelectorAll<HTMLElement>("[data-cmp-bar]").forEach((bar) => {
           const target = parseFloat(bar.dataset.cmpBar || "0")
-          gsap.set(bar, { "--w": "0%" } as any)
+          gsap.set(bar, { "--w": "0%" } as gsap.TweenVars)
           ScrollTrigger.create({
             trigger: bar, start: "top 88%", once: true,
             onEnter: () => {
-              gsap.to(bar, { duration: 0.8, ease: EASE.outCine, "--w": target + "%" } as any)
+              gsap.to(bar, { duration: 0.8, ease: EASE.outCine, "--w": target + "%" } as gsap.TweenVars)
             },
           })
         })
@@ -130,7 +130,7 @@ export default function ScrollAnimations() {
                 { x: 0, y: 0, opacity: 1, ease: "none" },
                 0.15 + i * 0.25)
             })
-            if (prog) tl.fromTo(prog, { "--p": "0%" } as any, { "--p": "100%", ease: "none" } as any, 0.15)
+            if (prog) tl.fromTo(prog, { "--p": "0%" } as gsap.TweenVars, { "--p": "100%", ease: "none" } as gsap.TweenVars, 0.15)
           }
         }
 
@@ -236,7 +236,7 @@ export default function ScrollAnimations() {
         // ── 11b. Per-character split reveal (data-split-chars) ───────────
         document.querySelectorAll<HTMLElement>("[data-split-chars]").forEach((line, idx) => {
           const target = line.querySelector<HTMLElement>("span") ?? line
-          if ((target as any).dataset.split === "1") return
+          if (target.dataset['split'] === "1") return
           const wrap = (el: Element) => {
             Array.from(el.childNodes).forEach((node) => {
               if (node.nodeType === Node.TEXT_NODE) {
@@ -251,7 +251,7 @@ export default function ScrollAnimations() {
             })
           }
           wrap(target);
-          (target as any).dataset.split = "1"
+          target.dataset['split'] = "1"
           const chars = target.querySelectorAll<HTMLElement>(".sc__c")
           gsap.set(chars, { yPercent: 110 })
           ScrollTrigger.create({
@@ -345,9 +345,9 @@ export default function ScrollAnimations() {
       })
 
       if ("fonts" in document) {
-        (document as any).fonts.ready.then(() => ScrollTrigger.refresh())
+        (document as Document & { fonts: { ready: Promise<unknown> } }).fonts.ready
+          .then(() => ScrollTrigger.refresh())
       }
-      setTimeout(() => ScrollTrigger.refresh(), 600)
     }
 
     const t = setTimeout(init, 80)
