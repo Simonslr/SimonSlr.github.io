@@ -2,34 +2,29 @@
 
 import React from "react"
 
-interface State { crashed: boolean }
+interface State { errorKey: number; hasError: boolean }
 
 export default class HydrationBoundary extends React.Component<
   { children: React.ReactNode },
   State
 > {
-  state: State = { crashed: false }
+  state: State = { errorKey: 0, hasError: false }
 
-  static getDerivedStateFromError() {
-    return { crashed: true }
+  static getDerivedStateFromError(): Partial<State> {
+    return { hasError: true }
   }
 
-  componentDidCatch(error: Error) {
-    // Only recover from hydration mismatches (extension injection)
-    if (
-      error.message.includes("Minified React error #418") ||
-      error.message.includes("Minified React error #423") ||
-      error.message.includes("Minified React error #425") ||
-      error.message.includes("hydrat") ||
-      error.message.includes("Text content did not match") ||
-      error.message.includes("did not match")
-    ) {
-      // Force a clean client-side re-render
-      this.setState({ crashed: false })
-    }
+  componentDidCatch() {
+    // Increment key → forces complete unmount + client-only remount
+    // The new mount has no server HTML to hydrate against = no mismatch possible
+    this.setState(s => ({ errorKey: s.errorKey + 1, hasError: false }))
   }
 
   render() {
-    return this.props.children
+    return (
+      <React.Fragment key={this.state.errorKey}>
+        {this.props.children}
+      </React.Fragment>
+    )
   }
 }
