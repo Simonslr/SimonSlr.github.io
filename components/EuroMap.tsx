@@ -9,12 +9,6 @@ import type { GeoJSON } from "geojson"
 
 const W = 960, H = 600, SCROLL_RANGE = 1800
 
-interface LenisInstance {
-  on: (event: string, cb: (e: { scroll: number }) => void) => void
-  off: (event: string, cb: (e: { scroll: number }) => void) => void
-}
-type WindowWithLenis = Window & typeof globalThis & { __lenis?: LenisInstance }
-
 const projection = geoMercator().center([4, 46]).scale(1000).translate([W / 2, H / 2])
 const pathGen    = geoPath(projection)
 
@@ -32,17 +26,6 @@ const COUNTRIES: Country[] = [
   { code: "ES", name: "Espagne",   color: "#ef4444", market: "Amazon.es", tagline: "Avantages TVA européenne",  zoom: 3.0 },
 ]
 
-// Deterministic star positions — LCG seeded at 42, avoids hydration mismatch
-const STAR_DATA = (() => {
-  let s = 42
-  const rnd = () => { s = Math.imul(1664525, s) + 1013904223 | 0; return (s >>> 0) / 0x100000000 }
-  return Array.from({ length: 55 }, (_, i) => ({
-    x: rnd() * W,
-    y: rnd() * H,
-    r: [0.55, 0.75, 0.9, 1.1, 0.6][i % 5] as number,
-    v: i % 3, // twinkling variant 0 / 1 / 2
-  }))
-})()
 
 export default function EuroMap() {
   const wrapperRef  = useRef<HTMLDivElement>(null)
@@ -50,9 +33,6 @@ export default function EuroMap() {
   const hintRef     = useRef<HTMLDivElement>(null)
   const svgRef      = useRef<SVGSVGElement>(null)
   const cameraRef   = useRef<SVGGElement>(null)
-  const mouseRef    = useRef({ tx: 0, ty: 0, cx: 0, cy: 0 })
-  const plxRafRef   = useRef(0)
-
   const [geoData, setGeoData] = useState<{
     main: Record<string, { d: string; cx: number; cy: number }>
     ctx:  { id: number; d: string }[]
@@ -82,37 +62,6 @@ export default function EuroMap() {
     })
   }, [])
 
-  // ── Mouse parallax — star layer drifts opposite to cursor ─────────────────
-  useEffect(() => {
-    const svg = svgRef.current
-    if (!svg) return
-    let disposed = false
-
-    const onMove = (e: MouseEvent) => {
-      const r = svg.getBoundingClientRect()
-      mouseRef.current.tx = (e.clientX - r.left - r.width  * 0.5) / r.width
-      mouseRef.current.ty = (e.clientY - r.top  - r.height * 0.5) / r.height
-    }
-
-    const loop = () => {
-      if (disposed) return
-      const m = mouseRef.current
-      m.cx += (m.tx - m.cx) * 0.07
-      m.cy += (m.ty - m.cy) * 0.07
-      const stars = svg.querySelector<SVGGElement>("#em-stars")
-      if (stars) stars.setAttribute("transform",
-        `translate(${(m.cx * -20).toFixed(2)} ${(m.cy * -12).toFixed(2)})`)
-      plxRafRef.current = requestAnimationFrame(loop)
-    }
-
-    window.addEventListener("mousemove", onMove, { passive: true })
-    plxRafRef.current = requestAnimationFrame(loop)
-    return () => {
-      disposed = true
-      window.removeEventListener("mousemove", onMove)
-      cancelAnimationFrame(plxRafRef.current)
-    }
-  }, [])
 
   // ── Typewriter on marketplace name ────────────────────────────────────────
   const startType = (text: string) => {
@@ -348,41 +297,15 @@ export default function EuroMap() {
     }
     driftId = requestAnimationFrame(driftLoop)
 
-    let lenisHandler: ((e: { scroll: number }) => void) | null = null
-    let lenisTimer: ReturnType<typeof setTimeout> | null = null
-    let fallbackFn: (() => void) | null = null
-    let lenisReadyHandler: ((e: Event) => void) | null = null
-
-    const attachLenis = (lenis: LenisInstance) => {
-      if (disposed || lenisHandler) return
-      lenisHandler = ({ scroll }: { scroll: number }) => { lerp.target = computeP(scroll) }
-      lenis.on("scroll", lenisHandler)
-      lerp.target = computeP(window.scrollY)
-    }
-
-    const attach = () => {
-      if (disposed) return
-      const lenis = (window as WindowWithLenis).__lenis
-      if (lenis) { attachLenis(lenis); return }
-      lenisReadyHandler = (e: Event) => { attachLenis((e as CustomEvent).detail) }
-      window.addEventListener("lenis:ready", lenisReadyHandler, { once: true })
-      lenisTimer = setTimeout(() => {
-        if (disposed || lenisHandler) return
-        if (lenisReadyHandler) { window.removeEventListener("lenis:ready", lenisReadyHandler); lenisReadyHandler = null }
-        fallbackFn = () => { lerp.target = computeP(window.scrollY) }
-        window.addEventListener("scroll", fallbackFn, { passive: true })
-      }, 3000)
-    }
-    setTimeout(attach, 80)
+    const onScroll = () => { lerp.target = computeP(window.scrollY) }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    // Set initial position after layout settles
+    requestAnimationFrame(() => { lerp.target = computeP(window.scrollY) })
 
     return () => {
       disposed = true; seq.kill()
       cancelAnimationFrame(rafId); cancelAnimationFrame(driftId)
-      if (lenisTimer) clearTimeout(lenisTimer)
-      if (lenisReadyHandler) window.removeEventListener("lenis:ready", lenisReadyHandler)
-      const lenis = (window as WindowWithLenis).__lenis
-      if (lenis && lenisHandler) lenis.off("scroll", lenisHandler)
-      if (fallbackFn) window.removeEventListener("scroll", fallbackFn)
+      window.removeEventListener("scroll", onScroll)
       if (typeTimerRef.current) clearInterval(typeTimerRef.current)
     }
   }, [geoData])
