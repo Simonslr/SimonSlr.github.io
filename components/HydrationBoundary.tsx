@@ -12,7 +12,7 @@ const CHUNK_ERROR_PATTERNS = [
   "error loading dynamically imported module",
 ]
 
-// DOM errors thrown by extension-injected nodes during React hydration/commit
+// DOM errors thrown by extension-injected nodes or React hydration recovery
 const DOM_ERROR_PATTERNS = [
   "insertBefore",
   "removeChild",
@@ -29,7 +29,6 @@ function shouldReloadForChunk(): boolean {
   try {
     const count = parseInt(sessionStorage.getItem(COUNT_KEY) ?? "0", 10)
     const ts    = parseInt(sessionStorage.getItem(TS_KEY)    ?? "0", 10)
-    // Counter resets if last reload was more than 30 seconds ago
     const fresh = isNaN(ts) || Date.now() - ts > 30_000
     const cur   = fresh ? 0 : count
     if (cur >= 3) return false
@@ -41,11 +40,46 @@ function shouldReloadForChunk(): boolean {
   }
 }
 
-// Force a fresh fetch by adding a unique query param — bypasses CDN/browser cache.
+// Navigate to a unique URL so the browser bypasses its cache entirely.
 function reloadFresh(): void {
   const url = new URL(window.location.href)
   url.searchParams.set("_r", Date.now().toString())
   window.location.replace(url.toString())
+}
+
+// Module-level singleton — lets the global handlers call setState even after mount.
+let _boundary: HydrationBoundary | null = null
+
+function onWindowError(event: ErrorEvent): void {
+  const msg = event.message ?? ""
+
+  if (CHUNK_ERROR_PATTERNS.some(p => msg.includes(p))) {
+    if (shouldReloadForChunk()) reloadFresh()
+    return
+  }
+
+  // DOM mutation errors during React hydration recovery or extension injection.
+  // preventDefault stops Chrome from surfacing them as "This page couldn't load".
+  // The actual tree remount is done by componentDidCatch (or the setState below
+  // when the boundary is already mounted).
+  if (DOM_ERROR_PATTERNS.some(p => msg.includes(p))) {
+    event.preventDefault()
+    _boundary?.setState(s => ({ errorKey: s.errorKey + 1, hasError: false }))
+  }
+}
+
+function onUnhandledRejection(event: PromiseRejectionEvent): void {
+  const msg = String(event.reason ?? "")
+  if (CHUNK_ERROR_PATTERNS.some(p => msg.includes(p))) {
+    if (shouldReloadForChunk()) reloadFresh()
+  }
+}
+
+// Attach BEFORE React starts hydrating so errors during hydration are caught.
+// Module-level code runs once when the bundle is parsed, before any render.
+if (typeof window !== "undefined") {
+  window.addEventListener("error", onWindowError)
+  window.addEventListener("unhandledrejection", onUnhandledRejection)
 }
 
 export default class HydrationBoundary extends React.Component<
@@ -56,14 +90,16 @@ export default class HydrationBoundary extends React.Component<
   private _resetTimer: ReturnType<typeof setTimeout> | null = null
 
   componentDidMount() {
-    // Remove cache-buster param added by reloadFresh() so the URL stays clean
+    _boundary = this
+
+    // Remove cache-buster param added by reloadFresh() so the URL stays clean.
     const url = new URL(window.location.href)
     if (url.searchParams.has("_r")) {
       url.searchParams.delete("_r")
       window.history.replaceState({}, "", url.toString())
     }
 
-    // After 10 s of successful operation, reset the reload counter so future
+    // After 10 s of successful operation reset the reload counter so future
     // ChunkLoadErrors (e.g. after a new deployment) can trigger reloads again.
     this._resetTimer = setTimeout(() => {
       try {
@@ -71,38 +107,11 @@ export default class HydrationBoundary extends React.Component<
         sessionStorage.removeItem(TS_KEY)
       } catch { /* ignore */ }
     }, 10_000)
-
-    window.addEventListener("error", this.handleError)
-    window.addEventListener("unhandledrejection", this.handleChunkRejection)
   }
 
   componentWillUnmount() {
+    _boundary = null
     if (this._resetTimer) clearTimeout(this._resetTimer)
-    window.removeEventListener("error", this.handleError)
-    window.removeEventListener("unhandledrejection", this.handleChunkRejection)
-  }
-
-  handleError = (event: ErrorEvent) => {
-    const msg = event.message ?? ""
-
-    if (CHUNK_ERROR_PATTERNS.some(p => msg.includes(p))) {
-      if (shouldReloadForChunk()) reloadFresh()
-      return
-    }
-
-    // Extension-caused DOM mutation during React commit — remount the tree.
-    // preventDefault stops the browser from surfacing "This page couldn't load".
-    if (DOM_ERROR_PATTERNS.some(p => msg.includes(p))) {
-      event.preventDefault()
-      this.setState(s => ({ errorKey: s.errorKey + 1, hasError: false }))
-    }
-  }
-
-  handleChunkRejection = (event: PromiseRejectionEvent) => {
-    const msg = String(event.reason ?? "")
-    if (CHUNK_ERROR_PATTERNS.some(p => msg.includes(p))) {
-      if (shouldReloadForChunk()) reloadFresh()
-    }
   }
 
   // Catches errors inside React's render/lifecycle (hydration mismatch etc.)
