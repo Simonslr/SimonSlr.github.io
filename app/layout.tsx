@@ -4,6 +4,7 @@ import "./globals.css"
 import ToastProvider from "@/components/ToastProvider"
 import GrainOverlay from "@/components/GrainOverlay"
 import NavigationProgress from "@/components/NavigationProgress"
+import HydrationBoundary from "@/components/HydrationBoundary"
 
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" })
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -22,11 +23,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} ${fraunces.variable}`} suppressHydrationWarning>
       <body style={{ fontFamily: "var(--font-inter, Inter, system-ui, sans-serif)" }} suppressHydrationWarning>
-        <ToastProvider>
-          <NavigationProgress />
-          <GrainOverlay />
-          {children}
-        </ToastProvider>
+        <HydrationBoundary>
+          <ToastProvider>
+            <NavigationProgress />
+            <GrainOverlay />
+            {children}
+          </ToastProvider>
+        </HydrationBoundary>
       </body>
     </html>
   )

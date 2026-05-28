@@ -95,12 +95,15 @@ export default function DesignCatalogue() {
               </svg>
               <input
                 ref={inputRef}
+                id="product-search"
+                name="product-search"
                 type="text"
                 placeholder="ex. Sony WH-1000XM5, iPad, Dyson…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleCompare()}
                 aria-label="Rechercher un produit"
+                autoComplete="off"
               />
             </div>
             <button className="btn btn--primary" type="button" onClick={handleCompare} data-magnetic>
