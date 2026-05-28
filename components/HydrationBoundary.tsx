@@ -21,19 +21,31 @@ const DOM_ERROR_PATTERNS = [
   "HierarchyRequestError",
 ]
 
-// Prevent ChunkLoadError reload loops: limit to 3 hard reloads per session.
-// With Cache-Control: no-cache, fresh HTML is always fetched so ChunkLoadError
-// should never recur after the first reload. This cap is a safety net only.
+const COUNT_KEY = "_hb_chunk_reloads"
+const TS_KEY    = "_hb_chunk_reloads_ts"
+
+// Max 3 reloads within a 30-second window. Resets automatically after 30 s.
 function shouldReloadForChunk(): boolean {
   try {
-    const key = "_hb_chunk_reloads"
-    const count = parseInt(sessionStorage.getItem(key) ?? "0", 10)
-    if (count >= 3) return false
-    sessionStorage.setItem(key, String(count + 1))
+    const count = parseInt(sessionStorage.getItem(COUNT_KEY) ?? "0", 10)
+    const ts    = parseInt(sessionStorage.getItem(TS_KEY)    ?? "0", 10)
+    // Counter resets if last reload was more than 30 seconds ago
+    const fresh = isNaN(ts) || Date.now() - ts > 30_000
+    const cur   = fresh ? 0 : count
+    if (cur >= 3) return false
+    sessionStorage.setItem(COUNT_KEY, String(cur + 1))
+    sessionStorage.setItem(TS_KEY,    String(Date.now()))
     return true
   } catch {
     return true
   }
+}
+
+// Force a fresh fetch by adding a unique query param — bypasses CDN/browser cache.
+function reloadFresh(): void {
+  const url = new URL(window.location.href)
+  url.searchParams.set("_r", Date.now().toString())
+  window.location.replace(url.toString())
 }
 
 export default class HydrationBoundary extends React.Component<
@@ -41,13 +53,31 @@ export default class HydrationBoundary extends React.Component<
   State
 > {
   state: State = { errorKey: 0, hasError: false }
+  private _resetTimer: ReturnType<typeof setTimeout> | null = null
 
   componentDidMount() {
+    // Remove cache-buster param added by reloadFresh() so the URL stays clean
+    const url = new URL(window.location.href)
+    if (url.searchParams.has("_r")) {
+      url.searchParams.delete("_r")
+      window.history.replaceState({}, "", url.toString())
+    }
+
+    // After 10 s of successful operation, reset the reload counter so future
+    // ChunkLoadErrors (e.g. after a new deployment) can trigger reloads again.
+    this._resetTimer = setTimeout(() => {
+      try {
+        sessionStorage.removeItem(COUNT_KEY)
+        sessionStorage.removeItem(TS_KEY)
+      } catch { /* ignore */ }
+    }, 10_000)
+
     window.addEventListener("error", this.handleError)
     window.addEventListener("unhandledrejection", this.handleChunkRejection)
   }
 
   componentWillUnmount() {
+    if (this._resetTimer) clearTimeout(this._resetTimer)
     window.removeEventListener("error", this.handleError)
     window.removeEventListener("unhandledrejection", this.handleChunkRejection)
   }
@@ -56,7 +86,7 @@ export default class HydrationBoundary extends React.Component<
     const msg = event.message ?? ""
 
     if (CHUNK_ERROR_PATTERNS.some(p => msg.includes(p))) {
-      if (shouldReloadForChunk()) window.location.reload()
+      if (shouldReloadForChunk()) reloadFresh()
       return
     }
 
@@ -71,7 +101,7 @@ export default class HydrationBoundary extends React.Component<
   handleChunkRejection = (event: PromiseRejectionEvent) => {
     const msg = String(event.reason ?? "")
     if (CHUNK_ERROR_PATTERNS.some(p => msg.includes(p))) {
-      if (shouldReloadForChunk()) window.location.reload()
+      if (shouldReloadForChunk()) reloadFresh()
     }
   }
 
