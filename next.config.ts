@@ -36,12 +36,12 @@ const nextConfig: NextConfig = {
   },
   headers: async () => [
     { source: "/(.*)", headers: SECURITY_HEADERS },
-    // Prevent browser from caching HTML pages — stale HTML after a new Vercel
-    // deployment would reference deleted JS chunks causing ChunkLoadError.
-    // _next/static chunks keep their content-hash-based immutable cache.
+    // Serve cached HTML immediately even if stale, revalidate in background.
+    // Stale chunks trigger the ChunkLoadError auto-reload in HydrationBoundary.
+    // This is more resilient than must-revalidate on poor/mobile connections.
     {
       source: "/((?!_next).*)",
-      headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
+      headers: [{ key: "Cache-Control", value: "public, max-age=0, stale-while-revalidate=604800" }],
     },
   ],
   // Désactive l'affichage de la version Next.js dans les réponses HTTP
