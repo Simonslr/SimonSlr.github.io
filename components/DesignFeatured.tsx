@@ -8,7 +8,12 @@ import { getFeaturedProduct } from "@/lib/design-data"
 const COUNTRY_AMAZON: Record<string, string> = { FR: "Amazon.fr", DE: "Amazon.de", ES: "Amazon.es" }
 
 function formatEUR(n: number): string {
-  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n).replace(/ /g, " ")
+  // Intl.NumberFormat("fr-FR") produces different Unicode spacing chars
+  // (NNBSP vs NBSP) on Node.js vs Chrome → SSR hydration mismatch.
+  // This manual implementation is identical on both runtimes.
+  const [int, dec] = n.toFixed(2).split(".")
+  const thousands = int.replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+  return `${thousands},${dec} €`
 }
 function formatEURSmart(n: number): string {
   return n % 1 === 0 ? n.toFixed(0) + " €" : n.toFixed(2) + " €"
@@ -88,7 +93,7 @@ export default function DesignFeatured() {
               </a>
             </div>
 
-            <div className="featured__updated">
+            <div className="featured__updated" suppressHydrationWarning>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 4v5h-5" />
               </svg>
