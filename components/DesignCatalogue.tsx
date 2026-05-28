@@ -206,7 +206,7 @@ function ProductCard({ p, index }: { p: DesignProduct; index: number }) {
             </svg>
           </a>
 
-          <div className="card__updated">
+          <div className="card__updated" suppressHydrationWarning>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 4v5h-5" />
             </svg>
