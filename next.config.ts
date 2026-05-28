@@ -36,12 +36,12 @@ const nextConfig: NextConfig = {
   },
   headers: async () => [
     { source: "/(.*)", headers: SECURITY_HEADERS },
-    // Serve cached HTML immediately even if stale, revalidate in background.
-    // Stale chunks trigger the ChunkLoadError auto-reload in HydrationBoundary.
-    // This is more resilient than must-revalidate on poor/mobile connections.
+    // Force browser to always revalidate HTML with Vercel CDN before use.
+    // stale-while-revalidate caused an infinite reload loop: stale HTML →
+    // missing chunks (ChunkLoadError) → reload() → same stale HTML → loop.
     {
       source: "/((?!_next).*)",
-      headers: [{ key: "Cache-Control", value: "public, max-age=0, stale-while-revalidate=604800" }],
+      headers: [{ key: "Cache-Control", value: "no-cache" }],
     },
   ],
   // Désactive l'affichage de la version Next.js dans les réponses HTTP

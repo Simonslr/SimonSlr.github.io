@@ -21,6 +21,21 @@ const DOM_ERROR_PATTERNS = [
   "HierarchyRequestError",
 ]
 
+// Prevent ChunkLoadError reload loops: limit to 3 hard reloads per session.
+// With Cache-Control: no-cache, fresh HTML is always fetched so ChunkLoadError
+// should never recur after the first reload. This cap is a safety net only.
+function shouldReloadForChunk(): boolean {
+  try {
+    const key = "_hb_chunk_reloads"
+    const count = parseInt(sessionStorage.getItem(key) ?? "0", 10)
+    if (count >= 3) return false
+    sessionStorage.setItem(key, String(count + 1))
+    return true
+  } catch {
+    return true
+  }
+}
+
 export default class HydrationBoundary extends React.Component<
   { children: React.ReactNode },
   State
@@ -41,12 +56,12 @@ export default class HydrationBoundary extends React.Component<
     const msg = event.message ?? ""
 
     if (CHUNK_ERROR_PATTERNS.some(p => msg.includes(p))) {
-      window.location.reload()
+      if (shouldReloadForChunk()) window.location.reload()
       return
     }
 
     // Extension-caused DOM mutation during React commit — remount the tree.
-    // preventDefault stops Chrome from surfacing "This page couldn't load".
+    // preventDefault stops the browser from surfacing "This page couldn't load".
     if (DOM_ERROR_PATTERNS.some(p => msg.includes(p))) {
       event.preventDefault()
       this.setState(s => ({ errorKey: s.errorKey + 1, hasError: false }))
@@ -56,7 +71,7 @@ export default class HydrationBoundary extends React.Component<
   handleChunkRejection = (event: PromiseRejectionEvent) => {
     const msg = String(event.reason ?? "")
     if (CHUNK_ERROR_PATTERNS.some(p => msg.includes(p))) {
-      window.location.reload()
+      if (shouldReloadForChunk()) window.location.reload()
     }
   }
 
