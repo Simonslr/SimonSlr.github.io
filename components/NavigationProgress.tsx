@@ -16,7 +16,8 @@ export default function NavigationProgress() {
     if (!bar) return
 
     // Route changed — complete and hide
-    bar.style.transition = "width 200ms ease, opacity 300ms ease 200ms"
+    document.documentElement.style.cursor = ""
+    bar.style.transition = "width 150ms ease, opacity 300ms ease 150ms"
     bar.style.width   = "100%"
     bar.style.opacity = "1"
     timerRef.current = setTimeout(() => {
@@ -24,7 +25,7 @@ export default function NavigationProgress() {
       barRef.current.style.opacity = "0"
       barRef.current.style.width   = "0%"
       barRef.current.style.transition = "none"
-    }, 500)
+    }, 450)
 
     return () => { if (timerRef.current) clearTimeout(timerRef.current) }
   }, [pathname])
@@ -42,10 +43,11 @@ export default function NavigationProgress() {
       if (href === pathname) return
 
       bar.style.transition = "none"
-      bar.style.width      = "0%"
+      bar.style.width      = "8%"
       bar.style.opacity    = "1"
+      document.documentElement.style.cursor = "progress"
       requestAnimationFrame(() => {
-        bar.style.transition = "width 2s cubic-bezier(0.1,0.05,0,1)"
+        bar.style.transition = "width 2.5s cubic-bezier(0.05,0.05,0,1)"
         bar.style.width      = "85%"
       })
     }
@@ -61,7 +63,7 @@ export default function NavigationProgress() {
         position:        "fixed",
         top:             0,
         left:            0,
-        height:          2,
+        height:          3,
         width:           "0%",
         opacity:         0,
         background:      "linear-gradient(90deg, #3b82f6, #60a5fa)",
