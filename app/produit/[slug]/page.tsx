@@ -7,13 +7,7 @@ import type { Product, Recommendation } from "@/lib/types"
 import { getRecommendation } from "@/lib/scoring"
 import Flag from "@/components/Flag"
 import DesignNavbar from "@/components/DesignNavbar"
-import ShareButton from "@/components/ShareButton"
-import FavoriteButton from "@/components/FavoriteButton"
-import AlertSection from "@/components/AlertSection"
-import { createClient } from "@/lib/supabase/server"
-import { getFavorites } from "@/app/actions/favorites"
-import { getAlerts } from "@/app/actions/alerts"
-import PriceChart from "@/components/PriceChart"
+import ProductUserSection from "@/components/ProductUserSection"
 import { safeJsonLd } from "@/lib/security"
 
 interface Props { params: Promise<{ slug: string }> }
@@ -25,7 +19,7 @@ const COUNTRY_AMZ: Record<string, string> = {
 }
 
 function fmt(n: number) {
-  return n % 1 === 0 ? n.toFixed(0) + " €" : n.toFixed(2).replace(".", ",") + " €"
+  return n % 1 === 0 ? n.toFixed(0) + " €" : n.toFixed(2).replace(".", ",") + " €"
 }
 
 export async function generateStaticParams() {
@@ -49,7 +43,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-/* ── Ligne de comparaison ─────────────────────────────────────────────────── */
 function CmpRow({ item, rank, worstTotal }: {
   item: Recommendation["ranked"][number]
   rank: "best" | "mid" | "worst"
@@ -62,7 +55,6 @@ function CmpRow({ item, rank, worstTotal }: {
   return (
     <div className={`cmp__row${isBest ? " is-best" : ""}${isWorst ? " is-worst" : ""}`}>
       <Flag country={item.country} size={18} />
-
       <div className="row-name">
         <span className="row-marketplace">
           {COUNTRY_AMZ[item.country]}
@@ -79,13 +71,10 @@ function CmpRow({ item, rank, worstTotal }: {
             : " · livraison gratuite"}
         </span>
       </div>
-
       <div className={`row-bar bar-${rank}`}>
         <span style={{ width: `${barPct}%` }} />
       </div>
-
       <span className="row-price">{fmt(item.total)}</span>
-
       <span className="row-cta">
         <a
           href={item.offer.affiliate_url}
@@ -104,7 +93,6 @@ function CmpRow({ item, rank, worstTotal }: {
   )
 }
 
-/* ── Produits similaires ─────────────────────────────────────────────────── */
 function RelatedProducts({ current, all }: { current: Product; all: Product[] }) {
   const related = all
     .filter(p => p.id !== current.id && p.category === current.category)
@@ -149,7 +137,6 @@ function RelatedProducts({ current, all }: { current: Product; all: Product[] })
   )
 }
 
-/* ── Page ─────────────────────────────────────────────────────────────────── */
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params
   const product = (products as Product[]).find(p => p.slug === slug)
@@ -158,35 +145,16 @@ export default async function ProductPage({ params }: Props) {
   const reco        = getRecommendation(product)
   const allProducts = products as Product[]
   const worst       = reco?.ranked[reco.ranked.length - 1]
-  const pageUrl     = `https://eurocompare.fr/produit/${product.slug}`
+  const pageUrl     = `https://eurocomp.vercel.app/produit/${product.slug}`
   const brand       = product.name.split(" ")[0]
   const nbMarkets   = reco?.ranked.length ?? 0
-
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  const isLoggedIn = !!user
-
-  // Historique des prix depuis Supabase
-  const { data: priceHistory } = await supabase
-    .from("price_history")
-    .select("recorded_at, price, country")
-    .eq("product_slug", slug)
-    .order("recorded_at", { ascending: true })
-    .limit(90)
-
-  const [favorites, alerts] = isLoggedIn
-    ? await Promise.all([getFavorites(), getAlerts()])
-    : [[], []]
-
-  const isFavorited  = favorites.some((f: { product_slug: string }) => f.product_slug === slug)
-  const existingAlert = alerts.find((a: { product_slug: string }) => a.product_slug === slug) ?? null
 
   const jsonLd = reco ? {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": product.name,
     "description": product.description,
-    "image": product.image ? `https://eurocompare.fr${product.image}` : undefined,
+    "image": product.image ? `https://eurocomp.vercel.app${product.image}` : undefined,
     "brand": { "@type": "Brand", "name": brand },
     "offers": reco.ranked.map((r) => ({
       "@type": "Offer",
@@ -210,7 +178,6 @@ export default async function ProductPage({ params }: Props) {
 
       <main style={{ paddingTop: 64, background: "var(--bg)" }}>
 
-        {/* Breadcrumb */}
         <div className="wrap">
           <nav className="crumbs" aria-label="Fil d'Ariane">
             <Link href="/">← Accueil</Link>
@@ -221,12 +188,10 @@ export default async function ProductPage({ params }: Props) {
           </nav>
         </div>
 
-        {/* Hero produit */}
         <section className="pdp-hero">
           <div className="wrap">
             <div className="pdp-hero__grid">
 
-              {/* Image */}
               <figure className="pdp-hero__media">
                 {product.image
                   ? <Image src={product.image} alt={product.name} fill priority style={{ objectFit: "contain", padding: 32 }} />
@@ -234,7 +199,6 @@ export default async function ProductPage({ params }: Props) {
                 }
               </figure>
 
-              {/* Infos */}
               <div className="pdp-hero__info">
                 <div className="pdp-hero__category">
                   <span className="brand">{brand}</span> · {product.category}
@@ -246,8 +210,6 @@ export default async function ProductPage({ params }: Props) {
 
                 {reco && (
                   <div className="price-block">
-
-                    {/* Économies */}
                     {reco.savings > 0 && (
                       <div className="save-row">
                         <span className="save-pill">−{fmt(reco.savings)}</span>
@@ -255,7 +217,6 @@ export default async function ProductPage({ params }: Props) {
                       </div>
                     )}
 
-                    {/* Prix */}
                     <div className="price-line">
                       <span className="price-now">{fmt(reco.best.total)}</span>
                       {worst && worst.total > reco.best.total && (
@@ -263,7 +224,6 @@ export default async function ProductPage({ params }: Props) {
                       )}
                     </div>
 
-                    {/* Marketplace */}
                     <div className="price-caption">
                       <Flag country={reco.best.country} size={16} />
                       <span>Sur <b>{COUNTRY_AMZ[reco.best.country]}</b></span>
@@ -273,7 +233,7 @@ export default async function ProductPage({ params }: Props) {
                       <span>vendeur officiel</span>
                     </div>
 
-                    {/* CTA */}
+                    {/* Main CTA — always visible, no auth needed */}
                     <div className="pdp-cta-row">
                       <a
                         href={reco.best.offer.affiliate_url}
@@ -287,25 +247,17 @@ export default async function ProductPage({ params }: Props) {
                           <path d="M7 17 17 7"/><path d="M7 7h10v10"/>
                         </svg>
                       </a>
-                      <FavoriteButton
-                        slug={slug}
-                        name={product.name}
-                        initialSaved={isFavorited}
-                        isLoggedIn={isLoggedIn}
-                      />
-                      <ShareButton title={`${product.name} — EuroCompare`} url={pageUrl} />
                     </div>
 
-                    <AlertSection
+                    {/* Auth-dependent: favorite, share, alerts, price chart — loads client-side */}
+                    <ProductUserSection
                       slug={slug}
                       name={product.name}
                       bestPrice={reco.best.total}
                       bestCountry={reco.best.country}
-                      isLoggedIn={isLoggedIn}
-                      existingAlert={existingAlert}
+                      pageUrl={pageUrl}
                     />
 
-                    {/* Trust */}
                     <div className="pdp-trust-line">
                       <span className="fresh">Prix mis à jour {reco.best.offer.updated_at}</span>
                       <span>Livraison incluse</span>
@@ -318,7 +270,6 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </section>
 
-        {/* Comparaison */}
         {reco && (
           <section className="cmp">
             <div className="wrap">
@@ -328,7 +279,6 @@ export default async function ProductPage({ params }: Props) {
                   {nbMarkets} marketplace{nbMarkets > 1 ? "s" : ""} · prix livraison incluse
                 </div>
               </div>
-
               <div className="cmp__rows">
                 {reco.ranked.map((item, i) => {
                   const rank = i === 0
@@ -346,17 +296,6 @@ export default async function ProductPage({ params }: Props) {
                   )
                 })}
               </div>
-
-              {/* Historique des prix */}
-              {priceHistory && priceHistory.length >= 2 && (
-                <div style={{ marginTop: 36, paddingTop: 28, borderTop: "1px solid var(--border)" }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-mute)", marginBottom: 16 }}>
-                    Historique des prix
-                  </p>
-                  <PriceChart data={priceHistory} slug={slug} />
-                </div>
-              )}
-
               <p className="cmp__note">
                 Frais de livraison estimés vers la France métropolitaine. Vérifiez le prix final sur Amazon avant d&apos;acheter.
                 EuroCompare participe au Programme Partenaires Amazon EU et perçoit une commission sur les ventes qualifiées.
@@ -365,10 +304,8 @@ export default async function ProductPage({ params }: Props) {
           </section>
         )}
 
-        {/* Produits similaires */}
         <RelatedProducts current={product} all={allProducts} />
 
-        {/* Retour catalogue */}
         <div className="pdp-bottom-link">
           <div className="wrap">
             <Link href="/#catalogue">
