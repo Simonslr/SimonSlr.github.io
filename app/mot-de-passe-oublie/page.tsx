@@ -1,20 +1,20 @@
 import Link from "next/link"
 import type { Metadata } from "next"
 import DesignNavbar from "@/components/DesignNavbar"
-import { signUp } from "@/app/actions/auth"
+import { requestPasswordReset } from "@/app/actions/auth"
 
 export const metadata: Metadata = {
-  title: "Créer un compte | EuroCompare",
+  title: "Mot de passe oublié | EuroCompare",
 }
 
 interface Props {
-  searchParams: Promise<{ error?: string; success?: string }>
+  searchParams: Promise<{ error?: string; sent?: string }>
 }
 
-export default async function InscriptionPage({ searchParams }: Props) {
-  const { error, success } = await searchParams
+export default async function MotDePasseOubliePage({ searchParams }: Props) {
+  const { error, sent } = await searchParams
 
-  if (success) {
+  if (sent) {
     return (
       <>
         <DesignNavbar />
@@ -35,18 +35,17 @@ export default async function InscriptionPage({ searchParams }: Props) {
                 <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
               </svg>
             </div>
-            <h1 style={{ ...titleStyle, fontSize: "clamp(36px, 6vw, 52px)", marginBottom: 12, textAlign: "center" }}>
-              Vérifiez votre email<span style={{ color: "var(--blue)" }}>.</span>
+            <h1 style={{ ...titleStyle, fontSize: "clamp(32px, 5vw, 48px)", marginBottom: 12, textAlign: "center" }}>
+              Email envoyé<span style={{ color: "var(--blue)" }}>.</span>
             </h1>
-            <p style={{ fontSize: 15, color: "rgba(245,245,247,0.55)", lineHeight: 1.65, marginBottom: 32, maxWidth: 340, margin: "0 auto 32px" }}>
-              Un lien de confirmation vous a été envoyé. Cliquez dessus pour activer votre compte.
+            <p style={{ fontSize: 15, color: "rgba(245,245,247,0.55)", lineHeight: 1.65, maxWidth: 340, margin: "0 auto 32px" }}>
+              Si cette adresse est associée à un compte, vous recevrez un lien pour réinitialiser votre mot de passe.
             </p>
             <Link
               href="/connexion"
-              className="btn btn--primary"
-              style={{ justifyContent: "center", borderRadius: 10, padding: "14px 28px", fontSize: 15 }}
+              style={{ fontSize: 14, color: "rgba(245,245,247,0.45)", textDecoration: "none" }}
             >
-              Retour à la connexion
+              ← Retour à la connexion
             </Link>
           </div>
         </main>
@@ -70,22 +69,30 @@ export default async function InscriptionPage({ searchParams }: Props) {
       >
         <div style={{ width: "100%", maxWidth: 420 }}>
 
-          <div style={eyebrowStyle}>EuroCompare</div>
+          <Link
+            href="/connexion"
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "rgba(245,245,247,0.4)", textDecoration: "none", marginBottom: 32 }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+            Connexion
+          </Link>
 
           <h1 style={titleStyle}>
-            Créer un compte<span style={{ color: "var(--blue)" }}>.</span>
+            Réinitialiser<span style={{ color: "var(--blue)" }}>.</span>
           </h1>
           <p style={subStyle}>
-            Gratuit. Alertes prix, favoris, sans carte bancaire.
+            Entrez votre email — vous recevrez un lien pour choisir un nouveau mot de passe.
           </p>
 
           {error && (
             <div style={alertErrorStyle}>
-              {decodeURIComponent(error)}
+              Adresse email invalide.
             </div>
           )}
 
-          <form action={signUp} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <form action={requestPasswordReset} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
               <label style={labelStyle}>Email</label>
               <input
@@ -94,50 +101,19 @@ export default async function InscriptionPage({ searchParams }: Props) {
                 style={inputStyle}
               />
             </div>
-            <div>
-              <label style={labelStyle}>Mot de passe</label>
-              <input
-                type="password" name="password" required
-                placeholder="Minimum 6 caractères"
-                minLength={6}
-                style={inputStyle}
-              />
-            </div>
             <button
               type="submit"
               className="btn btn--primary"
               style={{ marginTop: 4, justifyContent: "center", borderRadius: 10, padding: "14px 20px", fontSize: 15, fontWeight: 600 }}
             >
-              Créer mon compte
+              Envoyer le lien de réinitialisation
             </button>
           </form>
 
-          <p style={{ marginTop: 16, fontSize: 12, color: "rgba(245,245,247,0.3)", lineHeight: 1.6 }}>
-            En créant un compte vous acceptez nos{" "}
-            <Link href="/mentions-legales" style={{ color: "rgba(245,245,247,0.5)", textDecoration: "underline" }}>
-              mentions légales
-            </Link>.
-          </p>
-
-          <p style={{ marginTop: 32, fontSize: 14, color: "rgba(245,245,247,0.45)", textAlign: "center" }}>
-            Déjà un compte ?{" "}
-            <Link href="/connexion" style={{ color: "var(--blue)", fontWeight: 500 }}>
-              Se connecter
-            </Link>
-          </p>
         </div>
       </main>
     </>
   )
-}
-
-const eyebrowStyle: React.CSSProperties = {
-  fontFamily: "var(--font-jetbrains, var(--font-mono))",
-  fontSize: 11,
-  letterSpacing: "0.14em",
-  textTransform: "uppercase",
-  color: "rgba(245,245,247,0.4)",
-  marginBottom: 28,
 }
 
 const titleStyle: React.CSSProperties = {
@@ -155,7 +131,7 @@ const subStyle: React.CSSProperties = {
   fontSize: 15,
   color: "rgba(245,245,247,0.55)",
   marginBottom: 36,
-  lineHeight: 1.5,
+  lineHeight: 1.55,
 }
 
 const labelStyle: React.CSSProperties = {
@@ -187,5 +163,4 @@ const alertErrorStyle: React.CSSProperties = {
   marginBottom: 20,
   fontSize: 14,
   color: "#f87171",
-  lineHeight: 1.5,
 }

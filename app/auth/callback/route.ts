@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const code       = searchParams.get("code")
   const tokenHash  = searchParams.get("token_hash")
-  const type       = searchParams.get("type") as "signup" | "magiclink" | "email" | null
+  const type       = searchParams.get("type") as "signup" | "magiclink" | "email" | "recovery" | null
   const rawNext    = searchParams.get("next") ?? "/compte"
   // Prevent open redirect: must be same-site relative path
   const next       = rawNext.startsWith("/") && !rawNext.startsWith("//") && !/[\r\n]/.test(rawNext)
@@ -32,13 +32,19 @@ export async function GET(request: NextRequest) {
   // PKCE flow (OAuth + newer Supabase email confirmation)
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) return NextResponse.redirect(`${siteUrl}${next}`)
+    if (!error) {
+      const dest = type === "recovery" ? "/nouveau-mot-de-passe" : next
+      return NextResponse.redirect(`${siteUrl}${dest}`)
+    }
   }
 
   // OTP flow (magic link + older Supabase email confirmation)
   if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
-    if (!error) return NextResponse.redirect(`${siteUrl}${next}`)
+    if (!error) {
+      const dest = type === "recovery" ? "/nouveau-mot-de-passe" : next
+      return NextResponse.redirect(`${siteUrl}${dest}`)
+    }
   }
 
   return NextResponse.redirect(`${siteUrl}/connexion?error=auth`)

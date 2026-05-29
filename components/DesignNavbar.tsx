@@ -9,7 +9,8 @@ import { createClient } from "@/lib/supabase/browser"
 export default function DesignNavbar() {
   const pathname = usePathname()
   const [scrolled,   setScrolled]   = useState(false)
-  const [isDark,     setIsDark]     = useState(pathname === "/")
+  const AUTH_DARK = ["/connexion", "/inscription", "/mot-de-passe-oublie", "/nouveau-mot-de-passe"]
+  const [isDark,     setIsDark]     = useState(pathname === "/" || AUTH_DARK.some(p => pathname.startsWith(p)))
   const [menuOpen,   setMenuOpen]   = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 

@@ -85,3 +85,32 @@ export async function sendMagicLink(formData: FormData) {
   if (error) redirect("/connexion?error=magic")
   redirect("/connexion?magic=1")
 }
+
+export async function requestPasswordReset(formData: FormData) {
+  const email = parseEmail(formData)
+  if (!email) redirect("/mot-de-passe-oublie?error=invalid")
+
+  const supabase = await createClient()
+
+  // Always show "sent" to avoid leaking whether an email exists
+  await supabase.auth.resetPasswordForEmail(email!, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+  }).catch(() => null)
+
+  redirect("/mot-de-passe-oublie?sent=1")
+}
+
+export async function updatePassword(formData: FormData) {
+  const password = parsePassword(formData)
+  const confirm  = (formData.get("confirm") as string | null) ?? ""
+
+  if (!password) redirect("/nouveau-mot-de-passe?error=invalid")
+  if (password !== confirm) redirect("/nouveau-mot-de-passe?error=mismatch")
+
+  const supabase = await createClient()
+  const { error } = await supabase.auth.updateUser({ password: password! })
+
+  if (error) redirect("/nouveau-mot-de-passe?error=update")
+  revalidatePath("/", "layout")
+  redirect("/compte")
+}
