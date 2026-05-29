@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import { Space_Grotesk, Inter, JetBrains_Mono, Fraunces } from "next/font/google"
-import Script from "next/script"
 import "./globals.css"
 import ToastProvider from "@/components/ToastProvider"
 import GrainOverlay from "@/components/GrainOverlay"
@@ -20,9 +19,10 @@ export const metadata: Metadata = {
   verification: { google: "WagiuAOaaIMxAcLfLEoeJ6xVw9RZ_5Xj3QjR4gqIrF8" },
 }
 
-// Intercepts DOM mutation errors thrown during React 19 hydration recovery BEFORE
-// Chrome's renderer sees them. Must run before hydrateRoot — beforeInteractive
-// guarantees this. Returns the node argument so React doesn't get undefined back.
+// Inline script injected as the very first child of <body>.
+// No defer/async → runs synchronously during HTML parsing, before any
+// deferred JS bundles (Next.js/React). Patches Node prototype DOM methods
+// so React 19 hydration recovery never throws an uncaught NotFoundError.
 const DOM_PATCH = [
   "try{",
   "var _ib=Node.prototype.insertBefore;",
@@ -38,7 +38,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" translate="no" className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} ${fraunces.variable}`} suppressHydrationWarning>
       <body style={{ fontFamily: "var(--font-inter, Inter, system-ui, sans-serif)" }} suppressHydrationWarning>
-        <Script id="dom-node-patch" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: DOM_PATCH }} />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script dangerouslySetInnerHTML={{ __html: DOM_PATCH }} />
         <HydrationBoundary>
           <ToastProvider>
             <NavigationProgress />
