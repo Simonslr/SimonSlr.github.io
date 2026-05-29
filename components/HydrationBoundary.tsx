@@ -113,6 +113,22 @@ function onUnhandledRejection(event: PromiseRejectionEvent): void {
 if (typeof window !== "undefined") {
   window.addEventListener("error", onWindowError)
   window.addEventListener("unhandledrejection", onUnhandledRejection)
+
+  // React 19 uses window.reportError() for commit-phase errors, which fires
+  // window.onerror (not addEventListener). Return true to mark as handled.
+  const _prevOnerror = window.onerror
+  window.onerror = function(msg, _src, _line, _col, _err) {
+    const m = String(msg ?? "")
+    if (DOM_ERROR_PATTERNS.some(p => m.includes(p))) {
+      _boundary?.setState(s => ({ errorKey: s.errorKey + 1, hasError: false }))
+      return true
+    }
+    if (CHUNK_ERROR_PATTERNS.some(p => m.includes(p))) {
+      if (shouldReloadForChunk()) reloadFresh()
+      return true
+    }
+    return _prevOnerror ? _prevOnerror.call(window, msg, _src, _line, _col, _err) as boolean : false
+  }
 }
 
 export default class HydrationBoundary extends React.Component<

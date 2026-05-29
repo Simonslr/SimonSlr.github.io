@@ -5,7 +5,7 @@ import "./globals.css"
 
 const SW_REGISTER = `
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js', { scope: '/' })
+  navigator.serviceWorker.register('/api/sw', { scope: '/' })
     .catch(function() {});
 }
 `
@@ -25,6 +25,7 @@ export const metadata: Metadata = {
   description: "Comparez les prix Amazon entre la France, l'Allemagne et l'Espagne. Vendeurs officiels uniquement, livraison incluse, sans inscription.",
   robots: { index: true, follow: true },
   verification: { google: "WagiuAOaaIMxAcLfLEoeJ6xVw9RZ_5Xj3QjR4gqIrF8" },
+  other: { google: "notranslate" },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
