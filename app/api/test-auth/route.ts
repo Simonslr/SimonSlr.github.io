@@ -37,6 +37,18 @@ export async function GET(req: NextRequest) {
   const supabase = createClient(supabaseUrl, supabaseKey)
   const resend   = new Resend(resendKey)
 
+  // ── 1b. SUPABASE REACHABILITY CHECK ──────────────────────────────────────────
+  try {
+    const healthRes = await fetch(`${supabaseUrl}/rest/v1/`, {
+      headers: { "apikey": supabaseKey, "Authorization": `Bearer ${supabaseKey}` },
+      signal: AbortSignal.timeout(8000),
+    })
+    pass("supabase: reachable", `HTTP ${healthRes.status}`)
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    fail("supabase: reachable", msg + (msg.includes("fetch") ? " — projet peut-être en pause" : ""))
+  }
+
   // ── 2. SUPABASE SIGNUP ───────────────────────────────────────────────────────
   const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
     email:    TEST_EMAIL,
