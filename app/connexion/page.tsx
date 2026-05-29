@@ -1,7 +1,7 @@
 import Link from "next/link"
 import type { Metadata } from "next"
 import DesignNavbar from "@/components/DesignNavbar"
-import { signIn, sendMagicLink } from "@/app/actions/auth"
+import { signIn } from "@/app/actions/auth"
 
 export const metadata: Metadata = {
   title: "Connexion | EuroCompare",
@@ -83,28 +83,7 @@ export default async function ConnexionPage({ searchParams }: Props) {
             </button>
           </form>
 
-          <div style={dividerStyle}>
-            <div style={dividerLineStyle} />
-            <span style={dividerTextStyle}>ou</span>
-            <div style={dividerLineStyle} />
-          </div>
-
-          <form action={sendMagicLink} style={{ display: "flex", gap: 10 }}>
-            <input
-              type="email" name="email" required
-              placeholder="Lien par email"
-              style={{ ...inputStyle, flex: 1 }}
-            />
-            <button
-              type="submit"
-              className="btn btn--ghost"
-              style={{ whiteSpace: "nowrap", borderColor: "rgba(255,255,255,0.15)", color: "#f5f5f7" }}
-            >
-              Envoyer
-            </button>
-          </form>
-
-          <p style={{ marginTop: 36, fontSize: 14, color: "rgba(245,245,247,0.45)", textAlign: "center" }}>
+          <p style={{ marginTop: 32, fontSize: 14, color: "rgba(245,245,247,0.45)", textAlign: "center" }}>
             Pas encore de compte ?{" "}
             <Link href="/inscription" style={{ color: "var(--blue)", fontWeight: 500 }}>
               Créer un compte
@@ -169,27 +148,6 @@ const forgotStyle: React.CSSProperties = {
   color: "rgba(245,245,247,0.4)",
   textDecoration: "none",
   transition: "color 150ms",
-}
-
-const dividerStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 12,
-  margin: "28px 0",
-}
-
-const dividerLineStyle: React.CSSProperties = {
-  flex: 1,
-  height: 1,
-  background: "rgba(255,255,255,0.09)",
-}
-
-const dividerTextStyle: React.CSSProperties = {
-  fontSize: 11,
-  color: "rgba(245,245,247,0.3)",
-  fontFamily: "var(--font-jetbrains, monospace)",
-  letterSpacing: "0.08em",
-  textTransform: "uppercase",
 }
 
 function alertStyle(type: "error" | "success"): React.CSSProperties {
