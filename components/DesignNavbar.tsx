@@ -165,12 +165,6 @@ export default function DesignNavbar() {
         </div>
       )}
 
-      <style>{`
-        .nav__burger { display: none; }
-        @media (max-width: 720px) {
-          .nav__burger { display: inline-flex; }
-        }
-      `}</style>
     </>
   )
 }

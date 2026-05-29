@@ -80,12 +80,6 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
         })}
       </div>
 
-      <style>{`
-        @keyframes toast-in {
-          from { opacity: 0; transform: translateY(12px) scale(0.95); }
-          to   { opacity: 1; transform: translateY(0)    scale(1); }
-        }
-      `}</style>
     </Ctx.Provider>
   )
 }

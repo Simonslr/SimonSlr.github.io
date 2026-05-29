@@ -47,6 +47,39 @@ function reloadFresh(): void {
   window.location.replace(url.toString())
 }
 
+// Patch Node.prototype DOM mutation methods to swallow NotFoundError /
+// HierarchyRequestError thrown during React 19 hydration recovery.
+// Module-level code runs during bundle evaluation — before hydrateRoot is called.
+// This is the earliest possible hook point on the client.
+if (typeof window !== "undefined") {
+  try {
+    const _ib = Node.prototype.insertBefore
+    Node.prototype.insertBefore = function<T extends Node>(newNode: T, refNode: Node | null): T {
+      try { return _ib.call(this, newNode, refNode) as T }
+      catch (e: unknown) {
+        if (e instanceof Error && (e.name === "NotFoundError" || e.name === "HierarchyRequestError")) return newNode
+        throw e
+      }
+    }
+    const _rc = Node.prototype.removeChild
+    Node.prototype.removeChild = function<T extends Node>(child: T): T {
+      try { return _rc.call(this, child) as T }
+      catch (e: unknown) {
+        if (e instanceof Error && (e.name === "NotFoundError" || e.name === "HierarchyRequestError")) return child
+        throw e
+      }
+    }
+    const _rp = Node.prototype.replaceChild
+    Node.prototype.replaceChild = function<T extends Node>(newChild: Node, oldChild: T): T {
+      try { return _rp.call(this, newChild, oldChild) as T }
+      catch (e: unknown) {
+        if (e instanceof Error && (e.name === "NotFoundError" || e.name === "HierarchyRequestError")) return oldChild
+        throw e
+      }
+    }
+  } catch { /* not critical */ }
+}
+
 // Module-level singleton — lets the global handlers call setState even after mount.
 let _boundary: HydrationBoundary | null = null
 
