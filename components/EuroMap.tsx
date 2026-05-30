@@ -46,7 +46,9 @@ export default function EuroMap() {
 
   // ── Load geography ────────────────────────────────────────────────────────
   useEffect(() => {
-    fetch("/data/world-110m.json").then(r => r.json()).then((topo: Topology) => {
+    fetch("/data/world-110m.json")
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
+      .then((topo: Topology) => {
       const geo = feature(topo, topo.objects.countries as GeometryCollection<GeoJSON.GeoJsonProperties>)
       const main: Record<string, { d: string; cx: number; cy: number }> = {}
       const ctx:  { id: number; d: string }[] = []
@@ -59,6 +61,8 @@ export default function EuroMap() {
       const caps: Record<string, { x: number; y: number }> = {}
       Object.entries(CAPITALS).forEach(([k, ll]) => { const [x, y] = projection(ll) ?? [0, 0]; caps[k] = { x, y } })
       setGeoData({ main, ctx, caps })
+    }).catch(() => {
+      // Map fails to load — section will remain empty rather than broken
     })
   }, [])
 
@@ -285,7 +289,11 @@ export default function EuroMap() {
     }
     rafId = requestAnimationFrame(lerpLoop)
 
-    const computeP = (s: number) => Math.max(0, Math.min(1, (s - wrapper.offsetTop) / SCROLL_RANGE))
+    const computeP = (s: number) => {
+      // Re-read offsetTop each call — layout shifts (font load, images) would make a cached value stale
+      const top = wrapper.getBoundingClientRect().top + window.scrollY
+      return Math.max(0, Math.min(1, (s - top) / SCROLL_RANGE))
+    }
 
     let driftId = 0
     const driftLoop = () => {

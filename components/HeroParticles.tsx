@@ -28,6 +28,9 @@ export default function HeroParticles() {
     let particles: Particle[] = []
     let initialized = false
 
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const MAX_DIST2 = MAX_DIST * MAX_DIST
+
     const draw = () => {
       if (disposed) return
       if (W > 0 && H > 0 && initialized) {
@@ -42,33 +45,35 @@ export default function HeroParticles() {
           if (p.opacity < 0.06) { p.opacity = 0.06; p.opDir = 1 }
         }
 
-        // Connection lines
+        // Connection lines — single batched path + one stroke() call (was O(n²) individual strokes)
+        ctx.beginPath()
+        ctx.lineWidth = 0.5
         for (let i = 0; i < COUNT; i++) {
           for (let j = i + 1; j < COUNT; j++) {
             const dx = particles[i].x - particles[j].x
             const dy = particles[i].y - particles[j].y
-            const d  = Math.sqrt(dx * dx + dy * dy)
-            if (d < MAX_DIST) {
-              ctx.beginPath()
-              ctx.strokeStyle = `rgba(59,130,246,${((1 - d / MAX_DIST) * 0.2).toFixed(3)})`
-              ctx.lineWidth   = 0.5
+            if (dx * dx + dy * dy < MAX_DIST2) {
               ctx.moveTo(particles[i].x, particles[i].y)
               ctx.lineTo(particles[j].x, particles[j].y)
-              ctx.stroke()
             }
           }
         }
+        ctx.strokeStyle = "rgba(59,130,246,0.14)"
+        ctx.stroke()
 
-        // Dots
+        // Dots — single batched path + one fill() call
+        ctx.beginPath()
         for (const p of particles) {
-          ctx.beginPath()
+          ctx.moveTo(p.x + p.r, p.y)
           ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(148,163,184,${p.opacity.toFixed(3)})`
-          ctx.fill()
         }
+        ctx.fillStyle = "rgba(148,163,184,0.55)"
+        ctx.fill()
       }
-      rafId = requestAnimationFrame(draw)
+      rafId = reduced ? 0 : requestAnimationFrame(draw)
     }
+
+    if (reduced) return
 
     const ro = new ResizeObserver(entries => {
       for (const entry of entries) {

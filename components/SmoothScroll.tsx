@@ -31,8 +31,12 @@ export default function SmoothScroll() {
       gsap.ticker.add((time: number) => lenis.raf(time * 1000))
       gsap.ticker.lagSmoothing(0)
 
-      ScrollTrigger.addEventListener("refresh", () => lenis.resize())
+      const onRefresh = () => lenis.resize()
+      ScrollTrigger.addEventListener("refresh", onRefresh)
       ScrollTrigger.refresh()
+
+      // Store for cleanup
+      ;(lenis as typeof lenis & { _onRefresh: () => void })._onRefresh = onRefresh
 
       ;(window as WindowWithLenis).__lenis = lenis
       window.dispatchEvent(new CustomEvent("lenis:ready", { detail: lenis }))
@@ -41,6 +45,9 @@ export default function SmoothScroll() {
     const t = setTimeout(init, 50)
     return () => {
       clearTimeout(t)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const onRefresh = (lenis as any)?._onRefresh
+      if (onRefresh) ScrollTrigger.removeEventListener("refresh", onRefresh)
       lenis?.destroy()
     }
   }, [])

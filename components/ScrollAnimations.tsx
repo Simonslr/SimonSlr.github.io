@@ -24,6 +24,7 @@ export default function ScrollAnimations() {
 
       ctx = gsap.context(() => {
 
+        if (!reduced) {
         // ── 1. Legacy .reveal-line ────────────────────────────────────────
         document.querySelectorAll("h1, h2").forEach((h) => {
           const lines = h.querySelectorAll<HTMLElement>(".reveal-line > span")
@@ -70,11 +71,18 @@ export default function ScrollAnimations() {
             },
           })
         })
+        } // end !reduced sections 1-4
 
         // ── 5. Count-up (data-count) ──────────────────────────────────────
         document.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
           const to = parseFloat(el.dataset.count || "0")
           if (!isFinite(to)) return
+          if (reduced) {
+            el.textContent = el.dataset.fmt === "int"
+              ? Math.round(to).toLocaleString("fr-FR")
+              : to.toFixed(1).replace(".", ",")
+            return
+          }
           const proxy = { v: 0 }
           ScrollTrigger.create({
             trigger: el, start: "top 90%", once: true,
@@ -94,6 +102,7 @@ export default function ScrollAnimations() {
         // ── 6. Comparison bar + best-row pulse ────────────────────────────
         document.querySelectorAll<HTMLElement>("[data-cmp-bar]").forEach((bar) => {
           const target = parseFloat(bar.dataset.cmpBar || "0")
+          if (reduced) { gsap.set(bar, { "--w": target + "%" } as gsap.TweenVars); return }
           gsap.set(bar, { "--w": "0%" } as gsap.TweenVars)
           ScrollTrigger.create({
             trigger: bar, start: "top 88%", once: true,
@@ -102,7 +111,7 @@ export default function ScrollAnimations() {
             },
           })
         })
-        document.querySelectorAll<HTMLElement>(".cmp__row.is-best").forEach((row) => {
+        if (!reduced) document.querySelectorAll<HTMLElement>(".cmp__row.is-best").forEach((row) => {
           ScrollTrigger.create({
             trigger: row, start: "top 85%", once: true,
             onEnter: () => {
@@ -114,7 +123,7 @@ export default function ScrollAnimations() {
         })
 
         // ── 7. Method section pin ─────────────────────────────────────────
-        if (window.innerWidth >= 900) {
+        if (!reduced && window.innerWidth >= 900) {
           const sec = document.querySelector<HTMLElement>("[data-pin-section]")
           if (sec) {
             const head  = sec.querySelector<HTMLElement>(".method__head")
@@ -135,6 +144,7 @@ export default function ScrollAnimations() {
         }
 
         // ── 8. Curtain reveals ────────────────────────────────────────────
+        if (!reduced) {
         // data-curtain="rtl": right→left clip (Method demos)
         document.querySelectorAll<HTMLElement>('[data-curtain="rtl"]').forEach((el) => {
           gsap.set(el, { clipPath: "inset(0 0 0 100%)" })
@@ -158,8 +168,10 @@ export default function ScrollAnimations() {
             },
           })
         })
+        } // end !reduced section 8
 
         // ── 9. Lines that extend L→R on scrub ────────────────────────────
+        if (!reduced) {
         document.querySelectorAll<HTMLElement>("[data-extend-x]").forEach((el) => {
           gsap.fromTo(el,
             { scaleX: 0, transformOrigin: "0% 50%" },
@@ -176,8 +188,10 @@ export default function ScrollAnimations() {
               scrollTrigger: { trigger: el, start: "top 90%", end: "top 50%", scrub: 1 },
             })
         })
+        } // end !reduced section 9
 
         // ── 10. Featured: 3D parallax + cascade reveal ────────────────────
+        if (!reduced) {
         const featured = document.querySelector<HTMLElement>("[data-featured-section]")
         if (featured) {
           const media   = featured.querySelector<HTMLElement>("[data-featured-media]")
@@ -204,6 +218,7 @@ export default function ScrollAnimations() {
             })
           }
         }
+        } // end !reduced section 10
 
         // ── 11. Price ticker (digit scramble) ─────────────────────────────
         document.querySelectorAll<HTMLElement>("[data-price-ticker]").forEach((el) => {
@@ -211,6 +226,7 @@ export default function ScrollAnimations() {
           const fmt       = el.dataset.priceFormat || "eur"
           if (!isFinite(target)) return
           const finalText = el.textContent ?? ""
+          if (reduced) { el.textContent = finalText; return }
           ScrollTrigger.create({
             trigger: el, start: "top 88%", once: true,
             onEnter: () => {
@@ -234,7 +250,7 @@ export default function ScrollAnimations() {
         })
 
         // ── 11b. Per-character split reveal (data-split-chars) ───────────
-        document.querySelectorAll<HTMLElement>("[data-split-chars]").forEach((line, idx) => {
+        if (!reduced) document.querySelectorAll<HTMLElement>("[data-split-chars]").forEach((line, idx) => {
           const target = line.querySelector<HTMLElement>("span") ?? line
           if (target.dataset['split'] === "1") return
           const wrap = (el: Element) => {
