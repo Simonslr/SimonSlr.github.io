@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
+import { AnimatePresence, motion } from "framer-motion"
 import EuroCompareLogo from "./EuroCompareLogo"
 import { createClient } from "@/lib/supabase/browser"
 
@@ -106,9 +107,11 @@ export default function DesignNavbar() {
             )}
             <button className="btn btn--primary" type="button" onClick={handleCompare}>
               Comparer
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
-              </svg>
+              <span style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(255,255,255,0.18)", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "transform 200ms cubic-bezier(0.32,0.72,0,1)" }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+                </svg>
+              </span>
             </button>
 
             {/* Hamburger — mobile only */}
@@ -129,42 +132,66 @@ export default function DesignNavbar() {
       </nav>
 
       {/* Mobile menu overlay */}
-      {menuOpen && (
-        <div
-          style={{
-            position: "fixed", inset: 0, zIndex: 99,
-            background: isDark ? "rgba(10,15,30,0.97)" : "rgba(255,255,255,0.97)",
-            backdropFilter: "blur(16px)",
-            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            gap: 8,
-          }}
-          onClick={() => setMenuOpen(false)}
-        >
-          {navLinks.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              onClick={() => setMenuOpen(false)}
-              style={{
-                fontSize: 28, fontWeight: 600, letterSpacing: "-0.025em",
-                color: isDark ? "#fff" : "#0f172a",
-                textDecoration: "none", padding: "12px 24px",
-                opacity: 0.9,
-              }}
-            >
-              {l.label}
-            </a>
-          ))}
-          <button
-            className="btn btn--primary"
-            type="button"
-            onClick={handleCompare}
-            style={{ marginTop: 24, fontSize: 16, padding: "14px 32px" }}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+            style={{
+              position: "fixed", inset: 0, zIndex: 99,
+              background: isDark ? "rgba(10,15,30,0.97)" : "rgba(255,255,255,0.97)",
+              backdropFilter: "blur(20px)",
+              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+              gap: 4,
+            }}
+            onClick={() => setMenuOpen(false)}
           >
-            Comparer maintenant
-          </button>
-        </div>
-      )}
+            {navLinks.map((l, i) => (
+              <motion.a
+                key={l.href}
+                href={l.href}
+                onClick={() => setMenuOpen(false)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.4, delay: 0.05 + i * 0.07, ease: [0.32, 0.72, 0, 1] }}
+                style={{
+                  fontSize: 28, fontWeight: 600, letterSpacing: "-0.025em",
+                  color: isDark ? "#fff" : "#0f172a",
+                  textDecoration: "none", padding: "12px 24px",
+                  opacity: 0.9,
+                  display: "block",
+                }}
+              >
+                {l.label}
+              </motion.a>
+            ))}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, delay: 0.05 + navLinks.length * 0.07, ease: [0.32, 0.72, 0, 1] }}
+              style={{ marginTop: 28 }}
+            >
+              <button
+                className="btn btn--primary"
+                type="button"
+                onClick={handleCompare}
+                style={{ fontSize: 16, padding: "14px 32px", display: "inline-flex", alignItems: "center", gap: 10 }}
+              >
+                Comparer maintenant
+                <span style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(255,255,255,0.18)", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+                  </svg>
+                </span>
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </>
   )

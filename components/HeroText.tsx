@@ -42,17 +42,19 @@ export default function HeroText() {
         </h1>
 
         <p className="hero-sub hero-text__sub" data-reveal-line>
-          EuroCompare scanne Amazon France, Allemagne et Espagne — livraison incluse,
+          EuroCompare scanne Amazon France, Allemagne et Espagne. Livraison incluse,
           vendeurs officiels, sans inscription.
         </p>
 
         <div className="hero-text__ctas" data-reveal-line>
           <a className="btn btn--primary" href="#catalogue">
             Voir les économies
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
+            <span style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "transform 200ms cubic-bezier(0.32,0.72,0,1)" }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </span>
           </a>
           <a className="btn btn--ghost" href="#methode">Comment ça marche</a>
         </div>
