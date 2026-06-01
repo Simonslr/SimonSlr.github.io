@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Space_Grotesk, Inter, JetBrains_Mono, Fraunces } from "next/font/google"
 import Script from "next/script"
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
 const SW_REGISTER = `
@@ -13,6 +14,7 @@ import ToastProvider from "@/components/ToastProvider"
 import GrainOverlay from "@/components/GrainOverlay"
 import NavigationProgress from "@/components/NavigationProgress"
 import HydrationBoundary from "@/components/HydrationBoundary"
+import CookieBanner from "@/components/CookieBanner"
 
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" })
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -39,8 +41,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <NavigationProgress />
             <GrainOverlay />
             {children}
+            <CookieBanner />
           </ToastProvider>
         </HydrationBoundary>
+        <Analytics />
       </body>
     </html>
   )
