@@ -133,10 +133,9 @@ a { color: inherit; text-decoration: none; }
 .reveal-line { display: block; overflow: hidden; }
 .reveal-line > span {
   display: block;
-  will-change: transform;
 }
 [data-reveal] {
-  will-change: opacity, transform;
+  /* will-change removed — GSAP promotes layers dynamically during animation */
 }
 
 /* ===== NAVBAR ===== */
@@ -1064,7 +1063,7 @@ a { color: inherit; text-decoration: none; }
 /* ── Line-clip reveal (.rl) ─────────────────────────────────────────────── */
 /* Initial state set by GSAP only — no CSS hiding to avoid blank flashes   */
 .rl { display: block; overflow: hidden; }
-.rl > span { display: block; will-change: transform, clip-path; }
+.rl > span { display: block; }
 
 /* ── Peel transition target — initial state set by GSAP ─────────────────── */
 /* NOT hidden in CSS — GSAP sets clip-path on mount to avoid blank sections  */
@@ -2199,7 +2198,7 @@ a { color: inherit; text-decoration: none; }
 .pr__cell { position: relative; display: inline-block; height: 1em; width: 0.62em; overflow: hidden; text-align: center; vertical-align: baseline; line-height: 1; }
 .pr__reel { display: block; will-change: transform; }
 .pr__d { display: block; height: 1em; line-height: 1; }
-.sc__c { display: inline-block; will-change: transform; }
+.sc__c { display: inline-block; }
 
 /* Massive ghost numeral bleeding off the pledge column */
 .pledge2__ghost {

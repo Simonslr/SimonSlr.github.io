@@ -366,9 +366,16 @@ export default function ScrollAnimations() {
       }
     }
 
-    const t = setTimeout(init, 80)
+    // Wait for Lenis to be ready before initialising ScrollTrigger.
+    // If lenis:ready never fires (Lenis disabled, SSR, slow load), fall back after 200ms.
+    let t: ReturnType<typeof setTimeout> | undefined
+    let started = false
+    const doInit = () => { if (started) return; started = true; init() }
+    window.addEventListener("lenis:ready", doInit, { once: true })
+    t = setTimeout(doInit, 200)
     return () => {
       clearTimeout(t)
+      window.removeEventListener("lenis:ready", doInit)
       ctx?.revert()
       localCleanups.forEach(fn => fn())
     }

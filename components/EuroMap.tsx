@@ -85,6 +85,7 @@ export default function EuroMap() {
     const hint = hintRef.current, svg = svgRef.current, cam = cameraRef.current
     if (!section || !wrapper || !svg || !cam) return
     let disposed = false
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     const q = <T extends SVGElement>(sel: string) => svg.querySelector<T>(sel)
     const getPath = (code: string) => q<SVGPathElement>(`#em-path-${code}`)
@@ -92,7 +93,7 @@ export default function EuroMap() {
     const getGrad = (code: string) => svg.querySelector<SVGLinearGradientElement>(`#scan-grad-${code}`)
 
     // ── Capital ring pulse — repeating GSAP loop, staggered per ring ───────
-    COUNTRIES.forEach((c, ci) => {
+    if (!reduced) COUNTRIES.forEach((c, ci) => {
       ;[0, 1, 2].forEach(ring => {
         const el = q<SVGCircleElement>(`#em-cap-ring-${c.code}-${ring}`)
         if (!el) return
@@ -105,14 +106,16 @@ export default function EuroMap() {
     })
 
     // ── Entry animation ───────────────────────────────────────────────────
-    const ctxEls = Array.from(svg.querySelectorAll<SVGPathElement>(".em-ctx"))
-    gsap.set(ctxEls, { opacity: 0, scale: 0.96, transformOrigin: "center center" })
-    gsap.to(ctxEls, { opacity: 1, scale: 1, duration: 0.9, stagger: 0.025, ease: "power2.out", delay: 0.15 })
-    COUNTRIES.forEach((c, i) => {
-      const el = getPath(c.code); if (!el) return
-      gsap.set(el, { opacity: 0 })
-      gsap.to(el, { opacity: 1, duration: 0.8, delay: 0.5 + i * 0.12, ease: "power2.out" })
-    })
+    if (!reduced) {
+      const ctxEls = Array.from(svg.querySelectorAll<SVGPathElement>(".em-ctx"))
+      gsap.set(ctxEls, { opacity: 0, scale: 0.96, transformOrigin: "center center" })
+      gsap.to(ctxEls, { opacity: 1, scale: 1, duration: 0.9, stagger: 0.025, ease: "power2.out", delay: 0.15 })
+      COUNTRIES.forEach((c, i) => {
+        const el = getPath(c.code); if (!el) return
+        gsap.set(el, { opacity: 0 })
+        gsap.to(el, { opacity: 1, duration: 0.8, delay: 0.5 + i * 0.12, ease: "power2.out" })
+      })
+    }
     gsap.set(cam, { scale: 1 })
 
     // ── Scroll timeline ───────────────────────────────────────────────────
@@ -296,14 +299,20 @@ export default function EuroMap() {
     }
 
     let driftId = 0
-    const driftLoop = () => {
-      if (!disposed && svgRef.current) {
-        const dy = holdActive ? Math.sin(performance.now() * 0.001 * 0.6 * Math.PI * 2) * 0.5 : 0
-        svgRef.current.style.transform = `translateY(${dy.toFixed(3)}px)`
+    if (!reduced) {
+      const driftLoop = () => {
+        if (!disposed && svgRef.current) {
+          if (holdActive) {
+            const dy = Math.sin(performance.now() * 0.001 * 0.6 * Math.PI * 2) * 0.5
+            svgRef.current.style.transform = `translateY(${dy.toFixed(3)}px)`
+          } else if (svgRef.current.style.transform) {
+            svgRef.current.style.transform = ""
+          }
+        }
+        driftId = requestAnimationFrame(driftLoop)
       }
       driftId = requestAnimationFrame(driftLoop)
     }
-    driftId = requestAnimationFrame(driftLoop)
 
     const onScroll = () => { lerp.target = computeP(window.scrollY) }
     window.addEventListener("scroll", onScroll, { passive: true })
