@@ -85,7 +85,7 @@ export default function EuroMap() {
     const hint = hintRef.current, svg = svgRef.current, cam = cameraRef.current
     if (!section || !wrapper || !svg || !cam) return
     let disposed = false
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const reduced = false
 
     const q = <T extends SVGElement>(sel: string) => svg.querySelector<T>(sel)
     const getPath = (code: string) => q<SVGPathElement>(`#em-path-${code}`)

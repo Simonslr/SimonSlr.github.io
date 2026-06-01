@@ -7,8 +7,6 @@ type WindowWithLenis = Window & typeof globalThis & { __lenis?: unknown }
 export default function SmoothScroll() {
   useEffect(() => {
     if (typeof window === "undefined") return
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let lenis: any
 

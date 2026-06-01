@@ -28,7 +28,7 @@ export default function HeroParticles() {
     let particles: Particle[] = []
     let initialized = false
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const reduced = false
     const MAX_DIST2 = MAX_DIST * MAX_DIST
 
     const draw = () => {
@@ -72,8 +72,6 @@ export default function HeroParticles() {
       }
       rafId = reduced ? 0 : requestAnimationFrame(draw)
     }
-
-    if (reduced) return
 
     const ro = new ResizeObserver(entries => {
       for (const entry of entries) {

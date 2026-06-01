@@ -5,7 +5,7 @@ import { useEffect } from "react"
 export default function ScrollAnimations() {
   useEffect(() => {
     if (typeof window === "undefined") return
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const reduced = false
 
     let ctx: { revert: () => void } | undefined
     const localCleanups: Array<() => void> = []

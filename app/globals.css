@@ -151,11 +151,6 @@ body {
 .parallax-bg  { will-change: transform; transform: translateY(calc(var(--scroll-y) * 0.04px)); }
 .parallax-mid { will-change: transform; transform: translateY(calc(var(--scroll-y) * -0.03px)); }
 
-/* ── Prefers-reduced-motion ─────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal]                { opacity: 1 !important; transform: none !important; animation: none !important; }
-  .parallax-bg, .parallax-mid  { transform: none !important; will-change: auto; }
-}
 
 /* ── Reveal scroll ───────────────────────────────────────────────────────── */
 .reveal {
