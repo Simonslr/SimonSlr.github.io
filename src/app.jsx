@@ -3,13 +3,13 @@ const { useEffect: useEffectApp, useState: useStateApp, useRef: useRefApp } = Re
 
 const App = () => {
   const [variant, setVariant] = useStateApp(() => {
-    try { return localStorage.getItem("europrix:hero") || "dark"; } catch (e) { return "dark"; }
+    try { return localStorage.getItem("eurocomp:hero") || "dark"; } catch (e) { return "dark"; }
   });
   const prevVariant = useRefApp(variant);
   const didMount = useRefApp(false);
 
   useEffectApp(() => {
-    try { localStorage.setItem("europrix:hero", variant); } catch (e) {}
+    try { localStorage.setItem("eurocomp:hero", variant); } catch (e) {}
     if (!window.EuroPrixScroll) return;
 
     // First mount: initialize once.

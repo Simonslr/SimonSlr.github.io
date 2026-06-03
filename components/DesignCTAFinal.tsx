@@ -90,8 +90,10 @@ export default function DesignCTAFinal() {
               <h4>Légal</h4>
               <ul>
                 <li><Link href="/mentions-legales">Mentions légales</Link></li>
-                <li><Link href="/mentions-legales">Affiliation Amazon</Link></li>
-                <li><Link href="/confidentialite">Cookies</Link></li>
+                <li><Link href="/cgu">CGU</Link></li>
+                <li><Link href="/affiliation">Affiliation Amazon</Link></li>
+                <li><Link href="/confidentialite">Confidentialité</Link></li>
+                <li><Link href="/cookies">Cookies</Link></li>
                 <li><Link href="/contact">Contact</Link></li>
               </ul>
             </div>
@@ -99,8 +101,10 @@ export default function DesignCTAFinal() {
           <div className="foot__bottom">
             <span>© 2026 EuroCompare · Tous droits réservés.</span>
             <span className="right">
-              <span>FR · DE · ES</span>
-              <span>Programme d&apos;affiliation Amazon</span>
+              <span>FR · DE · ES · IT · NL</span>
+              <Link href="/affiliation" style={{ opacity: 0.6, fontSize: 12, textDecoration: "underline", textDecorationColor: "transparent" }}>
+                Ce site contient des liens d&apos;affiliation Amazon
+              </Link>
             </span>
           </div>
         </div>

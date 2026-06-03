@@ -14,7 +14,7 @@ const COUNTRY_FILTERS = [
 ];
 
 const Catalogue = () => {
-  const items = window.EUROPRIX_DATA.catalogue;
+  const items = window.EUROCOMP_DATA.catalogue;
   const [query, setQuery] = useStateCat("");
   const [sort, setSort] = useStateCat("savings");
   const [country, setCountry] = useStateCat("all");

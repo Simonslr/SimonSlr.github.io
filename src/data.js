@@ -1,5 +1,5 @@
 // EuroPrix — mocked product data (demo, plausible figures)
-window.EUROPRIX_DATA = {
+window.EUROCOMP_DATA = {
   featured: {
     id: "airpods-pro-2",
     brand: "Apple",

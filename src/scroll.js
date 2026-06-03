@@ -201,14 +201,14 @@
       console.warn("[EuroPrix] GSAP not loaded");
       return;
     }
-    if (window.__europrixInitDone) return; // idempotent — explicit kill required to re-init
+    if (window.__eurocompInitDone) return; // idempotent — explicit kill required to re-init
     window.gsap.registerPlugin(window.ScrollTrigger);
 
     initLenis();
 
     if (prefersReduced) {
       navWatcher();
-      window.__europrixInitDone = true;
+      window.__eurocompInitDone = true;
       return;
     }
 
@@ -222,7 +222,7 @@
     // ensure ScrollTrigger picks up final layout once fonts/images settle
     window.addEventListener("load", () => window.ScrollTrigger.refresh());
     setTimeout(() => window.ScrollTrigger.refresh(), 600);
-    window.__europrixInitDone = true;
+    window.__eurocompInitDone = true;
   }
 
   function refresh() {
@@ -238,7 +238,7 @@
       tickerFn = null;
     }
     if (lenis) { lenis.destroy(); lenis = null; }
-    window.__europrixInitDone = false;
+    window.__eurocompInitDone = false;
   }
 
   window.EuroPrixScroll = { init, refresh, kill };

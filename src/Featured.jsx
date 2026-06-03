@@ -1,6 +1,6 @@
 // EuroPrix — Featured product (AirPods Pro 2)
 const Featured = () => {
-  const { featured } = window.EUROPRIX_DATA;
+  const { featured } = window.EUROCOMP_DATA;
   const best = featured.bestCountry;
   const worst = Object.entries(featured.prices).reduce((w, [c, p]) => p > w[1] ? [c, p] : w, ["FR", -Infinity])[0];
   const save = featured.prices[worst] - featured.prices[best];

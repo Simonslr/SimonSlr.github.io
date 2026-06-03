@@ -105,8 +105,12 @@ export default function EuroMap() {
       })
     })
 
-    // ── Entry animation ───────────────────────────────────────────────────
-    if (!reduced) {
+    // ── Entry animation — only if section is currently visible ────────────
+    const sectionIsVisible = () => {
+      const rect = section.getBoundingClientRect()
+      return rect.top < window.innerHeight * 1.05 && rect.bottom > -50
+    }
+    if (!reduced && sectionIsVisible()) {
       const ctxEls = Array.from(svg.querySelectorAll<SVGPathElement>(".em-ctx"))
       gsap.set(ctxEls, { opacity: 0, scale: 0.96, transformOrigin: "center center" })
       gsap.to(ctxEls, { opacity: 1, scale: 1, duration: 0.9, stagger: 0.025, ease: "power2.out", delay: 0.15 })
@@ -316,8 +320,13 @@ export default function EuroMap() {
 
     const onScroll = () => { lerp.target = computeP(window.scrollY) }
     window.addEventListener("scroll", onScroll, { passive: true })
-    // Set initial position after layout settles
-    requestAnimationFrame(() => { lerp.target = computeP(window.scrollY) })
+    // Initialize BOTH target and current — prevents lerp catch-up if geoData loaded
+    // after the user had already scrolled past the section (the main animation bug)
+    requestAnimationFrame(() => {
+      const p = computeP(window.scrollY)
+      lerp.target  = p
+      lerp.current = p
+    })
 
     return () => {
       disposed = true; seq.kill()

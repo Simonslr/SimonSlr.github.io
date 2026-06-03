@@ -2,7 +2,7 @@
 const { useState } = React;
 
 const HeroTicker = () => {
-  const { featured } = window.EUROPRIX_DATA;
+  const { featured } = window.EUROCOMP_DATA;
   const rows = [
     { c: "FR", price: featured.prices.FR, delta: "+8 €", up: true },
     { c: "DE", price: featured.prices.DE, delta: "−59 €", best: true },
