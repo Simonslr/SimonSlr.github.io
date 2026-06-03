@@ -50,8 +50,8 @@ const jsonLd = {
     },
     {
       "@type": "SiteNavigationElement",
-      "name": ["Catalogue", "Comment ça marche", "Connexion"],
-      "url": [`${SITE}/#catalogue`, `${SITE}/#methode`, `${SITE}/connexion`],
+      "name": ["Catalogue", "Comment ça marche", "Comparateur"],
+      "url": [`${SITE}/#catalogue`, `${SITE}/#methode`, `${SITE}/#comparateur`],
     },
   ],
 }

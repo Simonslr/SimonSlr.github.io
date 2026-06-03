@@ -5,25 +5,12 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { AnimatePresence, motion } from "framer-motion"
 import EuroCompareLogo from "./EuroCompareLogo"
-import { createClient } from "@/lib/supabase/browser"
 
 export default function DesignNavbar() {
   const pathname = usePathname()
   const [scrolled,   setScrolled]   = useState(false)
-  const AUTH_DARK = ["/connexion", "/inscription", "/mot-de-passe-oublie", "/nouveau-mot-de-passe"]
-  const [isDark,     setIsDark]     = useState(pathname === "/" || AUTH_DARK.some(p => pathname.startsWith(p)))
+  const [isDark,     setIsDark]     = useState(pathname === "/")
   const [menuOpen,   setMenuOpen]   = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-
-  useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => setIsLoggedIn(!!data.user))
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setIsLoggedIn(!!session)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
 
   useEffect(() => {
     // Catches any element with data-hero="dark" (HeroText, EuroMap, HeroGlobe…)
@@ -96,15 +83,6 @@ export default function DesignNavbar() {
 
           {/* Desktop right */}
           <div className="nav__right">
-            {isLoggedIn ? (
-              <Link href="/compte" className="btn btn--ghost" style={{ fontSize: 14 }}>
-                Mon compte
-              </Link>
-            ) : (
-              <Link href="/connexion" className="btn btn--ghost" style={{ fontSize: 14 }}>
-                Connexion
-              </Link>
-            )}
             <button className="btn btn--primary" type="button" onClick={handleCompare}>
               Comparer
               <span style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(255,255,255,0.18)", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "transform 200ms cubic-bezier(0.32,0.72,0,1)" }}>
