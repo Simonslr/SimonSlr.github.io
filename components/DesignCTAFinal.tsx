@@ -101,7 +101,7 @@ export default function DesignCTAFinal() {
           <div className="foot__bottom">
             <span>© 2026 EuroCompare · Tous droits réservés.</span>
             <span className="right">
-              <span>FR · DE · ES · IT · NL</span>
+              <span>FR · DE · ES</span>
               <Link href="/affiliation" style={{ opacity: 0.6, fontSize: 12, textDecoration: "underline", textDecorationColor: "transparent" }}>
                 Ce site contient des liens d&apos;affiliation Amazon
               </Link>
