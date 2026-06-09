@@ -1,9 +1,8 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 
-// EuroMap doit être dans un Client Component pour utiliser ssr: false.
-// D3.js + TopoJSON (~400KB) chargés dans un chunk séparé après le LCP.
 const EuroMap = dynamic(() => import("@/components/EuroMap"), {
   ssr: false,
   loading: () => (
@@ -15,5 +14,12 @@ const EuroMap = dynamic(() => import("@/components/EuroMap"), {
 })
 
 export default function EuroMapClient() {
+  const [isDesktop, setIsDesktop] = useState(false)
+
+  useEffect(() => {
+    setIsDesktop(window.innerWidth > 860)
+  }, [])
+
+  if (!isDesktop) return null
   return <EuroMap />
 }
