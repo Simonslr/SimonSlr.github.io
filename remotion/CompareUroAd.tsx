@@ -105,7 +105,7 @@ function AnimatedLogo({
 
       <div style={{ textAlign: 'center', opacity: textOp }}>
         <div style={{ fontFamily: FONT, fontSize: size * 0.38, fontWeight: 800, letterSpacing: '-0.03em', color: WHITE, lineHeight: 1 }}>
-          CompareUro
+          ComparEuro
         </div>
         {subtitleOp > 0 && (
           <div style={{ fontFamily: MONO, fontSize: size * 0.14, letterSpacing: '0.18em', textTransform: 'uppercase', color: `rgba(96,165,250,0.65)`, marginTop: 10, opacity: subtitleOp }}>
@@ -478,7 +478,7 @@ function DOMScan({ frame: f }: { frame: number }) {
           color: `rgba(96,165,250,0.68)`, margin: 0,
           transform: `translateY(${(1 - ease(f, 0, 18)) * 100}%)`,
           opacity: ease(f, 0, 18) * exit,
-        }}>CompareUro scanne pour vous</p>
+        }}>ComparEuro scanne pour vous</p>
       </div>
 
       {/* Search bar animée */}

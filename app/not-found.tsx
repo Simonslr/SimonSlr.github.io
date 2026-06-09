@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import DesignNavbar from "@/components/DesignNavbar"
 
 export const metadata: Metadata = {
-  title: "Page introuvable | CompareUro",
+  title: "Page introuvable | ComparEuro",
 }
 
 export default function NotFound() {

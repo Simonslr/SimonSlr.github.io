@@ -34,7 +34,7 @@ export default function ProductUserSection({ slug, name, pageUrl }: Props) {
   return (
     <>
       <div className="pdp-cta-row" style={{ marginTop: 24 }}>
-        <ShareButton title={`${name} — CompareUro`} url={pageUrl} />
+        <ShareButton title={`${name} — ComparEuro`} url={pageUrl} />
       </div>
 
       {priceHistory.length >= 2 && (

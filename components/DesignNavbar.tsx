@@ -68,10 +68,10 @@ export default function DesignNavbar() {
     <>
       <nav id="site-nav" className={`nav${isDark ? " is-dark" : ""}${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap nav__inner">
-          {/* Logo — vrai logo CompareUro */}
+          {/* Logo — vrai logo ComparEuro */}
           <Link className="nav__logo" href="/" style={{ gap: 8 }}>
             <CompareUroLogo size={24} color="currentColor" textColor="currentColor" showText={false} />
-            <span>CompareUro</span>
+            <span>ComparEuro</span>
           </Link>
 
           {/* Desktop links */}

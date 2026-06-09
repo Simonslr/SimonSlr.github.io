@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import InfoPageLayout from "@/components/InfoPageLayout"
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialité | CompareUro",
+  title: "Politique de confidentialité | ComparEuro",
 }
 
 export default function ConfidentialitePage() {
@@ -16,7 +16,7 @@ export default function ConfidentialitePage() {
           title: "Données collectées",
           content: (
             <>
-              <p>CompareUro est conçu pour respecter votre vie privée. <strong>Nous ne collectons aucune donnée personnelle</strong> vous identifiant directement (nom, email, adresse, etc.) lors de votre simple navigation sur le site.</p>
+              <p>ComparEuro est conçu pour respecter votre vie privée. <strong>Nous ne collectons aucune donnée personnelle</strong> vous identifiant directement (nom, email, adresse, etc.) lors de votre simple navigation sur le site.</p>
               <p>Le site ne requiert aucune création de compte ni inscription pour accéder à ses fonctionnalités.</p>
             </>
           ),
@@ -33,7 +33,7 @@ export default function ConfidentialitePage() {
           title: "Liens affiliés Amazon",
           content: (
             <>
-              <p>Lorsque vous cliquez sur un lien Amazon depuis CompareUro, vous êtes redirigé vers le site Amazon. Amazon peut alors collecter des données vous concernant selon sa propre politique de confidentialité. CompareUro n'a aucun accès à ces données.</p>
+              <p>Lorsque vous cliquez sur un lien Amazon depuis ComparEuro, vous êtes redirigé vers le site Amazon. Amazon peut alors collecter des données vous concernant selon sa propre politique de confidentialité. ComparEuro n'a aucun accès à ces données.</p>
               <p>Amazon peut déposer des cookies sur votre navigateur via ces liens affiliés. Consultez la <a href="https://www.amazon.fr/gp/help/customer/display.html?nodeId=201909010" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">politique de confidentialité d'Amazon</a> pour plus d'informations.</p>
             </>
           ),

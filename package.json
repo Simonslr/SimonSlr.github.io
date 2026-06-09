@@ -13,7 +13,7 @@
     "prices:es": "node scripts/scrape-prices.js --country ES",
     "add": "node scripts/add-product.js",
     "ad:preview": "remotion preview remotion/index.ts",
-    "ad:render": "remotion render remotion/index.ts CompareUroAd --output ads/compareuro-ad.mp4 --codec h264"
+    "ad:render": "remotion render remotion/index.ts ComparEuroAd --output ads/compareuro-ad.mp4 --codec h264"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

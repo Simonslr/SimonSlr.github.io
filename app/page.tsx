@@ -12,11 +12,11 @@ import SmoothScroll     from "@/components/SmoothScroll"
 import ScrollAnimations from "@/components/ScrollAnimations"
 
 export const metadata: Metadata = {
-  title: "CompareUro — Le même produit, moins cher en Europe",
+  title: "ComparEuro — Le même produit, moins cher en Europe",
   description: "Comparez les prix Amazon France, Allemagne et Espagne. Livraison incluse, vendeurs officiels, sans inscription. Économisez jusqu'à 30% sur vos achats tech.",
   keywords: ["comparateur prix amazon", "amazon france allemagne espagne", "meilleur prix amazon", "économiser amazon europe"],
   openGraph: {
-    title: "CompareUro — Le même produit, moins cher en Europe",
+    title: "ComparEuro — Le même produit, moins cher en Europe",
     description: "Comparez les prix Amazon FR, DE, ES. Livraison incluse, vendeurs officiels.",
     type: "website",
     locale: "fr_FR",
@@ -32,7 +32,7 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": `${SITE}/#website`,
       "url": SITE,
-      "name": "CompareUro",
+      "name": "ComparEuro",
       "description": "Comparez les prix Amazon France, Allemagne et Espagne. Livraison incluse, vendeurs officiels.",
       "inLanguage": "fr-FR",
       "potentialAction": {
@@ -44,7 +44,7 @@ const jsonLd = {
     {
       "@type": "Organization",
       "@id": `${SITE}/#organization`,
-      "name": "CompareUro",
+      "name": "ComparEuro",
       "url": SITE,
       "description": "Comparateur de prix Amazon entre la France, l'Allemagne et l'Espagne.",
     },

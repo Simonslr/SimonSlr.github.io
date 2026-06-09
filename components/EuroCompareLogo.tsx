@@ -60,7 +60,7 @@ export default function compareuroLogo({
       </svg>
       {showText && (
         <span style={{ fontWeight: 800, letterSpacing: "-0.02em", fontSize: size * 0.5, color: textColor }}>
-          CompareUro
+          ComparEuro
         </span>
       )}
     </div>

@@ -63,7 +63,7 @@ export default function DesignCTAFinal() {
             <div className="foot__brand">
               <Link className="nav__logo" href="/" style={{ gap: 8 }}>
                 <CompareUroLogo size={22} color="rgba(255,255,255,0.9)" textColor="rgba(255,255,255,0.9)" showText={false} />
-                <span>CompareUro</span>
+                <span>ComparEuro</span>
               </Link>
               <p>Comparateur Amazon France · Allemagne · Espagne. Conçu à Paris. Indépendant.</p>
             </div>
@@ -99,7 +99,7 @@ export default function DesignCTAFinal() {
             </div>
           </div>
           <div className="foot__bottom">
-            <span>© 2026 CompareUro · Tous droits réservés.</span>
+            <span>© 2026 ComparEuro · Tous droits réservés.</span>
             <span className="right">
               <span>FR · DE · ES</span>
               <Link href="/affiliation" style={{ opacity: 0.6, fontSize: 12, textDecoration: "underline", textDecorationColor: "transparent" }}>

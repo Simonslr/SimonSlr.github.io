@@ -32,7 +32,7 @@ function StarShape({ cx, cy, r, fill }: { cx: number; cy: number; r: number; fil
 }
 
 // ── Static logo (server component, progress = 1) ───────────────────────────
-export default function compareuroLogo({
+export default function CompareUroLogo({
   size = 40,
   showText = true,
   textColor = "#0F172A",
@@ -60,7 +60,7 @@ export default function compareuroLogo({
       </svg>
       {showText && (
         <span style={{ fontWeight: 800, letterSpacing: "-0.02em", fontSize: size * 0.5, color: textColor }}>
-          CompareUro
+          ComparEuro
         </span>
       )}
     </div>
