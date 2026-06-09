@@ -99,7 +99,7 @@ export default function ContactPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 28, paddingTop: 4 }}>
                 <div>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-mute)", marginBottom: 8 }}>Email direct</div>
-                  <a href="mailto:contact@eurocompare.fr" style={{ fontSize: 14, color: "var(--blue)" }}>contact@eurocompare.fr</a>
+                  <a href="mailto:contact@compareuro.com" style={{ fontSize: 14, color: "var(--blue)" }}>contact@compareuro.com</a>
                 </div>
                 <div>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-mute)", marginBottom: 8 }}>Délai de réponse</div>

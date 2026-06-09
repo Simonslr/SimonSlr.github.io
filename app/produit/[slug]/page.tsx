@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const reco = getRecommendation(product)
   const saving = reco ? ` — Économisez ${Math.round(reco.savings)} €` : ""
   return {
-    title: `${product.name}${saving} | EuroCompare`,
+    title: `${product.name}${saving} | CompareUro`,
     description: `Comparez le prix du ${product.name} entre Amazon France, Allemagne et Espagne. Livraison incluse, vendeurs officiels.`,
     openGraph: {
       title: `${product.name} — Meilleur prix Amazon Europe`,
@@ -298,7 +298,7 @@ export default async function ProductPage({ params }: Props) {
               </div>
               <p className="cmp__note">
                 Frais de livraison estimés vers la France métropolitaine. Vérifiez le prix final sur Amazon avant d&apos;acheter.
-                EuroCompare participe au Programme Partenaires Amazon EU et perçoit une commission sur les ventes qualifiées.
+                CompareUro participe au Programme Partenaires Amazon EU et perçoit une commission sur les ventes qualifiées.
               </p>
             </div>
           </section>

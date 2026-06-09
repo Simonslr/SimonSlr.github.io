@@ -2,8 +2,8 @@ import type { Metadata } from "next"
 import InfoPageLayout from "@/components/InfoPageLayout"
 
 export const metadata: Metadata = {
-  title: "Méthodologie — Comment on compare les prix | EuroCompare",
-  description: "Découvrez comment EuroCompare collecte, calcule et présente les prix Amazon entre la France, l'Allemagne et l'Espagne.",
+  title: "Méthodologie — Comment on compare les prix | CompareUro",
+  description: "Découvrez comment CompareUro collecte, calcule et présente les prix Amazon entre la France, l'Allemagne et l'Espagne.",
 }
 
 export default function MethodologiePage() {
@@ -17,7 +17,7 @@ export default function MethodologiePage() {
           title: "Sources de données",
           content: (
             <>
-              <p>EuroCompare collecte les prix directement sur les pages produits des boutiques Amazon officielles de chaque pays : Amazon.fr (France), Amazon.de (Allemagne) et Amazon.es (Espagne).</p>
+              <p>CompareUro collecte les prix directement sur les pages produits des boutiques Amazon officielles de chaque pays : Amazon.fr (France), Amazon.de (Allemagne) et Amazon.es (Espagne).</p>
               <p>Seuls les produits vendus et expédiés par Amazon lui-même ou par des marques officielles sont inclus. Les vendeurs tiers de la marketplace Amazon ne sont pas pris en compte, afin de garantir la fiabilité des prix et la présence d'une garantie constructeur.</p>
             </>
           ),
@@ -26,7 +26,7 @@ export default function MethodologiePage() {
           title: "Calcul du prix total",
           content: (
             <>
-              <p>Le prix affiché sur EuroCompare est toujours le <strong>prix total livré en France</strong>, c'est-à-dire :</p>
+              <p>Le prix affiché sur CompareUro est toujours le <strong>prix total livré en France</strong>, c'est-à-dire :</p>
               <ul className="list-disc pl-5 space-y-1 mt-2">
                 <li>Prix du produit TTC tel qu'affiché sur le site Amazon du pays concerné</li>
                 <li>Frais de livraison standard vers la France métropolitaine (estimés ou réels selon la disponibilité)</li>
@@ -40,20 +40,20 @@ export default function MethodologiePage() {
           content: (
             <>
               <p>Les prix sont vérifiés et mis à jour régulièrement. La date de dernière mise à jour est indiquée sur chaque fiche produit. Les prix Amazon peuvent varier plusieurs fois par jour, notamment lors des périodes de promotions (Prime Day, Black Friday, soldes, etc.).</p>
-              <p><strong>Important :</strong> Vérifiez toujours le prix affiché sur le site Amazon au moment de votre achat. EuroCompare ne peut garantir que le prix affiché sur notre site correspond exactement au prix réel au moment de votre commande.</p>
+              <p><strong>Important :</strong> Vérifiez toujours le prix affiché sur le site Amazon au moment de votre achat. CompareUro ne peut garantir que le prix affiché sur notre site correspond exactement au prix réel au moment de votre commande.</p>
             </>
           ),
         },
         {
           title: "Sélection des produits",
           content: (
-            <p>Les produits présentés sur EuroCompare sont sélectionnés manuellement sur la base de leur popularité, des économies potentielles identifiées et de leur disponibilité dans les trois pays couverts. Nous privilégions les produits pour lesquels l'écart de prix entre pays est significatif et vérifiable.</p>
+            <p>Les produits présentés sur CompareUro sont sélectionnés manuellement sur la base de leur popularité, des économies potentielles identifiées et de leur disponibilité dans les trois pays couverts. Nous privilégions les produits pour lesquels l'écart de prix entre pays est significatif et vérifiable.</p>
           ),
         },
         {
           title: "Liens affiliés",
           content: (
-            <p>EuroCompare participe au programme Partenaires d'Amazon EU. Les liens vers Amazon présents sur ce site sont des liens affiliés : si vous achetez un produit via l'un de ces liens, EuroCompare perçoit une commission sur la vente, sans coût supplémentaire pour vous. Cette commission nous permet de financer le développement et la maintenance du site.</p>
+            <p>CompareUro participe au programme Partenaires d'Amazon EU. Les liens vers Amazon présents sur ce site sont des liens affiliés : si vous achetez un produit via l'un de ces liens, CompareUro perçoit une commission sur la vente, sans coût supplémentaire pour vous. Cette commission nous permet de financer le développement et la maintenance du site.</p>
           ),
         },
       ]}

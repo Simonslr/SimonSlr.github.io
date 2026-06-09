@@ -1,6 +1,6 @@
 "use client"
 
-import EuroCompareLogo from "./EuroCompareLogo"
+import CompareUroLogo from "./CompareUroLogo"
 import Link from "next/link"
 
 export default function DesignCTAFinal() {
@@ -62,8 +62,8 @@ export default function DesignCTAFinal() {
           <div className="foot__top">
             <div className="foot__brand">
               <Link className="nav__logo" href="/" style={{ gap: 8 }}>
-                <EuroCompareLogo size={22} color="rgba(255,255,255,0.9)" textColor="rgba(255,255,255,0.9)" showText={false} />
-                <span>EuroCompare</span>
+                <CompareUroLogo size={22} color="rgba(255,255,255,0.9)" textColor="rgba(255,255,255,0.9)" showText={false} />
+                <span>CompareUro</span>
               </Link>
               <p>Comparateur Amazon France · Allemagne · Espagne. Conçu à Paris. Indépendant.</p>
             </div>
@@ -99,7 +99,7 @@ export default function DesignCTAFinal() {
             </div>
           </div>
           <div className="foot__bottom">
-            <span>© 2026 EuroCompare · Tous droits réservés.</span>
+            <span>© 2026 CompareUro · Tous droits réservés.</span>
             <span className="right">
               <span>FR · DE · ES</span>
               <Link href="/affiliation" style={{ opacity: 0.6, fontSize: 12, textDecoration: "underline", textDecorationColor: "transparent" }}>

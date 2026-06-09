@@ -42,7 +42,7 @@ export default function HeroText() {
         </h1>
 
         <p className="hero-sub hero-text__sub" data-reveal-line>
-          EuroCompare scanne Amazon France, Allemagne et Espagne. Livraison incluse,
+          CompareUro scanne Amazon France, Allemagne et Espagne. Livraison incluse,
           vendeurs officiels, sans inscription.
         </p>
 

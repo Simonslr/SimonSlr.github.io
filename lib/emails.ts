@@ -1,8 +1,8 @@
 import { Resend } from "resend"
 import { htmlEscape, isHttpsUrl } from "@/lib/security"
 
-const FROM = "EuroCompare <alertes@eurocompare.fr>"
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://eurocompare.fr"
+const FROM = "CompareUro <alertes@compareuro.com>"
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://compareuro.com"
 
 function getResend() {
   if (!process.env.RESEND_API_KEY) return null
@@ -35,7 +35,7 @@ const emailHeader = `
                   </svg>
                 </td>
                 <td style="vertical-align:middle;">
-                  <span style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:17px;font-weight:700;color:#ffffff;letter-spacing:-0.02em;">EuroCompare</span>
+                  <span style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:17px;font-weight:700;color:#ffffff;letter-spacing:-0.02em;">CompareUro</span>
                 </td>
               </tr>
             </table>
@@ -55,7 +55,7 @@ const emailFooter = (unsubUrl: string) => `
       <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
           <td style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:12px;color:#94a3b8;line-height:1.7;">
-            <strong style="color:#64748b;">EuroCompare</strong> &mdash; Comparateur Amazon France, Allemagne, Espagne.<br/>
+            <strong style="color:#64748b;">CompareUro</strong> &mdash; Comparateur Amazon France, Allemagne, Espagne.<br/>
             <a href="${htmlEscape(unsubUrl)}" style="color:#94a3b8;text-decoration:underline;">G&eacute;rer mes pr&eacute;f&eacute;rences</a>
             &nbsp;&middot;&nbsp;
             <a href="${htmlEscape(SITE)}/mentions-legales" style="color:#94a3b8;text-decoration:underline;">Mentions l&eacute;gales</a>
@@ -74,7 +74,7 @@ function buildEmail(body: string, footerUrl: string): string {
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <title>EuroCompare</title>
+  <title>CompareUro</title>
 </head>
 <body style="margin:0;padding:0;background:#f1f5f9;">
   <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#f1f5f9;">
@@ -106,7 +106,7 @@ export async function sendWelcomeEmail(email: string) {
           Le m&ecirc;me produit,<br/>moins cher en Europe.
         </h1>
         <p style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:16px;color:#475569;line-height:1.7;margin:0 0 32px;">
-          Votre compte est actif. EuroCompare compare Amazon France, Allemagne et Espagne &mdash;
+          Votre compte est actif. CompareUro compare Amazon France, Allemagne et Espagne &mdash;
           livraison incluse &mdash; pour vous indiquer o&ugrave; acheter au meilleur prix.
         </p>
 
@@ -148,7 +148,7 @@ export async function sendWelcomeEmail(email: string) {
   await resend.emails.send({
     from:    FROM,
     to:      email,
-    subject: "Bienvenue sur EuroCompare",
+    subject: "Bienvenue sur CompareUro",
     html:    buildEmail(body, `${SITE}/compte`),
   })
 }

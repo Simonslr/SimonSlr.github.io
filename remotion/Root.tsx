@@ -1,10 +1,10 @@
 import { Composition } from 'remotion'
-import { EuroCompareAd } from './EuroCompareAd'
+import { CompareUroAd } from './CompareUroAd'
 
 export const Root: React.FC = () => (
   <Composition
-    id="EuroCompareAd"
-    component={EuroCompareAd}
+    id="CompareUroAd"
+    component={CompareUroAd}
     durationInFrames={600}
     fps={30}
     width={1080}

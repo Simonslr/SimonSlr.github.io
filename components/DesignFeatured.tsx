@@ -53,7 +53,7 @@ export default function DesignFeatured() {
 
           {/* Copy */}
           <div className="featured__copy" data-reveal="fade">
-            <div className="eyebrow">La sélection EuroCompare</div>
+            <div className="eyebrow">La sélection CompareUro</div>
             <h2 className="h-section" style={{ marginTop: 24 }}>
               {featured.title},<br />
               <span className="em-serif" style={{ color: "var(--blue)" }}>{formatEURSmart(save)} moins cher</span>

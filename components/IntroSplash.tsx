@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ARROWS, STARS, StarShape, STAR_SIZE } from "./EuroCompareLogo"
+import { ARROWS, STARS, StarShape, STAR_SIZE } from "./CompareUroLogo"
 
 function AnimatedLogo({ progress }: { progress: number }) {
   const arrowProg = Math.min(1, progress / 0.55)
@@ -40,7 +40,7 @@ function AnimatedLogo({ progress }: { progress: number }) {
       </svg>
       <div style={{ textAlign: "center", opacity: textOpacity, transition: "opacity 300ms ease" }}>
         <div style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 800, letterSpacing: "-0.03em", color: "#ffffff" }}>
-          EuroCompare
+          CompareUro
         </div>
         <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginTop: 6 }}>
           Comparateur de prix

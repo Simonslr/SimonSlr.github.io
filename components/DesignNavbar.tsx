@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { AnimatePresence, motion } from "framer-motion"
-import EuroCompareLogo from "./EuroCompareLogo"
+import CompareUroLogo from "./CompareUroLogo"
 
 export default function DesignNavbar() {
   const pathname = usePathname()
@@ -68,10 +68,10 @@ export default function DesignNavbar() {
     <>
       <nav id="site-nav" className={`nav${isDark ? " is-dark" : ""}${scrolled ? " is-scrolled" : ""}`}>
         <div className="wrap nav__inner">
-          {/* Logo — vrai logo EuroCompare */}
+          {/* Logo — vrai logo CompareUro */}
           <Link className="nav__logo" href="/" style={{ gap: 8 }}>
-            <EuroCompareLogo size={24} color="currentColor" textColor="currentColor" showText={false} />
-            <span>EuroCompare</span>
+            <CompareUroLogo size={24} color="currentColor" textColor="currentColor" showText={false} />
+            <span>CompareUro</span>
           </Link>
 
           {/* Desktop links */}

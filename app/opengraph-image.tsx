@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og"
 
 export const runtime = "edge"
-export const alt    = "EuroCompare — Le même produit, moins cher en Europe"
+export const alt    = "CompareUro — Le même produit, moins cher en Europe"
 export const size   = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
@@ -48,7 +48,7 @@ export default function OGImage() {
             ×
           </div>
           <span style={{ color: "white", fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em" }}>
-            EuroCompare
+            CompareUro
           </span>
         </div>
 
