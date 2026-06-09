@@ -14,12 +14,15 @@ const EuroMap = dynamic(() => import("@/components/EuroMap"), {
 })
 
 export default function EuroMapClient() {
-  const [isDesktop, setIsDesktop] = useState(false)
+  // Default true (desktop) — useEffect hides on mobile after mount.
+  // CSS display:none on .globe-hero-wrapper at ≤860px prevents any flash
+  // of the loading placeholder before the effect runs on mobile.
+  const [show, setShow] = useState(true)
 
   useEffect(() => {
-    setIsDesktop(window.innerWidth > 860)
+    if (window.innerWidth <= 860) setShow(false)
   }, [])
 
-  if (!isDesktop) return null
+  if (!show) return null
   return <EuroMap />
 }
