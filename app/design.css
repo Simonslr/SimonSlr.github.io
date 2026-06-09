@@ -1918,7 +1918,7 @@ a { color: inherit; text-decoration: none; }
   line-height: 0.95; letter-spacing: -0.045em; color: var(--text-on-dark);
   margin-bottom: clamp(28px,4vh,56px);
   hyphens: none; -webkit-hyphens: none;
-  word-break: keep-all;
+  word-break: normal; overflow-wrap: break-word;
 }
 .cta-fin__title .em-serif { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--blue); }
 .curtain-line { display: block; }
@@ -2228,7 +2228,7 @@ a { color: inherit; text-decoration: none; }
   }
 
   /* ── Navbar ── */
-  .nav__right .btn--ghost { display: none; }   /* cache "Connexion" sur mobile */
+  .nav__right .btn--ghost:not(.nav__burger) { display: none; }
 
   /* ── Hero text ── */
   .hero-text {
@@ -2347,4 +2347,69 @@ a { color: inherit; text-decoration: none; }
   height: 100%;
   pointer-events: none;
   z-index: 0;
+}
+
+/* ============================================================
+   MOBILE OVERFLOW GUARDS — v2
+   Targeted fixes for text/element overflow on narrow screens
+   ============================================================ */
+
+/* Universal text overflow protection for dynamic content */
+.card__title,
+.card__brand,
+.pdp-hero__title,
+.cta-fin__title,
+.pledge2__title,
+.em-hero-text__title,
+.h-section {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Navbar: on very narrow screens (≤400px), hide the Comparer button —
+   it's already available inside the burger menu */
+@media (max-width: 400px) {
+  .nav__right .btn--primary { display: none; }
+}
+
+@media (max-width: 520px) {
+  /* Section headings: reduce to fit narrow screens */
+  .h-section { font-size: clamp(30px, 9.5vw, 44px); }
+  .search-sec__head { margin-bottom: 32px; }
+
+  /* Search box: stack vertically */
+  .search-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 12px;
+    align-items: stretch;
+  }
+  .search-box > div:first-child { padding-left: 4px; }
+  .search-box .btn {
+    width: 100%;
+    justify-content: center;
+    border-radius: 10px;
+  }
+
+  /* Footer: single column */
+  .foot__top { grid-template-columns: 1fr !important; gap: 28px; }
+  .foot__bottom { text-align: center; }
+  .foot__bottom .right { flex-wrap: wrap; justify-content: center; gap: 16px; }
+
+  /* Filters: scrollable row instead of multi-row wrap */
+  .filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+
+  /* PDP: comparison row detail — prevent overflow */
+  .cmp .row-detail { font-size: 11px; }
+
+  /* Marquee: reduce gap/padding to fit mobile */
+  .mq2__copy { gap: clamp(16px, 4vw, 28px); padding-right: clamp(16px, 4vw, 28px); }
 }
