@@ -2412,4 +2412,17 @@ a { color: inherit; text-decoration: none; }
 
   /* Marquee: reduce gap/padding to fit mobile */
   .mq2__copy { gap: clamp(16px, 4vw, 28px); padding-right: clamp(16px, 4vw, 28px); }
+
+  /* Featured: price row — prevent overflow on narrow screens */
+  .featured__price { flex-wrap: wrap; gap: 8px 12px; }
+  .featured__price .now { font-size: clamp(28px, 7.5vw, 38px); }
+  .featured__price .was { font-size: 16px; }
+
+  /* EuroMap: HUD left position matches body padding */
+  .em-label-hud { left: var(--pad-x); }
+}
+
+/* EuroMap: shorten sticky scroll zone on mobile (auto-play replaces scroll-drive) */
+@media (max-width: 860px) {
+  .globe-hero-wrapper { height: calc(100vh + 300px); }
 }
