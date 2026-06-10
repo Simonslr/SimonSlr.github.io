@@ -1,16 +1,41 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { AnimatePresence, motion } from "framer-motion"
 import CompareUroLogo from "./CompareUroLogo"
+
+const SECTION_IDS = ["methode", "vedette", "catalogue", "confiance"]
 
 export default function DesignNavbar() {
   const pathname = usePathname()
   const [scrolled,   setScrolled]   = useState(false)
   const [isDark,     setIsDark]     = useState(pathname === "/")
   const [menuOpen,   setMenuOpen]   = useState(false)
+  const [activeHref, setActiveHref] = useState<string | null>(null)
+  const [pill, setPill] = useState({ left: 0, width: 0, opacity: 0 })
+
+  const linksRef    = useRef<HTMLDivElement>(null)
+  const hoveringRef = useRef(false)
+
+  // Slides the active-link indicator under the given nav link (by href).
+  // Pass null to hide it (e.g. while above the first tracked section).
+  const movePill = (href: string | null) => {
+    const container = linksRef.current
+    if (!container || !href) {
+      setPill((p) => (p.opacity === 0 ? p : { ...p, opacity: 0 }))
+      return
+    }
+    const link = container.querySelector<HTMLAnchorElement>(`a[href="${href}"]`)
+    if (!link) {
+      setPill((p) => (p.opacity === 0 ? p : { ...p, opacity: 0 }))
+      return
+    }
+    const cRect = container.getBoundingClientRect()
+    const lRect = link.getBoundingClientRect()
+    setPill({ left: lRect.left - cRect.left, width: lRect.width, opacity: 1 })
+  }
 
   useEffect(() => {
     // Catches any element with data-hero="dark" (HeroText, EuroMap, HeroGlobe…)
@@ -28,12 +53,29 @@ export default function DesignNavbar() {
         return r.top <= navH && r.bottom > 0
       })
       setIsDark(!!hit)
+
+      // Highlight the nav link for whichever tracked section currently
+      // sits at/above ~35% of the viewport (last one reached wins).
+      const refLine = navH + window.innerHeight * 0.35
+      let active: string | null = null
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id)
+        if (!el) continue
+        if (el.getBoundingClientRect().top <= refLine) active = `/#${id}`
+        else break
+      }
+      setActiveHref(active)
+      if (!hoveringRef.current) movePill(active)
     }
 
     // Immediate call so the navbar is correct on first paint (no scroll needed)
     update()
     window.addEventListener("scroll", update, { passive: true })
     window.addEventListener("resize", update)
+    // Recompute once webfonts swap in, since that can shift link widths.
+    if ("fonts" in document) {
+      (document as Document & { fonts: { ready: Promise<unknown> } }).fonts.ready.then(update)
+    }
     return () => {
       window.removeEventListener("scroll", update)
       window.removeEventListener("resize", update)
@@ -75,9 +117,25 @@ export default function DesignNavbar() {
           </Link>
 
           {/* Desktop links */}
-          <div className="nav__links">
+          <div
+            className="nav__links"
+            ref={linksRef}
+            onMouseLeave={() => { hoveringRef.current = false; movePill(activeHref) }}
+          >
+            <span
+              className="nav__pill"
+              aria-hidden="true"
+              style={{ transform: `translateX(${pill.left}px)`, width: `${pill.width}px`, opacity: pill.opacity }}
+            />
             {navLinks.map((l) => (
-              <a key={l.href} href={l.href}>{l.label}</a>
+              <a
+                key={l.href}
+                href={l.href}
+                className={activeHref === l.href ? "is-active" : undefined}
+                onMouseEnter={() => { hoveringRef.current = true; movePill(l.href) }}
+              >
+                {l.label}
+              </a>
             ))}
           </div>
 

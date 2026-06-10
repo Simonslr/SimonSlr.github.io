@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from "react"
 import { getCatalogueProducts } from "@/lib/design-data"
+
+type WindowWithSplash = Window & typeof globalThis & { __introSplashDone?: boolean }
+
 export default function HeroText() {
   const rootRef = useRef<HTMLElement>(null)
 
@@ -9,19 +12,52 @@ export default function HeroText() {
     const root = rootRef.current
     if (!root) return
     const lines = root.querySelectorAll<HTMLElement>("[data-reveal-line]")
+
+    let inView = false
+    let splashDone = false
+    let revealed = false
+    const reveal = () => {
+      if (revealed) return
+      revealed = true
+      lines.forEach((el, i) => {
+        el.style.transitionDelay = `${i * 90}ms`
+        el.classList.add("is-revealed")
+      })
+    }
+
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
-          lines.forEach((el, i) => {
-            el.style.transitionDelay = `${i * 90}ms`
-            el.classList.add("is-revealed")
-          })
+          inView = true
+          if (splashDone) reveal()
           io.disconnect()
         }
       })
     }, { threshold: 0.2 })
     io.observe(root)
-    return () => io.disconnect()
+
+    // Wait for the intro splash to finish (or skip) before revealing, so the
+    // reveal animation isn't wasted while hidden behind the splash overlay.
+    // Fallback after 2200ms in case introsplash:done never fires.
+    let started = false
+    const onSplashDone = () => {
+      if (started) return
+      started = true
+      splashDone = true
+      if (inView) reveal()
+    }
+    if ((window as WindowWithSplash).__introSplashDone) {
+      onSplashDone()
+    } else {
+      window.addEventListener("introsplash:done", onSplashDone, { once: true })
+    }
+    const fallback = setTimeout(onSplashDone, 2200)
+
+    return () => {
+      io.disconnect()
+      window.removeEventListener("introsplash:done", onSplashDone)
+      clearTimeout(fallback)
+    }
   }, [])
 
   const products = getCatalogueProducts()

@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react"
 import { ARROWS, STARS, StarShape, STAR_SIZE } from "./CompareUroLogo"
 
+type WindowWithSplash = Window & typeof globalThis & { __introSplashDone?: boolean }
+
+// Signals HeroText that the splash has started exiting (or never played),
+// so the hero's line reveal isn't wasted while hidden behind it.
+function markSplashDone() {
+  ;(window as WindowWithSplash).__introSplashDone = true
+  window.dispatchEvent(new Event("introsplash:done"))
+}
+
 function AnimatedLogo({ progress }: { progress: number }) {
   const arrowProg = Math.min(1, progress / 0.55)
   const starsProg = Math.max(0, (progress - 0.55) / 0.45)
@@ -62,6 +71,7 @@ export default function IntroSplash() {
     if (sessionStorage.getItem("splash_done")) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSkip(true)
+      markSplashDone()
     } else {
       sessionStorage.setItem("splash_done", "1")
     }
@@ -80,7 +90,10 @@ export default function IntroSplash() {
       if (p < 1) {
         raf = requestAnimationFrame(tick)
       } else {
-        setTimeout(() => setExiting(true), 350)
+        setTimeout(() => {
+          setExiting(true)
+          markSplashDone()
+        }, 350)
         setTimeout(() => setHidden(true), 1100)
       }
     }
