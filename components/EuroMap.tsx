@@ -8,6 +8,7 @@ import type { Topology, GeometryCollection } from "topojson-specification"
 import type { GeoJSON } from "geojson"
 
 const W = 960, H = 600, SCROLL_RANGE = 1800
+const MAP_CENTER = `${W / 2} ${H / 2}`
 
 const projection = geoMercator().center([4, 46]).scale(1000).translate([W / 2, H / 2])
 const pathGen    = geoPath(projection)
@@ -120,7 +121,7 @@ export default function EuroMap() {
         gsap.to(el, { opacity: 1, duration: 0.8, delay: 0.5 + i * 0.12, ease: "power2.out" })
       })
     }
-    gsap.set(cam, { scale: 1 })
+    gsap.set(cam, { x: 0, y: 0, scale: 1, svgOrigin: MAP_CENTER })
 
     // ── Scroll timeline ───────────────────────────────────────────────────
     const seq = gsap.timeline({ paused: true })
@@ -149,9 +150,11 @@ export default function EuroMap() {
         duration: 0.10,
       }, at + 0.06)
       seq.to(scanPath, { opacity: 0, duration: 0.06 }, at + 0.18)
-    }
 
-    gsap.set(cam, { x: 0, y: 0, scale: 1 })
+      // Camera pushes in toward this country's centroid as it becomes the focus.
+      const m = geoData.main[code]
+      if (m) seq.to(cam, { scale: c.zoom, svgOrigin: `${m.cx} ${m.cy}`, duration: 0.18, ease: "power3.out" }, at)
+    }
 
     const ball  = q<SVGCircleElement>("#em-beam-head")
     const trail = q<SVGPathElement>("#em-beam-trail")
@@ -222,6 +225,9 @@ export default function EuroMap() {
         duration: 0.09,
       }, at)
       spotlight(null, at)
+
+      // Camera pulls back to the full-map view before the beam travels onward.
+      seq.to(cam, { scale: 1, svgOrigin: MAP_CENTER, duration: 0.12, ease: "power2.inOut" }, at)
     }
 
     // ── Timeline ──────────────────────────────────────────────────────────
@@ -240,6 +246,7 @@ export default function EuroMap() {
 
     seq.to(ball, { opacity: 0, duration: 0.06 }, 0.93)
     if (halo) seq.to(halo, { opacity: 0, duration: 0.06 }, 0.93)
+    seq.to(cam, { scale: 1, svgOrigin: MAP_CENTER, duration: 0.06, ease: "power2.inOut" }, 0.93)
     seq.duration(1)
 
     // ── Desktop: lerp-smoothed scroll driver ──────────────────────────────
