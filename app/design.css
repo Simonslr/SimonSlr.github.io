@@ -1689,20 +1689,6 @@ a { color: inherit; text-decoration: none; }
   .hero-text__line { clip-path: inset(0 0 0 0); transform: none; opacity: 1; transition: none; }
   .globe-hero-hint, .globe-hero-loader { display: none; }
 }
-@media (max-width: 860px) {
-  /* Mobile: collapse the sticky scroll space, show map as static full-screen */
-  .globe-hero-wrapper { height: 100vh; }
-  .globe-hero-section { opacity: 1 !important; }
-  /* Hide progress rail and hint on mobile — no scroll interaction */
-  .em-progress, .globe-hero-hint { display: none; }
-  /* Label: smaller, centered bottom */
-  .em-label-hud { left: 50%; transform: translateX(-50%); text-align: center; }
-  .em-label-hud__rule { margin: 0 auto 18px; }
-  .em-label-hud__name { font-size: clamp(28px, 7vw, 48px); }
-  /* SVG: keep slice but cap height */
-  .euro-map__svg { animation: none; }
-}
-
 /* ============================================================
    MARQUEE V2  (.mq2*)
    ============================================================ */

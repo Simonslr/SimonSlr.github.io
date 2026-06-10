@@ -242,20 +242,8 @@ export default function EuroMap() {
     if (halo) seq.to(halo, { opacity: 0, duration: 0.06 }, 0.93)
     seq.duration(1)
 
-    // ── Mobile: auto-play ─────────────────────────────────────────────────
-    if (window.innerWidth <= 860) {
-      let loopCall: ReturnType<typeof gsap.delayedCall> | null = null
-      seq.play()
-      seq.eventCallback("onComplete", () => {
-        loopCall = gsap.delayedCall(1.5, () => { if (!disposed) seq.restart() })
-      })
-      return () => {
-        disposed = true; seq.kill(); loopCall?.kill()
-        if (typeTimerRef.current) clearInterval(typeTimerRef.current)
-      }
-    }
-
     // ── Desktop: lerp-smoothed scroll driver ──────────────────────────────
+    // (EuroMap is never mounted on mobile — see EuroMapClient.tsx)
     const lerp = { target: 0, current: 0 }, LERP_K = 0.22
     let cur: Country | null = null, holdActive = false, hintHidden = false
     let rafId = 0
