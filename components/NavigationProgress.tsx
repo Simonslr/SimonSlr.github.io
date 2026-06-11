@@ -40,7 +40,13 @@ export default function NavigationProgress() {
       if (!a) return
       const href = a.getAttribute("href") ?? ""
       if (href.startsWith("http") || href.startsWith("//") || href.startsWith("#")) return
-      if (href === pathname) return
+
+      // Same-page hash links (e.g. "/#catalogue" while already on "/") trigger
+      // a same-document scroll, not a route change — usePathname() never
+      // updates, so the bar/cursor would otherwise get stuck forever.
+      const hashIndex = href.indexOf("#")
+      const path = hashIndex === -1 ? href : href.slice(0, hashIndex)
+      if ((path || "/") === pathname) return
 
       bar.style.transition = "none"
       bar.style.width      = "8%"
