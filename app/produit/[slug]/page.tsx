@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: `Achetez ${product.name} au meilleur prix en Europe. Livraison incluse.`,
       url: `/produit/${slug}`,
       type: "website",
+      images: ["/opengraph-image"],
     },
   }
 }
