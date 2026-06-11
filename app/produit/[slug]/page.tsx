@@ -35,9 +35,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${product.name}${saving} | ComparEuro`,
     description: `Comparez le prix du ${product.name} entre Amazon France, Allemagne et Espagne. Livraison incluse, vendeurs officiels.`,
+    alternates: { canonical: `/produit/${slug}` },
     openGraph: {
       title: `${product.name} — Meilleur prix Amazon Europe`,
       description: `Achetez ${product.name} au meilleur prix en Europe. Livraison incluse.`,
+      url: `/produit/${slug}`,
       type: "website",
     },
   }
@@ -145,7 +147,8 @@ export default async function ProductPage({ params }: Props) {
   const reco        = getRecommendation(product)
   const allProducts = products as Product[]
   const worst       = reco?.ranked[reco.ranked.length - 1]
-  const pageUrl     = `https://eurocomp.vercel.app/produit/${product.slug}`
+  const site        = process.env.NEXT_PUBLIC_SITE_URL ?? "https://compareuro.com"
+  const pageUrl     = `${site}/produit/${product.slug}`
   const brand       = product.name.split(" ")[0]
   const nbMarkets   = reco?.ranked.length ?? 0
 
@@ -154,7 +157,7 @@ export default async function ProductPage({ params }: Props) {
     "@type": "Product",
     "name": product.name,
     "description": product.description,
-    "image": product.image ? `https://eurocomp.vercel.app${product.image}` : undefined,
+    "image": product.image ? `${site}${product.image}` : undefined,
     "brand": { "@type": "Brand", "name": brand },
     "offers": reco.ranked.map((r) => ({
       "@type": "Offer",

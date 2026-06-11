@@ -15,9 +15,11 @@ export const metadata: Metadata = {
   title: "ComparEuro — Le même produit, moins cher en Europe",
   description: "Comparez les prix Amazon France, Allemagne et Espagne. Livraison incluse, vendeurs officiels, sans inscription. Économisez jusqu'à 30% sur vos achats tech.",
   keywords: ["comparateur prix amazon", "amazon france allemagne espagne", "meilleur prix amazon", "économiser amazon europe"],
+  alternates: { canonical: "/" },
   openGraph: {
     title: "ComparEuro — Le même produit, moins cher en Europe",
     description: "Comparez les prix Amazon FR, DE, ES. Livraison incluse, vendeurs officiels.",
+    url: "/",
     type: "website",
     locale: "fr_FR",
   },
