@@ -21,6 +21,8 @@ const SORTS = [
 type SortId          = typeof SORTS[number]["id"]
 type CountryFilterId = "all" | "FR" | "DE" | "ES"
 
+const PAGE_SIZE = 8
+
 function formatEURSmart(n: number): string {
   return n % 1 === 0 ? n.toFixed(0) + " €" : n.toFixed(2) + " €"
 }
@@ -41,6 +43,7 @@ export default function DesignCatalogue() {
   const [sort,    setSort]    = useState<SortId>("savings")
   const [country, setCountry] = useState<CountryFilterId>("all")
   const [phase,   setPhase]   = useState<"in" | "out">("in")
+  const [visible, setVisible] = useState(PAGE_SIZE)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -63,6 +66,7 @@ export default function DesignCatalogue() {
   useEffect(() => {
     if (lastKey.current === filterKey) return
     lastKey.current = filterKey
+    setVisible(PAGE_SIZE)
     setPhase("out")
     const t = setTimeout(() => setPhase("in"), 220)
     return () => clearTimeout(t)
@@ -147,10 +151,17 @@ export default function DesignCatalogue() {
             {filtered.length === 0 && (
               <div className="cat__empty">Aucun produit ne correspond à ces filtres.</div>
             )}
-            {filtered.map((p, i) => (
+            {filtered.slice(0, visible).map((p, i) => (
               <ProductCard key={p.id} p={p} index={i} />
             ))}
           </div>
+          {visible < filtered.length && (
+            <div className="cat__more">
+              <button type="button" className="btn btn--outline" onClick={() => setVisible((v) => v + PAGE_SIZE)}>
+                Afficher plus ({filtered.length - visible} produits)
+              </button>
+            </div>
+          )}
         </div>
       </section>
     </>
