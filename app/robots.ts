@@ -12,6 +12,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: "https://compareuro.com/sitemap.xml",
+    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.compareuro.com"}/sitemap.xml`,
   }
 }
