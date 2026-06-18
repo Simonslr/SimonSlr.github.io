@@ -170,8 +170,22 @@ export default async function ProductPage({ params }: Props) {
     })),
   } : null
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": site },
+      { "@type": "ListItem", "position": 2, "name": product.category, "item": `${site}/#catalogue` },
+      { "@type": "ListItem", "position": 3, "name": product.name },
+    ],
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbLd) }}
+      />
       {jsonLd && (
         <script
           type="application/ld+json"

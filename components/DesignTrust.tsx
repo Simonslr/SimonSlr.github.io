@@ -1,5 +1,3 @@
-"use client"
-
 export default function DesignTrust() {
   return (
     <section id="confiance" className="section trust" data-trust-sec>
