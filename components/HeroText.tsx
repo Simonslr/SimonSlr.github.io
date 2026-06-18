@@ -78,8 +78,9 @@ export default function HeroText() {
         </h1>
 
         <p className="hero-sub hero-text__sub" data-reveal-line>
-          ComparEuro scanne Amazon France, Allemagne et Espagne. Livraison incluse,
-          vendeurs officiels, sans inscription.
+          ComparEuro est le comparateur de prix Amazon qui vous fait économiser :
+          on scanne la France, l&apos;Allemagne et l&apos;Espagne pour trouver le prix
+          le plus bas. Livraison incluse, vendeurs officiels, sans inscription.
         </p>
 
         <div className="hero-text__ctas" data-reveal-line>

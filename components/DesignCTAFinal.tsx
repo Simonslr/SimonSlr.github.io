@@ -52,7 +52,7 @@ export default function DesignCTAFinal() {
                 <CompareUroLogo size={22} color="rgba(255,255,255,0.9)" textColor="rgba(255,255,255,0.9)" showText={false} />
                 <span>ComparEuro</span>
               </Link>
-              <p>Comparateur Amazon France · Allemagne · Espagne. Conçu à Paris. Indépendant.</p>
+              <p>Comparateur de prix Amazon France · Allemagne · Espagne. Conçu à Paris. Indépendant.</p>
             </div>
             <div className="foot__col">
               <p className="foot__col-title">Produit</p>

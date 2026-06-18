@@ -10,7 +10,7 @@ export default function MethodologiePage() {
   return (
     <InfoPageLayout
       title="Méthodologie"
-      subtitle="Comment on collecte, calcule et affiche les prix."
+      subtitle="Comment notre comparateur de prix collecte, calcule et affiche les économies."
       updatedAt="7 mai 2026"
       sections={[
         {

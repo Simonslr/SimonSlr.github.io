@@ -24,7 +24,7 @@ const instrumentSerif = Instrument_Serif({ subsets: ["latin"], variable: "--font
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://eurocomp.vercel.app"),
   title: "ComparEuro — Le vrai prix. Le bon pays.",
-  description: "Comparez les prix Amazon entre la France, l'Allemagne et l'Espagne. Vendeurs officiels uniquement, livraison incluse, sans inscription.",
+  description: "ComparEuro, le comparateur de prix Amazon entre la France, l'Allemagne et l'Espagne. Vendeurs officiels uniquement, livraison incluse, sans inscription.",
   robots: { index: true, follow: true },
   verification: { google: "WagiuAOaaIMxAcLfLEoeJ6xVw9RZ_5Xj3QjR4gqIrF8" },
   other: { google: "notranslate" },
