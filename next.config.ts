@@ -3,8 +3,8 @@ import type { NextConfig } from "next"
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",               // Next.js App Router requires unsafe-inline for hydration chunks
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com data:",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' data:",
   "img-src 'self' data: blob: https://*.ssl-images-amazon.com https://m.media-amazon.com https://images-eu.ssl-images-amazon.com https://images-na.ssl-images-amazon.com",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
   "frame-src 'none'",

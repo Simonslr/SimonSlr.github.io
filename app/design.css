@@ -42,9 +42,9 @@
   --section-pad: min(140px, 12vw);
   --maxw: 1200px;
 
-  --font-sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-serif: "Instrument Serif", "Times New Roman", Times, serif;
-  --font-mono: "Geist Mono", "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: var(--font-geist-sans), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-instrument-serif), "Times New Roman", Times, serif;
+  --font-mono: var(--font-geist-mono), "SF Mono", ui-monospace, monospace;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
