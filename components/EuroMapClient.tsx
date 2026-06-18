@@ -14,17 +14,15 @@ const EuroMap = dynamic(() => import("@/components/EuroMap"), {
 })
 
 export default function EuroMapClient() {
-  // Unknown until measured client-side — avoids mounting (and dynamic-
-  // importing Three.js/R3F) on mobile just to tear it down a tick later.
-  const [show, setShow] = useState<boolean | null>(null)
+  // Default true (desktop) — useEffect hides on mobile after mount.
+  // CSS display:none on .globe-hero-wrapper at ≤860px prevents any flash
+  // of the loading placeholder before the effect runs on mobile.
+  const [show, setShow] = useState(true)
 
   useEffect(() => {
-    setShow(window.innerWidth > 860)
+    if (window.innerWidth <= 860) setShow(false)
   }, [])
 
-  if (show === null) {
-    return <div className="globe-hero-wrapper" style={{ background: "var(--bg-dark, #0a0f1e)" }} />
-  }
   if (!show) return null
   return <EuroMap />
 }
