@@ -68,7 +68,7 @@ export default function DesignCTAFinal() {
               <p>Comparateur Amazon France · Allemagne · Espagne. Conçu à Paris. Indépendant.</p>
             </div>
             <div className="foot__col">
-              <h4>Produit</h4>
+              <p className="foot__col-title">Produit</p>
               <ul>
                 <li><Link href="/#methode">Comment ça marche</Link></li>
                 <li><Link href="/#comparateur">Comparateur</Link></li>
@@ -77,7 +77,7 @@ export default function DesignCTAFinal() {
               </ul>
             </div>
             <div className="foot__col">
-              <h4>Catégories</h4>
+              <p className="foot__col-title">Catégories</p>
               <ul>
                 <li><Link href="/#catalogue">Audio</Link></li>
                 <li><Link href="/#catalogue">Smartphones</Link></li>
@@ -87,7 +87,7 @@ export default function DesignCTAFinal() {
               </ul>
             </div>
             <div className="foot__col">
-              <h4>Légal</h4>
+              <p className="foot__col-title">Légal</p>
               <ul>
                 <li><Link href="/mentions-legales">Mentions légales</Link></li>
                 <li><Link href="/cgu">CGU</Link></li>
@@ -102,7 +102,7 @@ export default function DesignCTAFinal() {
             <span>© 2026 ComparEuro · Tous droits réservés.</span>
             <span className="right">
               <span>FR · DE · ES</span>
-              <Link href="/affiliation" style={{ opacity: 0.6, fontSize: 12, textDecoration: "underline", textDecorationColor: "transparent" }}>
+              <Link href="/affiliation" style={{ fontSize: 12, textDecoration: "underline", textDecorationColor: "transparent" }}>
                 Ce site contient des liens d&apos;affiliation Amazon
               </Link>
             </span>
