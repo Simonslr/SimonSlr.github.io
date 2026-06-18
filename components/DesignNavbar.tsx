@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { AnimatePresence, motion } from "framer-motion"
 import CompareUroLogo from "./CompareUroLogo"
 
 const SECTION_IDS = ["methode", "vedette", "catalogue", "confiance"]
@@ -12,7 +11,8 @@ export default function DesignNavbar() {
   const pathname = usePathname()
   const [scrolled,   setScrolled]   = useState(false)
   const [isDark,     setIsDark]     = useState(pathname === "/")
-  const [menuOpen,   setMenuOpen]   = useState(false)
+  const [menuOpen,     setMenuOpen]     = useState(false)
+  const [menuRendered, setMenuRendered] = useState(false)
   const [activeHref, setActiveHref] = useState<string | null>(null)
   const [pill, setPill] = useState({ left: 0, width: 0, opacity: 0 })
 
@@ -89,6 +89,14 @@ export default function DesignNavbar() {
     window.addEventListener("scroll", close, { once: true, passive: true })
     return () => window.removeEventListener("scroll", close)
   }, [menuOpen])
+
+  // Garde le menu monté le temps de la transition CSS de sortie
+  useEffect(() => {
+    if (menuOpen) { setMenuRendered(true); return }
+    if (!menuRendered) return
+    const t = setTimeout(() => setMenuRendered(false), 400)
+    return () => clearTimeout(t)
+  }, [menuOpen, menuRendered])
 
   const handleCompare = () => {
     setMenuOpen(false)
@@ -168,66 +176,39 @@ export default function DesignNavbar() {
       </nav>
 
       {/* Mobile menu overlay */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-            style={{
-              position: "fixed", inset: 0, zIndex: 99,
-              background: isDark ? "rgba(10,15,30,0.97)" : "rgba(255,255,255,0.97)",
-              backdropFilter: "blur(20px)",
-              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-              gap: 4,
-            }}
-            onClick={() => setMenuOpen(false)}
-          >
-            {navLinks.map((l, i) => (
-              <motion.a
-                key={l.href}
-                href={l.href}
-                onClick={() => setMenuOpen(false)}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.4, delay: 0.05 + i * 0.07, ease: [0.32, 0.72, 0, 1] }}
-                style={{
-                  fontSize: 28, fontWeight: 600, letterSpacing: "-0.025em",
-                  color: isDark ? "#fff" : "#0f172a",
-                  textDecoration: "none", padding: "12px 24px",
-                  opacity: 0.9,
-                  display: "block",
-                }}
-              >
-                {l.label}
-              </motion.a>
-            ))}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4, delay: 0.05 + navLinks.length * 0.07, ease: [0.32, 0.72, 0, 1] }}
-              style={{ marginTop: 28 }}
+      {menuRendered && (
+        <div
+          className={`nav__mobile${menuOpen ? " is-open" : ""}${isDark ? " is-dark" : ""}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          {navLinks.map((l, i) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setMenuOpen(false)}
+              className="nav__mobile-link"
+              style={{ transitionDelay: `${50 + i * 70}ms` }}
             >
-              <button
-                className="btn btn--primary"
-                type="button"
-                onClick={handleCompare}
-                style={{ fontSize: 16, padding: "14px 32px", display: "inline-flex", alignItems: "center", gap: 10 }}
-              >
-                Comparer maintenant
-                <span style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(255,255,255,0.18)", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
-                  </svg>
-                </span>
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {l.label}
+            </a>
+          ))}
+          <div className="nav__mobile-cta" style={{ transitionDelay: `${50 + navLinks.length * 70}ms` }}>
+            <button
+              className="btn btn--primary"
+              type="button"
+              onClick={handleCompare}
+              style={{ fontSize: 16, padding: "14px 32px", display: "inline-flex", alignItems: "center", gap: 10 }}
+            >
+              Comparer maintenant
+              <span style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(255,255,255,0.18)", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
 
     </>
   )
