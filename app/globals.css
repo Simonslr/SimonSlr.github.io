@@ -1,55 +1,55 @@
 @import "tailwindcss";
 
-/* ── Palette commerce / comparateur de prix ─────────────────────────────── */
+/* ── Palette achromatique — design-system/ (monopo saigon) ───────────────── */
 :root {
-  /* Primary — bleu fiable (Wise / Booking) */
-  --blue:          #0051CC;
-  --blue-hover:    #0042A8;
-  --blue-light:    #EEF4FF;
-  --blue-border:   #BFCFEE;
+  /* Primary — encre, plus aucun accent chromatique */
+  --blue:          #000000;
+  --blue-hover:    #181818;
+  --blue-light:    #F5F5F5;
+  --blue-border:   #D9D9D9;
 
-  /* Savings — vert positif (app bancaire) */
-  --green:         #15803D;
-  --green-light:   #F0FDF4;
-  --green-border:  #BBF7D0;
-  --green-strong:  #16A34A;
+  /* Savings — encodé par poids/échelle, pas par couleur */
+  --green:         #000000;
+  --green-light:   #F5F5F5;
+  --green-border:  #D9D9D9;
+  --green-strong:  #000000;
 
-  /* Danger — rouge prix élevé */
-  --red:           #DC2626;
-  --red-light:     #FEF2F2;
+  /* Danger / prix élevé — gris neutre, jamais rouge */
+  --red:           #6D6D6D;
+  --red-light:     #F5F5F5;
 
   /* Backgrounds */
   --bg:            #FFFFFF;
-  --bg-soft:       #F8FAFC;
-  --bg-alt:        #F1F5F9;
+  --bg-soft:       #F5F5F5;
+  --bg-alt:        #F5F5F5;
 
   /* Text */
-  --text:          #0F172A;
-  --text-body:     #334155;
-  --text-mute:     #64748B;
-  --text-faint:    #94A3B8;
+  --text:          #000000;
+  --text-body:     #181818;
+  --text-mute:     #6D6D6D;
+  --text-faint:    #9A9A9A;
 
   /* Borders */
-  --border:        #E2E8F0;
-  --border-strong: #CBD5E1;
+  --border:        #E5E5E5;
+  --border-strong: #D9D9D9;
 
   /* Fonts */
   --font:          "Inter", system-ui, sans-serif;
   --font-mono:     "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
   /* Legacy aliases pour les anciens composants */
-  --ink:           #0F172A;
-  --ink-soft:      #1E293B;
-  --ink-line:      #334155;
-  --paper:         #F8FAFC;
-  --paper-soft:    #F1F5F9;
-  --paper-line:    #E2E8F0;
-  --signal:        #0051CC;
-  --signal-light:  #EEF4FF;
-  --signal-deep:   #0042A8;
-  --signal-mute:   #93C5FD;
-  --text-mute:     #64748B;
-  --text-faint:    #94A3B8;
+  --ink:           #000000;
+  --ink-soft:      #181818;
+  --ink-line:      #6D6D6D;
+  --paper:         #F5F5F5;
+  --paper-soft:    #F5F5F5;
+  --paper-line:    #E5E5E5;
+  --signal:        #000000;
+  --signal-light:  #F5F5F5;
+  --signal-deep:   #181818;
+  --signal-mute:   #9A9A9A;
+  --text-mute:     #6D6D6D;
+  --text-faint:    #9A9A9A;
   --white:         #FFFFFF;
 }
 
@@ -57,7 +57,7 @@
 html, body { margin: 0; padding: 0; }
 * { box-sizing: border-box; }
 /* scroll-behavior intentionally removed — Lenis handles smooth scroll */
-::selection { background: #DBEAFE; color: #1E40AF; }
+::selection { background: #000000; color: #ffffff; }
 
 body {
   background: var(--bg);
@@ -163,11 +163,10 @@ body {
 .card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease;
+  border-radius: 0;
+  transition: transform 200ms ease, border-color 200ms ease;
 }
 .card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
   transform: translateY(-2px);
   border-color: var(--border-strong);
 }
@@ -176,7 +175,7 @@ body {
   background: var(--blue);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 75px;
   font-family: var(--font);
   font-weight: 600;
   font-size: 14px;
@@ -192,11 +191,11 @@ body {
 .btn-primary:active { transform: translateY(0); }
 
 .savings-badge {
-  background: var(--green-light);
-  color: var(--green);
-  border: 1px solid var(--green-border);
-  border-radius: 6px;
-  font-weight: 700;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 75px;
+  font-weight: 600;
   font-size: 13px;
   padding: 4px 10px;
   display: inline-flex;

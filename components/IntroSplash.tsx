@@ -146,7 +146,7 @@ export default function IntroSplash() {
     <div
       style={{
         position: "fixed", inset: 0, zIndex: 9999,
-        background: "#0a0f1e",
+        background: "#000000",
         display: "grid", placeItems: "center",
         opacity: exiting ? 0 : 1,
         transition: "opacity 700ms cubic-bezier(0.4,0,0.2,1)",

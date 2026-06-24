@@ -23,7 +23,7 @@ export interface DesignFeatured extends DesignProduct {
   description: string
 }
 
-function formatUpdated(updatedAt: string): string {
+export function formatUpdated(updatedAt: string): string {
   const now = new Date()
   const updated = new Date(updatedAt)
   const diffMs = now.getTime() - updated.getTime()

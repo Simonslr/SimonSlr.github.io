@@ -5,6 +5,7 @@ import type { Metadata } from "next"
 import products from "@/data/products.json"
 import type { Product, Recommendation } from "@/lib/types"
 import { getRecommendation } from "@/lib/scoring"
+import { formatUpdated } from "@/lib/design-data"
 import Flag from "@/components/Flag"
 import DesignNavbar from "@/components/DesignNavbar"
 import ProductUserSection from "@/components/ProductUserSection"
@@ -277,7 +278,7 @@ export default async function ProductPage({ params }: Props) {
                     />
 
                     <div className="pdp-trust-line">
-                      <span className="fresh">Prix mis à jour {reco.best.offer.updated_at}</span>
+                      <span className="fresh">Prix mis à jour {formatUpdated(reco.best.offer.updated_at)}</span>
                       <span>Livraison incluse</span>
                       <span>Vendeur officiel</span>
                     </div>

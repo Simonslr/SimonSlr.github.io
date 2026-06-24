@@ -61,6 +61,7 @@ export default function DesignCTAFinal() {
                 <li><Link href="/#comparateur">Comparateur</Link></li>
                 <li><Link href="/#catalogue">Catalogue</Link></li>
                 <li><Link href="/#confiance">Confiance</Link></li>
+                <li><Link href="/faq">FAQ</Link></li>
               </ul>
             </div>
             <div className="foot__col">

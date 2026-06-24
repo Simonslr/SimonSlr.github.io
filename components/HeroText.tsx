@@ -73,7 +73,7 @@ export default function HeroText() {
             <span className="italic">Moins cher ailleurs.</span>
           </span>
           <span className="hero-text__line" data-reveal-line>
-            En <span style={{ color: "var(--blue)" }}>Europe.</span>
+            En <span style={{ fontWeight: 600 }}>Europe.</span>
           </span>
         </h1>
 
@@ -86,7 +86,7 @@ export default function HeroText() {
         <div className="hero-text__ctas" data-reveal-line>
           <a className="btn btn--primary" href="#catalogue">
             Voir les économies
-            <span style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "transform 200ms cubic-bezier(0.32,0.72,0,1)" }}>
+            <span style={{ width: 26, height: 26, borderRadius: "50%", background: "transparent", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "transform 200ms cubic-bezier(0.32,0.72,0,1)" }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />

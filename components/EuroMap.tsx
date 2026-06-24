@@ -21,9 +21,9 @@ const RAIL_POS: Record<string, number> = { FR: 0.21, DE: 0.50, ES: 0.79 }
 
 interface Country { code: string; name: string; color: string; market: string; tagline: string; zoom: number }
 const COUNTRIES: Country[] = [
-  { code: "FR", name: "France",    color: "#3b82f6", market: "Amazon.fr", tagline: "Livraison Prime incluse",   zoom: 3.8 },
-  { code: "DE", name: "Allemagne", color: "#f59e0b", market: "Amazon.de", tagline: "Souvent le meilleur prix",  zoom: 3.4 },
-  { code: "ES", name: "Espagne",   color: "#ef4444", market: "Amazon.es", tagline: "Avantages TVA européenne",  zoom: 3.0 },
+  { code: "FR", name: "France",    color: "#ffffff", market: "Amazon.fr", tagline: "Livraison Prime incluse",   zoom: 3.8 },
+  { code: "DE", name: "Allemagne", color: "#ffffff", market: "Amazon.de", tagline: "Souvent le meilleur prix",  zoom: 3.4 },
+  { code: "ES", name: "Espagne",   color: "#ffffff", market: "Amazon.es", tagline: "Avantages TVA européenne",  zoom: 3.0 },
 ]
 
 
@@ -144,7 +144,7 @@ export default function EuroMap() {
       seq.set(scanPath, { opacity: 1 }, at)
       seq.to(grad, { attr: { x1: W * 1.5, x2: W * 2 }, duration: 0.18, ease: "power2.out" }, at)
       seq.to(getPath(code)!, {
-        attr: { fill: `rgba(${r},${g},${b},0.22)`, stroke: c.color + "cc", strokeWidth: 1.4 },
+        attr: { fill: `rgba(${r},${g},${b},0.22)`, stroke: c.color + "cc", "stroke-width": 1.4 },
         filter: `drop-shadow(0 0 28px ${c.color}55) drop-shadow(0 0 8px ${c.color}99)`,
         duration: 0.10,
       }, at + 0.06)
@@ -153,71 +153,44 @@ export default function EuroMap() {
 
     gsap.set(cam, { x: 0, y: 0, scale: 1 })
 
-    const ball  = q<SVGCircleElement>("#em-beam-head")
-    const trail = q<SVGPathElement>("#em-beam-trail")
-    const halo  = q<SVGCircleElement>("#em-beam-halo")
-    if (!ball) return
-
     COUNTRIES.forEach(c => {
       const el = getPath(c.code); if (!el) return
       gsap.set(el, {
-        attr: { fill: `${c.color}12`, stroke: `${c.color}55`, strokeWidth: 0.9 },
+        attr: { fill: `${c.color}12`, stroke: `${c.color}55`, "stroke-width": 0.9 },
         filter: `drop-shadow(0 0 10px ${c.color}30)`,
       })
     })
 
     const travel = (fromCode: string, toCode: string, at: number, dur: number) => {
       const a = geoData.caps[fromCode], b = geoData.caps[toCode]
-      const toC = COUNTRIES.find(c => c.code === toCode)!
       if (!a || !b) return
 
       const mx = (a.x + b.x) / 2
       const my = Math.min(a.y, b.y) - Math.abs(b.x - a.x) * 0.09
-      const pathD  = `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`
+      const pathD   = `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`
       const pathLen = Math.hypot(b.x - a.x, b.y - a.y) * 1.09
 
-      if (trail) {
-        seq.set(trail, {
-          attr: { d: pathD, strokeDasharray: `${pathLen * 0.18} ${pathLen}`, strokeDashoffset: pathLen },
-          stroke: toC.color, opacity: 0.80,
+      // Trajectory trace — the line itself draws progressively (stroke-dashoffset
+      // 0) instead of a dot travelling along it.
+      // NB: GSAP's attr plugin needs the literal hyphenated attribute name —
+      // camelCase keys (strokeDasharray/strokeDashoffset) are silently no-ops on SVG.
+      const trace = q<SVGPathElement>(`#em-trace-${fromCode}-${toCode}`)
+      if (trace) {
+        seq.set(trace, {
+          attr: { d: pathD, "stroke-dasharray": pathLen, "stroke-dashoffset": pathLen },
+          opacity: 0.95,
         }, at)
-        seq.to(trail, { attr: { strokeDashoffset: 0 }, opacity: 0.45, duration: dur, ease: "none" }, at)
-        seq.to(trail, { opacity: 0, duration: 0.08 }, at + dur + 0.02)
+        seq.to(trace, { attr: { "stroke-dashoffset": 0 }, duration: dur, ease: "power2.inOut" }, at)
       }
-
-      const ax = a.x, ay = a.y, bx = b.x, by = b.y
-      const proxy = { t: 0 }
-
-      seq.set(ball, { fill: toC.color, opacity: 1, attr: { r: 5, cx: ax, cy: ay } }, at)
-      if (halo) {
-        seq.set(halo, { attr: { cx: ax, cy: ay }, fill: toC.color, opacity: 0 }, at)
-        seq.to(halo, { opacity: 0.28, duration: 0.10 }, at + 0.02)
-      }
-
-      seq.fromTo(proxy, { t: 0 }, {
-        t: 1, duration: dur, ease: "power2.inOut",
-        onUpdate() {
-          const t  = proxy.t
-          const px = (1-t)*(1-t)*ax + 2*(1-t)*t*mx + t*t*bx
-          const py = (1-t)*(1-t)*ay + 2*(1-t)*t*my + t*t*by
-          ball.setAttribute("cx", px.toFixed(2))
-          ball.setAttribute("cy", py.toFixed(2))
-          halo?.setAttribute("cx", px.toFixed(2))
-          halo?.setAttribute("cy", py.toFixed(2))
-        },
-      }, at)
-
-      if (halo) seq.to(halo, { opacity: 0, duration: 0.08 }, at + dur - 0.05)
 
       scanIn(toCode, at + dur * 0.88)
-      spotlight(toCode, at + dur * 0.90)
     }
 
     const deactivate = (code: string, at: number) => {
       const c = COUNTRIES.find(x => x.code === code)!
       const el = getPath(code); if (!el) return
       seq.to(el, {
-        attr: { fill: `${c.color}12`, stroke: `${c.color}44`, strokeWidth: 0.9 },
+        attr: { fill: `${c.color}12`, stroke: `${c.color}44`, "stroke-width": 0.9 },
         filter: `drop-shadow(0 0 10px ${c.color}25)`,
         duration: 0.09,
       }, at)
@@ -227,19 +200,26 @@ export default function EuroMap() {
     // ── Timeline ──────────────────────────────────────────────────────────
     scanIn("FR", 0.04)
     spotlight("FR", 0.06)
-    const frCap = geoData.caps.FR
-    seq.set(ball, { attr: { cx: frCap?.x ?? W/2, cy: frCap?.y ?? H/2, r: 5 },
-      fill: FR.color, opacity: 0 }, 0.04)
-    seq.to(ball, { opacity: 1, duration: 0.08, ease: "power2.out" }, 0.06)
 
+    // Both trajectories leave France at the same time, direct to each
+    // destination — no detour through the other country.
     deactivate("FR", 0.12)
-    travel("FR", "DE", 0.14, 0.22)
+    travel("FR", "DE", 0.14, 0.34)
+    travel("FR", "ES", 0.14, 0.34)
 
-    deactivate("DE", 0.56)
-    travel("DE", "ES", 0.58, 0.20)
+    // Both destinations arrive together — highlight DE + ES at once, dim only France
+    const arriveAt = 0.14 + 0.34 * 0.90
+    ;(["FR", "DE", "ES"] as const).forEach(code => {
+      const el = getPath(code)
+      if (el) seq.to(el, { opacity: code === "FR" ? 0.32 : 1, duration: 0.10 }, arriveAt)
+    })
+    const ctxLayer = q<SVGGElement>("#ctx-layer")
+    if (ctxLayer) seq.to(ctxLayer, { opacity: 0.5, duration: 0.10 }, arriveAt)
 
-    seq.to(ball, { opacity: 0, duration: 0.06 }, 0.93)
-    if (halo) seq.to(halo, { opacity: 0, duration: 0.06 }, 0.93)
+    const frDeTrace = q<SVGPathElement>("#em-trace-FR-DE")
+    const frEsTrace = q<SVGPathElement>("#em-trace-FR-ES")
+    if (frDeTrace) seq.to(frDeTrace, { opacity: 0, duration: 0.06 }, 0.93)
+    if (frEsTrace) seq.to(frEsTrace, { opacity: 0, duration: 0.06 }, 0.93)
     seq.duration(1)
 
     // ── Desktop: lerp-smoothed scroll driver ──────────────────────────────
@@ -427,7 +407,7 @@ export default function EuroMap() {
               ))}
             </g>
 
-            {/* Dashed connection lines between capitals */}
+            {/* Dashed connection lines between capitals — faint permanent route hint */}
             {geoData && (() => {
               const { FR: fr, DE: de, ES: es } = geoData.caps
               if (!fr || !de || !es) return null
@@ -442,6 +422,13 @@ export default function EuroMap() {
                 </g>
               )
             })()}
+
+            {/* Animated trajectory traces — drawn progressively in sync with scroll,
+                replacing the previous travelling-dot animation */}
+            <path id="em-trace-FR-DE" d="" fill="none" stroke={COUNTRIES[1].color}
+              strokeWidth="2.2" strokeLinecap="round" opacity="0" filter="url(#em-glow-soft)" />
+            <path id="em-trace-FR-ES" d="" fill="none" stroke={COUNTRIES[2].color}
+              strokeWidth="2.2" strokeLinecap="round" opacity="0" filter="url(#em-glow-soft)" />
 
             {/* Main 3 countries */}
             {COUNTRIES.map(c => (

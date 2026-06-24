@@ -28,17 +28,14 @@ export default function CookieBanner() {
         transform: "translateX(-50%)",
         zIndex: 9999,
         width: "min(92vw, 640px)",
-        background: "rgba(10,15,30,0.97)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
+        background: "#000000",
         border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: 16,
+        borderRadius: 0,
         padding: "18px 22px",
         display: "flex",
         alignItems: "center",
         gap: 20,
         flexWrap: "wrap",
-        boxShadow: "0 8px 40px rgba(0,0,0,0.45)",
         animation: "toast-in 300ms cubic-bezier(0.32,0.72,0,1) both",
       }}
     >
@@ -60,7 +57,7 @@ export default function CookieBanner() {
           onClick={refuse}
           style={{
             padding: "8px 16px",
-            borderRadius: 8,
+            borderRadius: 75,
             border: "1px solid rgba(255,255,255,0.15)",
             background: "transparent",
             color: "rgba(255,255,255,0.6)",
@@ -75,9 +72,9 @@ export default function CookieBanner() {
           onClick={accept}
           style={{
             padding: "8px 18px",
-            borderRadius: 8,
+            borderRadius: 75,
             border: "none",
-            background: "#2563eb",
+            background: "#636363",
             color: "#fff",
             fontSize: 13,
             fontWeight: 600,

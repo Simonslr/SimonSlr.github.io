@@ -151,7 +151,7 @@ export default function DesignNavbar() {
           <div className="nav__right">
             <button className="btn btn--primary" type="button" onClick={handleCompare}>
               Comparer
-              <span style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(255,255,255,0.18)", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "transform 200ms cubic-bezier(0.32,0.72,0,1)" }}>
+              <span style={{ width: 22, height: 22, borderRadius: "50%", background: "transparent", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "transform 200ms cubic-bezier(0.32,0.72,0,1)" }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
                 </svg>
@@ -200,7 +200,7 @@ export default function DesignNavbar() {
               style={{ fontSize: 16, padding: "14px 32px", display: "inline-flex", alignItems: "center", gap: 10 }}
             >
               Comparer maintenant
-              <span style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(255,255,255,0.18)", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <span style={{ width: 26, height: 26, borderRadius: "50%", background: "transparent", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
                 </svg>

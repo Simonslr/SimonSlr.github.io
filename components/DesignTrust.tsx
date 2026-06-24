@@ -34,6 +34,12 @@ export default function DesignTrust() {
             icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M3 12h18" /><path d="M12 3a14 14 0 0 1 0 18" /><path d="M12 3a14 14 0 0 0 0 18" /></svg>}
           />
         </div>
+
+        <p className="trust__disclosure" data-reveal="fade">
+          Comment on gagne notre argent ? Une petite commission Amazon, payée par Amazon, jamais par vous —
+          {" "}
+          <a href="/affiliation">notre modèle économique en détail</a>.
+        </p>
       </div>
     </section>
   )

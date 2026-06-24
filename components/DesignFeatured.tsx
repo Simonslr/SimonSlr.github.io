@@ -54,7 +54,7 @@ export default function DesignFeatured() {
             <div className="eyebrow">La sélection ComparEuro</div>
             <h2 className="h-section" style={{ marginTop: 24 }}>
               {featured.title},<br />
-              <span className="em-serif" style={{ color: "var(--blue)" }}>{formatEURSmart(save)} moins cher</span>
+              <span className="em-serif" style={{ fontWeight: 600 }}>{formatEURSmart(save)} moins cher</span>
               <br />ailleurs.
             </h2>
             <p className="sub" style={{ marginTop: 28 }}>{featured.description}</p>

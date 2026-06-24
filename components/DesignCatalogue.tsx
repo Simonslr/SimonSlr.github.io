@@ -171,8 +171,9 @@ export default function DesignCatalogue() {
 function ProductCard({ p, index }: { p: DesignProduct; index: number }) {
   const best = p.bestCountry
   const save = getSavings(p.prices)
+  const worst = ["FR", "DE", "ES"].filter((c) => p.prices[c] != null).reduce((w, c) => (p.prices[c] > p.prices[w] ? c : w))
   const rows = ["FR", "DE", "ES"].filter((c) => p.prices[c] != null).map((c) => ({
-    c, price: p.prices[c], isBest: c === best,
+    c, price: p.prices[c], isBest: c === best, isWorst: c === worst && c !== best,
   }))
 
   return (
@@ -201,7 +202,7 @@ function ProductCard({ p, index }: { p: DesignProduct; index: number }) {
 
           <div className="card__prices">
             {rows.map((r) => (
-              <div key={r.c} className={`card__price-row${r.isBest ? " best" : ""}`}>
+              <div key={r.c} className={`card__price-row${r.isBest ? " best" : ""}${r.isWorst ? " worst" : ""}`}>
                 <Flag country={r.c} size={12} />
                 <span className="cn">{COUNTRY_AMAZON[r.c]}</span>
                 <span />
